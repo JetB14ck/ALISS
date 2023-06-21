@@ -3,10 +3,13 @@
 @using ALISS.Data
 @using ALISS.STARS.DTO
 @using System.IO;
+@using ALISS.STARS.DTO.RepeatAutomate;
+@using ALISS.Data.D7_StarsRepeat
 
 @inject IJSRuntime jsRuntime
 @inject UploadAutomateService UploadAutomateservice
 @inject StarsMappingService StarsMappingService
+@inject RepeatAutomateService RepeatService
 @inject LoginUserData loginUserData
 @inject DropDownListDataService ddlDataService
 @inject NavigationManager navigationManager
@@ -106,7 +109,7 @@ else
                 <div class="row justify-content-end">
                     <div class="col-auto buttonArea">
                         <RadzenButton Text="Upload File" class="btnAdd"
-                              Click="@ShowUploadEntryDialog" Disabled="@(string.IsNullOrEmpty(searchModel.afu_machinetype) || string.IsNullOrEmpty(searchModel.afu_Area))" />
+                                      Click="@ShowUploadEntryDialog" Disabled="@(string.IsNullOrEmpty(searchModel.afu_machinetype) || string.IsNullOrEmpty(searchModel.afu_Area))" />
                     </div>
                 </div>
             </div>
@@ -124,9 +127,9 @@ else
                 </div>
             </div>
             <RadzenGrid AllowFiltering="true" AllowSorting="true" AllowPaging="true" Style="max-width: 1597px"
-                    PageSize="inboxGrid.PageSize" @ref="inboxGrid.radzenGrid" Data="@gridDatas" TItem="UploadAutomateDataDTO"
-                    FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
-                    AllowColumnResize="true">
+                        PageSize="inboxGrid.PageSize" @ref="inboxGrid.radzenGrid" Data="@gridDatas" TItem="UploadAutomateDataDTO"
+                        FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+                        AllowColumnResize="true">
                 <Columns>
                     <RadzenGridColumn TItem="UploadAutomateDataDTO" Property="arh_name" Title="ศูนย์วิทย์" Width="200px">
                         <FooterTemplate>
@@ -223,7 +226,7 @@ else
                                         </div>
                                         <div class="col-auto">
                                             <RadzenButton Icon="save" ButtonType="ButtonType.Submit" class="btnSave" Text="Upload"
-                                                      disabled="@(selectedFiles == null ? true : false)" />
+                                                          disabled="@(selectedFiles == null ? true : false)" />
                                         </div>
 
                                     </div>
@@ -343,215 +346,147 @@ else
 
     async Task ValidateFile()
     {
+        string confirmMessage = "";
+        confirmMessage = "Confirm upload data." + "\n" + " File Name: " + selectedFiles.Name + "\n";
 
-        //1. Upload file --> temp ** ไฟล์มี 2 แบบ
-        //2. อ่านไฟล์ไปเก็บไว้ที่ Temp table ** check template ตัด header ด้วย
-        //3. ดึงข้อมูลจาก temp table ==> process (batch)
-        //4. ลบ temp table
+        var result = await jsRuntime.InvokeAsync<bool>("ShowConfirm", confirmMessage);
+        if (result == false)
+        {
+            return;
+        }
+        showModal = true;
 
-        //string confirmMessage = "";
-        //confirmMessage = "Confirm upload data." + "\n" + " File Name: " + selectedFiles.Name + "\n";
+        string str_CurrentDate = DateTime.Now.ToString("yyyyMMdd");
 
+        string filepath = await RepeatService.GetPath();
+        filepath = Path.Combine(filepath, searchModel.afu_Area, str_CurrentDate);
+        bool exists = System.IO.Directory.Exists(filepath);
 
+        if (!exists)
+            System.IO.Directory.CreateDirectory(filepath);
 
-        //var result = await jsRuntime.InvokeAsync<bool>("ShowConfirm", confirmMessage);
-        //if (result == false)
-        //{
-        //    return;
-        //}
+        var filename = Path.Combine(filepath, selectedFiles.Name);
 
-        //showModal = true;
+        UploadedBytes = 0;
 
-        //**** automate mapping ==> where machine, active, order by last update => first()
-        //MasterTemplateSearchDTO searchMasterTemplate = new MasterTemplateSearchDTO();
-        //MappingDataDTO mappingSearch = new MappingDataDTO();
-        //mappingSearch.mp_hos_code = UploadFileData.afu_hos_code;
-        //mappingSearch.mp_lab = UploadFileData.afu_lab;
-        //mappingSearch.mp_program = UploadFileData.afu_Program;
-        //mappingSearch.mp_filetype = UploadFileData.afu_FileType;
+        TotalBytes = selectedFiles.Size;
 
-        ////if (UploadFileData.afu_Program == "MLAB")
-        ////{
-        ////    mappingSearch = new MappingDataDTO();
-        ////    mappingSearch.mp_hos_code = UploadFileData.afu_hos_code;
+        long percent = 0;
+        long chunckSize = 400000;
+        long numChunks = TotalBytes / chunckSize;
+        long remainder = TotalBytes % chunckSize;
 
-        ////    List<ParameterDTO> parameterDTO = new List<ParameterDTO>();
-        ////    parameterDTO = await ddlDataService.GetParameterListByModelAsync(new ParameterDTO() { prm_code_major = "MLAB_MAPPING_TEMPLATE" });
-        ////    mappingSearch.mp_id = Guid.Parse(parameterDTO.FirstOrDefault(x => x.prm_code_minor == "mp_id").prm_value);
-        ////}
-        ////else
-        ////{
-        ////    mappingSearch.mp_filetype = null;
-        ////}
+        if (File.Exists(filename)) File.Delete(filename);
 
-        //var MappingTemplate = new MappingDataDTO();
-        //MasterTemplateDTO ActiveMasterTemplate = await masterTemplateService.GetListByModelActiveAsync(searchMasterTemplate);
+        using (var inStream = selectedFiles.OpenReadStream(long.MaxValue))
+        {
+            using (var outStream = File.OpenWrite(filename))
+            {
+                for (int i = 0; i < numChunks; i++)
+                {
+                    var buffer = new byte[chunckSize];
+                    await inStream.ReadAsync(buffer, 0, buffer.Length);
 
-        //if (UploadFileData.afu_Program != "MLAB")
-        //{
-        //    MappingTemplate = await mappingservice.GetMappingDataActiveWithModelAsync(mappingSearch);
+                    await outStream.WriteAsync(buffer, 0, buffer.Length);
 
-        //    if (MappingTemplate.mp_id == Guid.Empty)
-        //    {
-        //        await jsRuntime.InvokeAsync<object>("ShowAlert", "ไม่พบ Mapping Template สำหรับใช้ในการ Upload File");
-        //        showModal = false;
-        //        return;
-        //    }
+                    UploadedBytes += chunckSize;
 
-        //    if (ActiveMasterTemplate == null)
-        //    {
-        //        await jsRuntime.InvokeAsync<object>("ShowAlert", "ไม่พบ Master Template ที่มีสถานะเป็น Active (กรุณาติดต่อผู้ดูแลระบบ)");
-        //        showModal = false;
-        //        return;
-        //    }
-        //}
-        //else
-        //{
+                    percent = UploadedBytes * 100 / TotalBytes;
 
-        //    MappingTemplate = await mappingservice.GetMappingDataAsync(mappingSearch.mp_id.ToString());
+                    LargeUploadMessage = $"กำลังอัปโหลดไฟล์ {percent}%";
 
-        //    if (ActiveMasterTemplate == null)
-        //    {
-        //        await jsRuntime.InvokeAsync<object>("ShowAlert", "ไม่พบ Master Template ที่มีสถานะเป็น Active (กรุณาติดต่อผู้ดูแลระบบ)");
-        //        showModal = false;
-        //        return;
-        //    }
-        //}
+                    await InvokeAsync(StateHasChanged);
+                }
 
+                if (remainder > 0)
+                {
+                    var buffer = new byte[remainder];
+                    await inStream.ReadAsync(buffer, 0, buffer.Length);
 
-        //string str_CurrentDate = DateTime.Now.ToString("yyyyMMdd");
+                    await outStream.WriteAsync(buffer, 0, buffer.Length);
 
-        //string filepath = await fileUploadservice.GetPath();
-        //filepath = Path.Combine(filepath, str_CurrentDate, mappingSearch.mp_hos_code);
-        //bool exists = System.IO.Directory.Exists(filepath);
+                    UploadedBytes += remainder;
 
-        //if (!exists)
-        //    System.IO.Directory.CreateDirectory(filepath);
+                    percent = UploadedBytes * 100 / TotalBytes;
 
-        //var filename = Path.Combine(filepath, selectedFiles.Name);
+                    LargeUploadMessage = $"กำลังอัปโหลดไฟล์ {percent}%";
 
-        //UploadedBytes = 0;
+                    await InvokeAsync(StateHasChanged);
+                }
+            }
+        }
 
-        //TotalBytes = selectedFiles.Size;
+        LargeUploadMessage = "กำลังตรวจสอบไฟล์ ...";
+        await InvokeAsync(StateHasChanged);
 
-        //long percent = 0;
-        //long chunckSize = 400000;
-        //long numChunks = TotalBytes / chunckSize;
-        //long remainder = TotalBytes % chunckSize;
+        UploadFileData.afu_smp_id = machine_ddl_list.Find(x => x.smp_machinetype == UploadFileData.afu_machinetype).smp_id;
+        var chkValidate = await RepeatService.ValidateLabFileAsync(filepath, selectedFiles.Name, UploadFileData.afu_smp_id);
 
-        //if (File.Exists(filename)) File.Delete(filename);
+        LargeUploadMessage = "อัปโหลดเรียบร้อยแล้ว";
+        await InvokeAsync(StateHasChanged);
+        int totalRec = 0;
 
-        //using (var inStream = selectedFiles.OpenReadStream(long.MaxValue))
-        //{
-        //    using (var outStream = File.OpenWrite(filename))
-        //    {
-        //        for (int i = 0; i < numChunks; i++)
-        //        {
-        //            var buffer = new byte[chunckSize];
-        //            await inStream.ReadAsync(buffer, 0, buffer.Length);
+        if (chkValidate != null)
+        {
+            string ErrorMessage = "";
+            foreach (AutomateFileUploadErrorMessageDTO item in chkValidate)
+            {
+                if (item.afu_status == 'I' && item.afu_Err_Column == "Total")
+                {
+                    Int32.TryParse(item.afu_Err_Message, out totalRec);
+                    ////ErrorMessage += "Total Record(s) = " + totalRec + "\n";
+                    ErrorMessage += "Total Record(s) = " + String.Format("{0:n0}", totalRec) + "\n";
+                }
+                else if (item.afu_status == 'E')
+                    ErrorMessage += "- " + item.afu_Err_Message + "\n";
+            }
 
-        //            await outStream.WriteAsync(buffer, 0, buffer.Length);
+            await jsRuntime.InvokeAsync<object>("ShowAlert", ErrorMessage);
+        }
 
-        //            UploadedBytes += chunckSize;
+        var chkError = chkValidate.FirstOrDefault(x => x.afu_status == 'E');
 
-        //            percent = UploadedBytes * 100 / TotalBytes;
+        if (chkError == null)
+        {
+            var path = chkValidate.FirstOrDefault(x => x.afu_status == 'I' && x.afu_Err_Column == "path").afu_Err_Message;
+            await UploadFile(UploadFileData.afu_smp_id, totalRec, path);
+            await ControlPopup("UploadEntry", false);
+            showModal = false;
 
-        //            LargeUploadMessage = $"กำลังอัปโหลดไฟล์ {percent}%";
+            SearchData();
+            StateHasChanged();
 
-        //            await InvokeAsync(StateHasChanged);
-        //        }
+        }
+        else
+        {
+            showModal = false;
+            return;
+        }
 
-        //        if (remainder > 0)
-        //        {
-        //            var buffer = new byte[remainder];
-        //            await inStream.ReadAsync(buffer, 0, buffer.Length);
-
-        //            await outStream.WriteAsync(buffer, 0, buffer.Length);
-
-        //            UploadedBytes += remainder;
-
-        //            percent = UploadedBytes * 100 / TotalBytes;
-
-        //            LargeUploadMessage = $"กำลังอัปโหลดไฟล์ {percent}%";
-
-        //            await InvokeAsync(StateHasChanged);
-        //        }
-        //    }
-        //}
-
-        //LargeUploadMessage = "กำลังตรวจสอบไฟล์ ...";
-        //await InvokeAsync(StateHasChanged);
-
-        //var chkValidate = await fileUploadservice.ValidateLabFileAsync(filepath, selectedFiles.Name, MappingTemplate, UploadFileData.afu_FileType);
-
-        //LargeUploadMessage = "อัปโหลดเรียบร้อยแล้ว";
-        //await InvokeAsync(StateHasChanged);
-        //int totalRec = 0;
-        //if (chkValidate != null)
-        //{
-        //    string ErrorMessage = "";
-        //    foreach (UploadAutomateErrorMessageDTO item in chkValidate)
-        //    {
-        //        if (item.afu_status == 'I' && item.afu_Err_Column == "Total")
-        //        {
-        //            Int32.TryParse(item.afu_Err_Message, out totalRec);
-        //            ErrorMessage += "Total Record(s) = " + String.Format("{0:n0}", totalRec) + "\n";
-        //        }
-        //        else if (item.afu_status == 'E')
-        //            ErrorMessage += "- " + item.afu_Err_Message + "\n";
-        //    }
-
-        //    await jsRuntime.InvokeAsync<object>("ShowAlert", ErrorMessage);
-        //}
-
-        //var chkError = chkValidate.FirstOrDefault(x => x.afu_status == 'E');
-
-        //if (chkError == null)
-        //{
-        //    var path = chkValidate.FirstOrDefault(x => x.afu_status == 'I' && x.afu_Err_Column == "path").afu_Err_Message;
-        //    await UploadFile(MappingTemplate.mp_id, MappingTemplate.mp_version, totalRec, path);
-        //    await ControlPopup("UploadEntry", false);
-        //    showModal = false;
-
-        // ****** ==> process batch ไม่ต้องรอ response
-
-        //    SearchData();
-        //    StateHasChanged();
-
-        //}
-        //else
-        //{
-        //    showModal = false;
-        //    return;
-        //}
-
-        //UploadedBytes = 0;
-        //TotalBytes = 0;
-        //LargeUploadMessage = "";
-
+        UploadedBytes = 0;
+        TotalBytes = 0;
+        LargeUploadMessage = "";
     }
 
-    async Task UploadFile(Guid mp_id, Decimal mp_version, int TotalRec, string path)
+    private async Task UploadFile(Guid mapping_id, int TotalRec, string path)
     {
 
-        //UploadAutomateDataDTO UploadAutomate = new UploadAutomateDataDTO();
-        // ==> TRAutomateUploadFile
-        //UploadAutomate.afu_mp_id = mp_id;
-        //UploadAutomate.afu_mp_version = mp_version;
-        //UploadAutomate.afu_hos_code = UploadFileData.afu_hos_code;
-        //UploadAutomate.afu_lab = UploadFileData.afu_lab;
-        //UploadAutomate.afu_Program = UploadFileData.afu_Program;
-        //UploadAutomate.afu_Path = path;
-        //UploadAutomate.afu_DataYear = UploadFileData.afu_DataYear;
-        //UploadAutomate.afu_FileName = selectedFiles.Name;
-        //UploadAutomate.afu_TotalRecord = TotalRec;
-        //UploadAutomate.afu_FileType = UploadFileData.afu_FileType;
-        //UploadAutomate.afu_createuser = mainLayout.loginUser.Username;
-        //UploadAutomate.afu_updateuser = mainLayout.loginUser.Username;
-        //UploadAutomate.afu_FileTypeLabel = UploadFileData.afu_FileTypeLabel;
-        //UploadAutomate.afu_TestType = UploadFileData.afu_TestType;
+        RepeatAutomateDataDTO RepeatFileUpload = new RepeatAutomateDataDTO();
 
-        //var x = await fileUploadservice.UploadFileAsync(UploadAutomate);
+        RepeatFileUpload.afu_smp_id = mapping_id;
+
+        RepeatFileUpload.afu_arh_code = UploadFileData.afu_arh_code;
+        RepeatFileUpload.afu_machinetype = UploadFileData.afu_machinetype;//machineType_ddl_List.Find(x => x.data_id == mapping_id.ToString()).data_Text;
+        RepeatFileUpload.afu_filename = selectedFiles.Name;
+        RepeatFileUpload.afu_path = path;
+        RepeatFileUpload.afu_totalrecord = TotalRec;
+        RepeatFileUpload.afu_repeat_flag = true;
+        RepeatFileUpload.afu_status = "N";
+
+        RepeatFileUpload.afu_createuser = mainLayout.loginUser.Username;
+        RepeatFileUpload.afu_repeatuser = mainLayout.loginUser.Username;
+
+        var x = await RepeatService.UploadFileAsync(RepeatFileUpload);
 
     }
 
