@@ -117,6 +117,11 @@ namespace ALISS.STARS.Library
                             objTRStarsResult.srr_tatdate = DateTime.Now.AddDays(model.arh_days_receive);
                         }
 
+                        if (!string.IsNullOrEmpty(model.str_cancelreason))
+                        {
+                            objTRStarsResult.srr_status = "J";
+                        }
+
                         objTRStarsReceiveSample.srr_id = objTRStarsResult.srr_id;
                         objTRStarsReceiveSample.str_createdate = DateTime.Now;
                         objTRStarsReceiveSample.str_updatedate = DateTime.Now;

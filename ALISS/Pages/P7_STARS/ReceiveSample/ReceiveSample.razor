@@ -105,9 +105,9 @@ else
             <div class="container">
                 <div class="row justify-content-end">
                     <div class="col-auto buttonArea">
-                        <RadzenButton Icon="save" Text="@configData.Get_Label("srr_receive")" class="btnAdd" Click="ReceiveSampleData" />
-                        <RadzenButton Icon="print" Text="@configData.Get_Label("srr_print_stars_barcode")" class="btnAdd" Click="ExportBarcode" />
-                        <RadzenButton Icon="list" Text="@configData.Get_Label("srr_print_logbook")" class="btnAdd" Click="ExportLogbook" />
+                        <RadzenButton Icon="save" Text="@configData.Get_Label("srr_receive")" class="btnAdd" Click="ReceiveSampleData" Disabled="@(gridDatas.Count() == 0 || gridDatas.Where(x => !string.IsNullOrEmpty(x.srr_starsno) || x.srr_status == "J").Count() == gridDatas.Count())" />
+                        <RadzenButton Icon="print" Text="@configData.Get_Label("srr_print_stars_barcode")" class="btnAdd" Click="ExportBarcode" Disabled="@(gridDatas.Where(x => !string.IsNullOrEmpty(x.srr_starsno) || x.srr_status == "J").Count() != gridDatas.Count() || gridDatas.Count() == 0)" />
+                        <RadzenButton Icon="list" Text="@configData.Get_Label("srr_print_logbook")" class="btnAdd" Click="ExportLogbook" Disabled="@(gridDatas.Where(x => !string.IsNullOrEmpty(x.srr_starsno) || x.srr_status == "J").Count() != gridDatas.Count() || gridDatas.Count() == 0)" />
 
                     </div>
                 </div>
@@ -345,27 +345,33 @@ else
 
     private async Task ExportLogbook()
     {
+        showModal = true;
         try
         {
             string tempPath = ParameterList.FirstOrDefault(x => x.prm_code_minor == "RECEIVE_SAMPLE_LOGBOOK_PATH").prm_value;
             receiveSampleService.ExportLogbook(jsRuntime, gridDatas.Where(x => x.srr_status == "R").OrderBy(x => x.srr_starsno).ToList(), tempPath);
+            showModal = false;
         }
         catch (Exception ex)
         {
             await jsRuntime.InvokeAsync<object>("ShowAlert", ex.Message);
+            showModal = false;
         }
     }
 
     private async Task ExportBarcode()
     {
+        showModal = true;
         try
         {
             string tempPath = ParameterList.FirstOrDefault(x => x.prm_code_minor == "RECEIVE_SAMPLE_BARCODE_PATH").prm_value;
             receiveSampleService.ExportBarcode(jsRuntime, gridDatas.Where(x => x.srr_status == "R" && !string.IsNullOrEmpty(x.srr_starsno)).OrderBy(x => x.srr_starsno).ToList(), tempPath);
+            showModal = false;
         }
         catch (Exception ex)
         {
             await jsRuntime.InvokeAsync<object>("ShowAlert", ex.Message);
+            showModal = false;
         }
     }
 }
