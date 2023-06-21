@@ -1,0 +1,819 @@
+﻿@page "/StarsPersonalReportDetail"
+@page "/StarsPersonalReportDetail/{id}"
+
+@using ALISS.Data.D7_StarsMapping
+@using ALISS.Mapping.DTO
+@using ALISS.Data
+@using ALISS.STARS.DTO
+
+@using Radzen
+@using Radzen.Blazor
+@using Microsoft.AspNetCore.Http;
+@using System.IO;
+@using Newtonsoft.Json;
+
+
+@inject IJSRuntime jsRuntime
+@inject STARSPersonalReportService starsReportservice
+@inject MasterTemplateService masterTemplateService
+@inject DialogService dialogService
+@inject NavigationManager navManager
+
+@inject DropDownListDataService ddlDataService
+@inject ConfigDataService configDataService
+
+<div>
+    <div class="divHead">
+        STARS Personal Report Detail
+    </div>
+</div>
+
+
+@if (pageLoading)
+{
+    <Loading ShowModel="true" />
+    <p><em>Loading...</em></p>
+}
+else
+{
+
+
+    <EditForm Model="@reportData" OnValidSubmit="@(() => ShowConfirmDialog(saveType))">
+        <div class="container inputArea">
+            <DataAnnotationsValidator />
+            <ValidationSummary />
+            <div class="row">
+
+                <div class="col-12 col-xl-6">
+                    <div class="row justify-content-center divGroup">
+                        <div class="@classLabel">
+                            <LabelBox inputLabel="@configData.Get_Label("srp_reportno")" />
+                        </div>
+                        <div class="@classInput">
+                            <RadzenTextBox @bind-Value="reportData.srp_reportno" Style="width: 100%;" MaxLength="200" Disabled="true" />
+                            <RadzenButton Click="@NextId" class="inner-button" Style="background: #0074d9 0% 0% no-repeat padding-box; top: 0px; right: 15px;" Icon="arrow_right_alt" Visible="!string.IsNullOrEmpty(id)&&nextReportData.srp_createddate == reportData.srp_createddate"></RadzenButton>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-xl-6">
+                    <div class="row justify-content-center divGroup">
+                        <div class="@classLabel">
+                            <LabelBox inputLabel="@configData.Get_Label("srr_reportdate")" />
+                        </div>
+                        <div class="@classInput">
+                            <RadzenTextBox @bind-Value="report_date" Style="width: 100%;" MaxLength="200" Disabled="true" />
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-12 col-xl-6">
+                    <div class="row justify-content-center divGroup">
+                        <div class="@classLabel">
+                            <LabelBox inputLabel="@configData.Get_Label("srr_reportuser")" />
+                        </div>
+                        <div class="@classInput">
+                            <RadzenTextBox @bind-Value="reportData.srr_reportuser" Style="width: 100%;" MaxLength="200" Disabled="true" />
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-xl-6">
+                    <div class="row justify-content-center divGroup">
+                        <div class="@classLabel">
+                            <LabelBox inputLabel="@configData.Get_Label("srp_status")" />
+                        </div>
+                        <div class="@classInput">
+                            <RadzenDropDown @bind-Value="reportData.srp_status" Data="ddl_status" ValueProperty="code" TextProperty="text" Style="width: 100%;" MaxLength="200" Disabled="true" />
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-12 col-xl-6">
+                    <div class="row justify-content-center divGroup">
+                        <div class="@classLabel">
+                            <LabelBox inputLabel="@configData.Get_Label("srp_starsno")" requireField="true" />
+                        </div>
+                        <div class="@classInput">
+                            <RadzenTextArea @bind-Value="reportData.srp_starsno" Style="width: 100%; height: 80px" Disabled="true" />
+                            <RadzenButton Click="@(() => ControlPopup("SelectSTARS", true))" Visible="reportData.srp_id == 0" class="inner-button" Style="background: #0A6839 0% 0% no-repeat padding-box;" Icon="list"></RadzenButton>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-xl-6">
+                </div>
+
+                <div class="col-12 col-xl-6">
+                    <div class="row justify-content-center divGroup">
+                        <div class="@classLabel">
+                            <LabelBox inputLabel="@configData.Get_Label("srp_testing_user")" requireField="true" />
+                        </div>
+                        <div class="@classInput">
+                            <RadzenDropDown @bind-Value="reportData.srp_testing_user" TextProperty="arc_testuser" ValueProperty="arc_testuser" Style="width: 100%;" Data="ddl_contact.Select(x => new { x.arc_testuser})" Disabled="@(_StrControl.Equals("E") ? true : false)" />
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-xl-6">
+                    <div class="row justify-content-center divGroup">
+                        <div class="@classLabel">
+                            <LabelBox inputLabel="@configData.Get_Label("srp_approve_user")" requireField="true" />
+                        </div>
+                        <div class="@classInput">
+                            <RadzenDropDown @bind-Value="reportData.srp_approve_user" TextProperty="arc_approveuser" ValueProperty="arc_approveuser" Style="width: 100%;" Data="ddl_contact.Select(x => new { x.arc_approveuser})" Change="@(args => DDL_Change("Approver", args))" Disabled="@(_StrControl.Equals("E") ? true : false)" />
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-12 col-xl-6">
+                    <div class="row justify-content-center divGroup">
+                        <div class="@classLabel">
+                            <LabelBox inputLabel="@configData.Get_Label("srp_director_name")" />
+                        </div>
+                        <div class="@classInput">
+                            <RadzenTextBox @bind-Value="reportData.srp_director_path" Style="width: 100%;" MaxLength="200" Disabled="true" />
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-xl-6">
+                </div>
+
+                <div class="col-12 col-xl-6">
+                    <div class="row justify-content-center divGroup">
+                        <div class="@classLabel">
+                        </div>
+                        <div class="@classInput">
+                            <RadzenTextArea @bind-Value="directorInfo" Style="width: 100%; height: 80px" Disabled="true" />
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-xl-6">
+                </div>
+
+                <div class="col-12 col-xl-12">
+                    <div class="row justify-content-center divGroup">
+                        <div class="col-2">
+                            <LabelBox inputLabel="@configData.Get_Label("srp_remarks")" />
+                        </div>
+                        <div class="col-10">
+                            <RadzenHtmlEditor @bind-Value="reportData.srp_remarks" Disabled="@(_StrControl.Equals("E") ? true : false)" Style="width: 100%; height: 300px;" />
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+
+            <br />
+            <div class="row justify-content-between buttonArea">
+                <div class="col-auto">
+                    <RadzenButton Text="Back" class="btnCancel" Click="@OpenStarPersonalReport" />
+                </div>
+                <div class="col-auto text-right">
+                    <RadzenButton Text="Cancel" class="btnCancel" Click="@CancelData" Disabled="@(reportData.srp_status != "D")" />
+                    <RadzenButton Icon="search" Text="Preview" Style="background: #1b6ec2 0% 0% no-repeat padding-box; " Click="@PreviewReport" Disabled="@(string.IsNullOrEmpty(reportData.srp_status) || reportData.srp_status == "C")" />
+                    <RadzenButton Text="Save" class="btnSave" ButtonType="ButtonType.Submit" Click="@(()=>saveType = "Draft")" Disabled="@(reportData.srp_status == "C" || reportData.srp_status == "A")" />
+                    <RadzenButton Text="Save & Complete" class="btnSave" ButtonType="ButtonType.Submit" Click="@(()=>saveType = "Complete")" Disabled="@(reportData.srp_status != "D" && !string.IsNullOrEmpty(reportData.srp_status))" />
+                </div>
+            </div>
+        </div>
+
+
+    </EditForm>
+
+}
+
+@if (ShowSelectSTARS)
+{
+
+    <div class="modal" tabindex="-1" style="display:block" role="dialog">
+        <div class="modal-dialog" style="min-width: 800px; max-width: 1200px;">
+            <div class="modal-content">
+                <div class="modal-header">
+
+                </div>
+                <div class="modal-body">
+                    <EditForm Model="@searchModel">
+                        <DataAnnotationsValidator />
+                        <div class="container inputArea">
+                            <div class="row justify-content-center">
+                                <div class="col-12 col-xl-4">
+                                    <div class="row justify-content-center divGroup">
+                                        <div class="@classLabel">
+                                            <LabelBox inputLabel="@configData.Get_Label("srr_arh_code")" requireField="true" />
+                                        </div>
+                                        <div class="@classInput">
+                                            <RadzenDropDown @bind-Value="searchModel.srr_arh_code" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowClear="true" TValue="string" AllowFiltering="true" Placeholder="Select..." Data="lab_ddl_List.Select(x => new { x.stars_arh_code, x.stars_arh_name }).Distinct().OrderBy(o => o.stars_arh_code)" ValueProperty="stars_arh_code" TextProperty="stars_arh_name" Change="@(args => DDL_Change("Arh", args))" Disabled="(!string.IsNullOrEmpty(mainLayout.loginUser.arh_code))" Style="width: 100%;" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-12 col-xl-4">
+                                    <div class="row justify-content-center divGroup">
+                                        <div class="@classLabel">
+                                            <LabelBox inputLabel="@configData.Get_Label("srr_hos_code")" />
+                                        </div>
+                                        <div class="@classInput">
+                                            <RadzenDropDown @bind-Value="searchModel.srr_hos_code" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowClear="true" TValue="string" AllowFiltering="true" Placeholder="Select..." Data="lab_ddl_List.Where(x => (searchModel.srr_arh_code == null || x.arh_code == searchModel.srr_arh_code)).Select(x => new { x.hos_code, x.hos_name }).Distinct().OrderBy(o => o.hos_name)" ValueProperty="hos_code" TextProperty="hos_name" Disabled="(!string.IsNullOrEmpty(mainLayout.loginUser.hos_code))" Style="width: 100%;" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row justify-content-center">
+                                <div class="col-12 col-xl-4">
+                                    <div class="row justify-content-center divGroup">
+                                        <div class="@classLabel">
+                                            <LabelBox inputLabel="@configData.Get_Label("srr_starsno")" />
+                                        </div>
+                                        <div class="@classInput">
+                                            <RadzenTextBox @bind-Value="@searchModel.srr_starsno" Style="width: 100%" />
+
+                                        </div>
+                                    </div>
+                                </div>
+                                <InputBox ConfigData="@(configData.Get_ConfigRow("srr_recvdate"))">
+                                    <RadzenDatePicker @bind-Value="searchModel.srr_recvdate" DateFormat="d" Style="width: 100%;" />
+                                </InputBox>
+                            </div>
+
+                            <div class="row justify-content-center">
+                                <div class="col-xl-12">
+                                    <div class="row justify-content-center divGroup buttonArea">
+                                        <div class="col-auto">
+                                            <RadzenButton Click="@SearchData" class="btnSave" Text="Search" />
+                                        </div>
+                                        <div class="col-auto">
+                                            <RadzenButton class="btnCancel" Text="Clear" Click="@ClearSearch" />
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <hr />
+                        <div>
+
+                            <div style="width:100%;margin:0px auto;">
+                                <div class="container">
+                                    <div class="row justify-content-end">
+                                        <div class="col-auto">
+                                            <label>Rows : </label>
+                                        </div>
+                                        <div class="col-auto">
+                                            <RadzenDropDown @bind-Value="inboxGrid.PageSize" TValue="int" AllowFiltering="true" Data="inboxGrid.PageSizeOption" Change="SearchData" Style="width:50px" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <RadzenGrid AllowFiltering="true" AllowSorting="true" AllowPaging="true" Style="max-width: 1597px" RowHeight="50px"
+                                            PageSize="inboxGrid.PageSize" @ref="inboxGrid.radzenGrid" Data="@gridDatas" TItem="STARSPersonalReportSelectListDTO"
+                                            FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+                                            AllowColumnResize="true">
+                                    <Columns>
+                                        <RadzenGridColumn TItem="STARSPersonalReportSelectListDTO" Property="" Width="50px" Filterable="false" Sortable="false">
+                                            <HeaderTemplate>
+                                                <RadzenCheckBox TriState="false" TValue="bool" Value="@(gridDatas.Any(i => selectedStarsResults != null && selectedStarsResults.Contains(i.srr_starsno)))"
+                                                                Change="@(args => selectedStarsResults = args ? gridDatas.Select(x => x.srr_starsno).ToList() : null)" />
+                                            </HeaderTemplate>
+                                            <Template Context="data">
+                                                <RadzenCheckBox TriState="false" Value="@(selectedStarsResults != null && selectedStarsResults.Contains(data.srr_starsno))"
+                                                                TValue="bool" Change=@(args => { OnGridRowSelected(data); }) />
+                                            </Template>
+                                        </RadzenGridColumn>
+                                        <RadzenGridColumn TItem="STARSPersonalReportSelectListDTO" Property="srr_starsno" Title="STARS No." Width="120px">
+                                            <FooterTemplate>
+                                                <label title="@inboxGrid.FooterLabelString">@inboxGrid.FooterLabelString</label>
+                                            </FooterTemplate>
+                                        </RadzenGridColumn>
+                                        <RadzenGridColumn TItem="STARSPersonalReportSelectListDTO" Width="120px" Property="srr_name" Title="ชื่อ-สกุล" />
+                                        <RadzenGridColumn TItem="STARSPersonalReportSelectListDTO" Property="srr_recvdate" Title="Receive Date" Width="100px">
+                                            <Template Context="data">
+                                                @String.Format("{0:dd/MM/yyyy}", data.srr_recvdate)
+                                            </Template>
+                                        </RadzenGridColumn>
+                                        <RadzenGridColumn TItem="STARSPersonalReportSelectListDTO" Property="srr_testdate" Title="Lab Date" Width="100px">
+                                            <Template Context="data">
+                                                @String.Format("{0:dd/MM/yyyy}", data.srr_testdate)
+                                            </Template>
+                                        </RadzenGridColumn>
+                                        <RadzenGridColumn TItem="STARSPersonalReportSelectListDTO" Width="120px" Property="srr_testuser" Title="Lab By" />
+                                        <RadzenGridColumn TItem="STARSPersonalReportSelectListDTO" Property="srr_approvedate" Title="Lab Date" Width="100px">
+                                            <Template Context="data">
+                                                @String.Format("{0:dd/MM/yyyy}", data.srr_approvedate)
+                                            </Template>
+                                        </RadzenGridColumn>
+                                        <RadzenGridColumn TItem="STARSPersonalReportSelectListDTO" Width="120px" Property="srr_approveuser" Title="Approve By" />
+                                        <RadzenGridColumn TItem="STARSPersonalReportSelectListDTO" Property="srr_tatdate" Title="TAT Date" Width="100px">
+                                            <Template Context="data">
+                                                @String.Format("{0:dd/MM/yyyy}", data.srr_tatdate)
+                                            </Template>
+                                        </RadzenGridColumn>
+                                        <RadzenGridColumn TItem="STARSPersonalReportSelectListDTO" Property="srr_testdate" Title="Lab Date" Width="100px">
+                                            <Template Context="data">
+                                                @String.Format("{0:dd/MM/yyyy}", data.srr_testdate)
+                                            </Template>
+                                        </RadzenGridColumn>
+                                        <RadzenGridColumn TItem="STARSPersonalReportSelectListDTO" Property="srr_approvedate" Title="Approve Date" Width="100px">
+                                            <Template Context="data">
+                                                @String.Format("{0:dd/MM/yyyy}", data.srr_approvedate)
+                                            </Template>
+                                        </RadzenGridColumn>
+                                        <RadzenGridColumn TItem="STARSPersonalReportSelectListDTO" Width="120px" Property="srr_ident_organism" Title="Organism" />
+                                        <RadzenGridColumn TItem="STARSPersonalReportSelectListDTO" Width="180px" Property="srr_addition_antibiotic" Title="Addition Antibiotic" Context="data" Filterable="false" Sortable="false">
+                                            <Template Context="data">
+                                                <div class="row">
+                                                    <div class="col-10">
+                                                        @data.srr_addition_antibiotic
+                                                    </div>
+                                                    <div class="col-2">
+                                                        <RadzenButton Icon="search" Style="background: #0A6839 0% 0% no-repeat padding-box; position: inherit; right:34px;" Click="@(() => openAdditionAntibiotic(data))" />
+                                                    </div>
+                                                </div>
+
+                                            </Template>
+                                        </RadzenGridColumn>
+                                    </Columns>
+                                </RadzenGrid>
+                            </div>
+                        </div>
+
+
+                        <div class="row justify-content-center">
+                            <div class="col-xl-12">
+                                <div class="row justify-content-center divGroup buttonArea">
+                                    <div class="col-auto">
+                                        <RadzenButton class="btnCancel" Text="Cancel" Click="@(() => ControlPopup("SelectSTARS",false))" />
+                                    </div>
+                                    <div class="col-auto">
+                                        <RadzenButton Icon="save" Click="@(() => SelectResults())" class="btnSave" Text="OK" />
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    </EditForm>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+}
+
+@if (ShowAntibiotic)
+{
+
+    <div class="modal" tabindex="-1" style="display:block" role="dialog">
+        <div class="modal-dialog" style="min-width: 600px; max-width: 800px;">
+            <div class="modal-content">
+                <div class="modal-header">
+
+                </div>
+                <div class="modal-body">
+                    <EditForm Model="@antibioticSearchDTO">
+                        <DataAnnotationsValidator />
+                        <div class="container inputArea">
+                            <div class="row justify-content-center">
+                                <div class="col-12">
+                                    <div class="row justify-content-center divGroup">
+                                        <div class="@classLabel">
+                                            <LabelBox inputLabel="@configData.Get_Label("srr_starsno")" />
+                                        </div>
+                                        <div class="@classInput">
+                                            <RadzenTextBox @bind-Value="@antibioticSearchDTO.srr_starsno" Style="width: 100%" Disabled="true" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-12">
+                                    <div class="row justify-content-center divGroup">
+                                        <div class="@classLabel">
+                                            <LabelBox inputLabel="@configData.Get_Label("srr_recvdate")" />
+                                        </div>
+                                        <div class="@classInput">
+                                            <RadzenDatePicker @bind-Value="antibioticSearchDTO.srr_recvdate" Disabled="true" DateFormat="d" Style="width: 100%;" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-12">
+                                    <div class="row justify-content-center divGroup">
+                                        <div class="@classLabel">
+                                            <LabelBox inputLabel="@configData.Get_Label("srr_ident_organism")" />
+                                        </div>
+                                        <div class="@classInput">
+                                            <RadzenTextBox @bind-Value="antibioticSearchDTO.srr_ident_organism" Style="width: 100%" Disabled="true" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <hr />
+                        <div>
+
+                            <div style="width:100%;margin:0px auto;">
+                                <div class="container">
+                                    <div class="row justify-content-end">
+                                        <div class="col-auto">
+                                            <label>Rows : </label>
+                                        </div>
+                                        @*<div class="col-auto">
+                                                <RadzenDropDown @bind-Value="inboxGrid.PageSize" TValue="int" AllowFiltering="true" Data="inboxGrid.PageSizeOption" Change="SearchData" Style="width:50px" />
+                                            </div>*@
+                                    </div>
+                                </div>
+                                <RadzenGrid AllowFiltering="true" AllowSorting="true" AllowPaging="true" Style="max-width: 1597px"
+                                            PageSize="inboxAntibioticGrid.PageSize" @ref="inboxAntibioticGrid.radzenGrid" Data="@gridAntibioticDatas" TItem="STARSAntibioticListDTO"
+                                            FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+                                            AllowColumnResize="true">
+                                    <Columns>
+                                        <RadzenGridColumn TItem="STARSAntibioticListDTO" Property="" Width="50px" Filterable="false" Sortable="false">
+                                            <HeaderTemplate>
+                                                <RadzenCheckBox TriState="false" TValue="bool" Value="@(gridAntibioticDatas.Any(i => selectedAntibiotics != null && selectedAntibiotics.Contains(i.sta_ant_code)))"
+                                                                Change="@(args => selectedAntibiotics = args ? gridAntibioticDatas.Select(x => x.sta_ant_code).ToList() : null)" />
+                                            </HeaderTemplate>
+                                            <Template Context="data">
+                                                <RadzenCheckBox TriState="false" Value="@(selectedAntibiotics != null && selectedAntibiotics.Contains(data.sta_ant_code))"
+                                                                TValue="bool" Change=@(args => { OnAntibioticGridRowSelected(data); }) />
+                                            </Template>
+                                        </RadzenGridColumn>
+                                        <RadzenGridColumn TItem="STARSAntibioticListDTO" Width="150px" Property="sta_ant_code" Title="Antibiotic Code" />
+                                        <RadzenGridColumn TItem="STARSAntibioticListDTO" Width="150px" Property="sta_ant_name" Title="Antibiotic" />
+                                        <RadzenGridColumn TItem="STARSAntibioticListDTO" Width="120px" Property="sta_ant_MIC" Title="MIC" />
+                                        <RadzenGridColumn TItem="STARSAntibioticListDTO" Width="120px" Property="sta_ant_SIR" Title="SIR" />
+                                    </Columns>
+                                </RadzenGrid>
+                            </div>
+                        </div>
+
+
+                        <div class="row justify-content-center">
+                            <div class="col-xl-12">
+                                <div class="row justify-content-center divGroup buttonArea">
+                                    <div class="col-auto">
+                                        <RadzenButton class="btnCancel" Text="Cancel" Click="@(() => ControlPopup("Antibiotic",false))" />
+                                    </div>
+                                    <div class="col-auto">
+                                        <RadzenButton Icon="save" Click="@(() => SelectAntibiotics())" class="btnSave" Text="OK" />
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    </EditForm>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+}
+
+
+@code {
+    [CascadingParameter] MainLayout mainLayout { get; set; }
+
+    [Parameter]
+    public string id { get; set; }
+
+    private string classLabel = "col-4";
+    private string classInput = "col-8";
+
+    private bool pageLoading = false;
+    private string tempid = "";
+    private string _StrControl = "";
+    private string directorInfo = string.Empty;
+    private string report_date = string.Empty;
+
+    private ConfigData configData = new ConfigData();
+
+    private bool ShowSelectSTARS = false;
+    private bool ShowAntibiotic = false;
+
+    private STARSPersonalReportDataDTO reportData = new STARSPersonalReportDataDTO();
+    private STARSPersonalReportDataDTO nextReportData = new STARSPersonalReportDataDTO();
+    private List<TCAreaHealthContact> ddl_contact = new List<TCAreaHealthContact>();
+    private List<ddl_status_model> ddl_status = new List<ddl_status_model>();
+    private List<ParameterDTO> ParameterList;
+
+    private STARSPersonalReportSelectSearchDTO searchModel = new STARSPersonalReportSelectSearchDTO();
+    private RadzenGridCustom<STARSPersonalReportSelectListDTO> inboxGrid = new RadzenGridCustom<STARSPersonalReportSelectListDTO>();
+    private RadzenGridCustom<STARSAntibioticListDTO> inboxAntibioticGrid = new RadzenGridCustom<STARSAntibioticListDTO>();
+    private List<STARSPersonalReportSelectListDTO> gridDatas = new List<STARSPersonalReportSelectListDTO>();
+    private List<STARSAntibioticListDTO> gridAntibioticDatas = new List<STARSAntibioticListDTO>();
+    private List<STARSPersonalReportSelectListDTO> tempStars = new List<STARSPersonalReportSelectListDTO>();
+    private List<HospitalLabDataDTO> lab_ddl_List;
+    private IList<string> selectedStarsResults;
+
+    private int srrID = 0;
+    private IList<string> selectedAntibiotics = new List<string>();
+    private STARSAntibioticSearchDTO antibioticSearchDTO = new STARSAntibioticSearchDTO();
+
+    private string saveType = string.Empty;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            pageLoading = true;
+            await mainLayout.GetLoginUser();
+            if (mainLayout.loginUser.CheckPagePermission("MNU_0806") == false) navManager.NavigateTo("/NoPermissionPage");
+
+            configData.ConfigDTOList = await configDataService.Get_TBConfig_DataList_Async(new TBConfigDTO() { tbc_mnu_code = "MNU_0806" });
+
+            if (tempid != "")
+                id = tempid;
+
+            ddl_status = JsonConvert.DeserializeObject<List<ddl_status_model>>("[{\"code\":\"D\", \"text\":\"Draft\"}, {\"code\":\"A\", \"text\":\"Complete\"}, {\"code\":\"C\", \"text\":\"Cancel\"}]");
+            ddl_contact = await ddlDataService.GetAreaHealthListContactByModelAsync(new TCAreaHealthContact() { arc_arh_code = mainLayout.loginUser.arh_code });
+            ParameterList = await ddlDataService.GetParameterListByModelAsync(new ParameterDTO() { prm_code_major = "STARS_PERSONAL_REPORT" });
+
+            gridAntibioticDatas = await starsReportservice.GetSTARSAntibioticListByModelAsync(new STARSAntibioticSearchDTO());
+
+            var searchData = new HospitalLabDataDTO()
+            {
+                arh_code = searchModel.srr_arh_code = mainLayout.loginUser.arh_code,
+                hos_code = searchModel.srr_hos_code = mainLayout.loginUser.hos_code
+            };
+            lab_ddl_List = await ddlDataService.GetAllLabListByModelAsync(searchData);
+
+            if (string.IsNullOrEmpty(id))
+            {
+                _StrControl = "N";
+                reportData.srp_remarks = ParameterList.FirstOrDefault(x => x.prm_code_minor == "REMARK").prm_value;
+            }
+            else
+            {
+                reportData = await starsReportservice.GetStarsPersonalReportDataAsync(id);
+                report_date = reportData.srr_reportdate_str;
+                nextReportData = await starsReportservice.GetStarsPersonalReportDataAsync((reportData.srp_id + 1).ToString());
+
+                DDL_Change("Approver", null);
+
+                if (reportData.srp_status == "A" || reportData.srp_status == "C")
+                {
+                    _StrControl = "E";
+                }
+            }
+            pageLoading = false;
+            StateHasChanged();
+        }
+    }
+
+    async void NextId()
+    {
+        pageLoading = true;
+        tempid = (reportData.srp_id + 1).ToString();
+        navManager.NavigateTo("StarsPersonalReportDetail/" + tempid);
+
+        await OnAfterRenderAsync(true);
+        StateHasChanged();
+        pageLoading = false;
+    }
+
+    private async Task GetData()
+    {
+        pageLoading = true;
+        //To do anythings
+        pageLoading = false;
+        StateHasChanged();
+    }
+
+    void OpenStarPersonalReport()
+    {
+        navManager.NavigateTo("StarsPersonalReport");
+    }
+
+    private async Task SaveData(bool completeFlag)
+    {
+        pageLoading = true;
+
+        if (_StrControl == "N")
+            reportData.srp_createduser = mainLayout.loginUser.Username;
+
+        reportData.srp_status = completeFlag ? "A" : "D";
+
+        reportData.srp_updateuser = mainLayout.loginUser.Username;
+        if (reportData.srp_id == 0)
+            reportData.srp_arh_code = tempStars.FirstOrDefault().srr_arh_code;
+
+        STARSPersonalReportDataModelDTO saveData = new STARSPersonalReportDataModelDTO()
+        {
+            reportData = this.reportData,
+            antibioticData = tempStars
+        };
+
+        var response = await starsReportservice.SaveStarsPersonalReportDataAsync(saveData, ParameterList.FirstOrDefault(x => x.prm_code_minor == "RUNNING_FORMAT").prm_value);
+        tempid = response.reportData.srp_id.ToString();
+        pageLoading = false;
+        navManager.NavigateTo("StarsPersonalReportDetail/" + tempid);
+        await OnAfterRenderAsync(true);
+
+        await GetData();
+        StateHasChanged();
+    }
+
+    async Task ShowConfirmDialog(string type)
+    {
+        pageLoading = true;
+        if (type == "Draft")
+        {
+            var result = await jsRuntime.InvokeAsync<bool>
+              ("ShowConfirm", "Confirm save data.");
+            if (result)
+            {
+                await SaveData(false);
+            }
+        }
+        else
+        {
+            var result = await jsRuntime.InvokeAsync<bool>
+              ("ShowConfirm", "Confirm save and complete data.");
+            if (result)
+            {
+                await SaveData(true);
+            }
+        }
+        pageLoading = false;
+    }
+
+
+    async Task ControlPopup(string type, bool control)
+    {
+        if (type == "SelectSTARS")
+        {
+            ShowSelectSTARS = control;
+
+            if (control)
+            {
+                if (!string.IsNullOrEmpty(reportData.srp_starsno))
+                {
+                    selectedStarsResults = reportData.srp_starsno.Split("\n").ToList();
+                }
+            }
+        }
+        if (type == "Antibiotic")
+        {
+            ShowAntibiotic = control;
+
+            if (!control)
+            {
+                antibioticSearchDTO = new STARSAntibioticSearchDTO();
+            }
+        }
+    }
+
+    private async Task PreviewReport()
+    {
+        pageLoading = true;
+        try
+        {
+
+            var exportData = await starsReportservice.GetStarsPersonalExportDataAsync(id);
+            var starsAutomateResult = await starsReportservice.GetStarsAutomateResultDataAsync(reportData.srp_starsno);
+            exportData.stars_automate_result = starsAutomateResult.stars_automate_result;
+            string tempPath = ParameterList.FirstOrDefault(x => x.prm_code_minor == "PERSONAL_REPORT_PATH").prm_value;
+            starsReportservice.PreviewReport(jsRuntime, exportData, tempPath);
+        }
+        catch (Exception ex)
+        {
+            await jsRuntime.InvokeAsync<object>("ShowAlert", ex.Message);
+        }
+
+        pageLoading = false;
+    }
+
+    async Task CancelData()
+    {
+        pageLoading = true;
+        var result = await jsRuntime.InvokeAsync<bool>("ShowConfirm", "Confirm cancel data?");
+        if (result)
+        {
+            await starsReportservice.CancelStarsPersonalReportDataAsync(reportData.srp_id.ToString(), mainLayout.loginUser.Username);
+            await OnAfterRenderAsync(true);
+        }
+        pageLoading = false;
+    }
+
+    #region Modal
+
+
+    private async void SearchData()
+    {
+        pageLoading = true;
+        if (string.IsNullOrEmpty(searchModel.srr_arh_code))
+        {
+            await jsRuntime.InvokeAsync<object>("ShowAlert", "กรุณาเลือกเขตสุขภาพ");
+            pageLoading = false;
+            return;
+        }
+        gridDatas = await starsReportservice.GetSTARSPersonalReportSelectListByModelAsync(searchModel);
+        foreach (var item in gridDatas)
+        {
+            var antibiotic = tempStars.Where(x => x.srr_starsno == item.srr_starsno);
+            if (antibiotic.Count() > 0)
+            {
+                item.srr_addition_antibiotic = antibiotic.FirstOrDefault().srr_addition_antibiotic;
+            }
+        }
+
+        if (inboxGrid.radzenGrid != null) inboxGrid.radzenGrid.GoToPage(0);
+        pageLoading = false;
+        StateHasChanged();
+    }
+
+    private void openAdditionAntibiotic(STARSPersonalReportSelectListDTO data)
+    {
+        srrID = data.srr_id;
+
+        antibioticSearchDTO.srr_ident_organism = data.srr_ident_organism;
+        antibioticSearchDTO.srr_recvdate = data.srr_recvdate;
+        antibioticSearchDTO.srr_starsno = data.srr_starsno;
+        if (string.IsNullOrEmpty(data.srr_addition_antibiotic))
+            selectedAntibiotics = new List<string>();
+        else
+            selectedAntibiotics = data.srr_addition_antibiotic.Split(",").ToList();
+        ControlPopup("Antibiotic", true);
+    }
+
+    void OnGridRowSelected(STARSPersonalReportSelectListDTO data)
+    {
+        selectedStarsResults = selectedStarsResults ?? new List<string>();
+        if (!selectedStarsResults.Contains(data.srr_starsno))
+            selectedStarsResults.Add(data.srr_starsno);
+        else if (selectedStarsResults.Contains(data.srr_starsno))
+            selectedStarsResults.Remove(data.srr_starsno);
+    }
+
+    void OnAntibioticGridRowSelected(STARSAntibioticListDTO data)
+    {
+        selectedAntibiotics = selectedAntibiotics ?? new List<string>();
+        if (!selectedAntibiotics.Contains(data.sta_ant_code))
+            selectedAntibiotics.Add(data.sta_ant_code);
+        else if (selectedAntibiotics.Contains(data.sta_ant_code))
+            selectedAntibiotics.Remove(data.sta_ant_code);
+    }
+
+    private async void SelectResults()
+    {
+        if (selectedStarsResults == null || selectedStarsResults.Count() == 0)
+        {
+            await jsRuntime.InvokeAsync<object>("ShowAlert", "กรุณาเลือกข้อมูลอย่างน้อย 1 รายการ");
+            return;
+        }
+
+        tempStars = new List<STARSPersonalReportSelectListDTO>();
+        foreach (var item in selectedStarsResults)
+        {
+            tempStars.Add(gridDatas.FirstOrDefault(x => x.srr_starsno == item));
+        }
+
+        reportData.srp_starsno = string.Join("\n", selectedStarsResults);
+        selectedStarsResults = new List<string>();
+        ControlPopup("SelectSTARS", false);
+    }
+
+    private void ClearSearch()
+    {
+        searchModel = new STARSPersonalReportSelectSearchDTO();
+        searchModel.srr_arh_code = mainLayout.loginUser.arh_code;
+        searchModel.srr_hos_code = mainLayout.loginUser.hos_code;
+        selectedStarsResults = new List<string>();
+        tempStars = new List<STARSPersonalReportSelectListDTO>();
+        gridDatas = new List<STARSPersonalReportSelectListDTO>();
+    }
+
+    private void DDL_Change(string ddl_name, object value)
+    {
+        if (ddl_name == "Arh" && value == null)
+        {
+            searchModel.srr_hos_code = null;
+        }
+        if (ddl_name == "Approver")
+        {
+            var director = ddl_contact.FirstOrDefault(x => x.arc_approveuser == reportData.srp_approve_user);
+            reportData.srp_director_name = director.arc_directoruser;
+            reportData.srp_director_path = director.arc_directorsign_path;
+            reportData.srp_director_position = director.arc_directorposition_1;
+            reportData.srp_director_position2 = director.arc_directorposition_2;
+            directorInfo = reportData.srp_director_name + Environment.NewLine + reportData.srp_director_position + Environment.NewLine + reportData.srp_director_position2;
+        }
+        StateHasChanged();
+    }
+
+    private async void SelectAntibiotics()
+    {
+        if (selectedAntibiotics == null || selectedAntibiotics.Count() == 0)
+        {
+            await jsRuntime.InvokeAsync<object>("ShowAlert", "กรุณาเลือกข้อมูลอย่างน้อย 1 รายการ");
+            return;
+        }
+
+        foreach (var data in gridDatas)
+        {
+            if (data.srr_id == srrID)
+            {
+                data.srr_addition_antibiotic = string.Join(",", selectedAntibiotics);
+            }
+        }
+        selectedAntibiotics = new List<string>();
+        ControlPopup("Antibiotic", false);
+    }
+
+    #endregion
+}

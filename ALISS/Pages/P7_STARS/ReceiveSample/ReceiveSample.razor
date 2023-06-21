@@ -1,0 +1,371 @@
+﻿@page "/ReceiveSample"
+
+@using ALISS.Data.D7_StarsMapping
+@using ALISS.Data
+@using ALISS.STARS.DTO
+
+@using Radzen
+@using Radzen.Blazor
+@using System.IO;
+
+@inject IJSRuntime jsRuntime
+@inject ReceiveSampleService receiveSampleService
+@inject NavigationManager navigationManager
+@inject DropDownListDataService ddlDataService
+@inject ConfigDataService configDataService
+@inject OrganismService organismService
+@inject MasterTemplateService masterTemplateService
+
+<div style="width: 1200px;">
+    <div class="divHead">
+        Receive Sample
+    </div>
+</div>
+
+
+
+
+@if (gridDatas == null || lab_ddl_List == null)
+{
+    <p><em>Loading...</em></p>
+    <Loading ShowModel="true" />
+}
+else
+{
+<div class="container inputArea">
+    <div class="row justify-content-between">
+        <div class="col-12">
+            <div class="row justify-content-center divGroup">
+                <div class="col-2">
+                    <LabelBox inputLabel="@configData.Get_Label("srr_boxno")" />
+                </div>
+                <div class="col-10">
+                    <RadzenTextBox @bind-Value="searchModel.srr_boxno" @onkeydown="@boxnoEnter" Style="width: 100%; height: 60px; text-align: center; font-size: 36px;"  />
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row justify-content-between">
+        <div class="col-12 col-xl-4">
+            <div class="row justify-content-center divGroup">
+                <div class="@classLabel">
+                    <LabelBox inputLabel="@configData.Get_Label("srr_arh_code")" />
+                </div>
+                <div class="@classInput">
+                    <RadzenDropDown @bind-Value="searchModel.srr_arh_code" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowClear="true" TValue="string" AllowFiltering="true" Placeholder="Select..." Data="lab_ddl_List.Select(x => new { x.arh_code, x.arh_name }).Distinct().OrderBy(o=>o.arh_code)" ValueProperty="arh_code" TextProperty="arh_name" Change="@(args => DDL_Change("Arh", args))" Disabled="(!string.IsNullOrEmpty(mainLayout.loginUser.arh_code))" />
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row justify-content-between">
+        <div class="col-12 col-xl-4">
+            <div class="row justify-content-center divGroup">
+                <div class="@classLabel">
+                    <LabelBox inputLabel="@configData.Get_Label("srr_hos_code")" />
+                </div>
+                <div class="@classInput">
+                    <RadzenDropDown @bind-Value="searchModel.srr_hos_code" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowClear="true" TValue="string" AllowFiltering="true" Placeholder="Select..." Data="lab_ddl_List.Select(x => new { x.arh_code, x.arh_name, x.prv_code, x.prv_name, x.hos_code, x.hos_name }).Where(x => (searchModel.srr_arh_code == null || x.arh_code == searchModel.srr_arh_code))" ValueProperty="hos_code" TextProperty="hos_name" Disabled="(!string.IsNullOrEmpty(mainLayout.loginUser.hos_code))" />
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row justify-content-between">
+        <div class="col-12 col-xl-4">
+            <div class="row justify-content-center divGroup">
+                <div class="@classLabel">
+                    <LabelBox inputLabel="@configData.Get_Label("srr_only_receive")" />
+                </div>
+                <div class="@classInput">
+                    <RadzenCheckBox @bind-Value="searchModel.srr_status" TValue="bool" />
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12 col-xl-4">
+            <div class="row justify-content-center divGroup buttonArea">
+                <div class="col-auto">
+                    <RadzenButton class="btnSearch" Text="@configData.Get_Label("srr_index_search_btn")" Click="SearchData" />
+                </div>
+                <div class="col-auto">
+                    <RadzenButton class="btnClear" Text="@configData.Get_Label("srr_index_clear_btn")" Click="ClearInboxData" />
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+    <hr />
+    <div>
+
+        @if (mainLayout.loginUser.PagePermission.rop_create == true)
+        {
+            <div class="container">
+                <div class="row justify-content-end">
+                    <div class="col-auto buttonArea">
+                        <RadzenButton Icon="save" Text="@configData.Get_Label("srr_receive")" class="btnAdd" Click="ReceiveSampleData" />
+                        <RadzenButton Icon="print" Text="@configData.Get_Label("srr_print_stars_barcode")" class="btnAdd" Click="ExportBarcode" />
+                        <RadzenButton Icon="list" Text="@configData.Get_Label("srr_print_logbook")" class="btnAdd" Click="ExportLogbook" />
+
+                    </div>
+                </div>
+            </div>
+            <br />
+        }
+        <div style="width:90%;margin:0px auto;">
+            <div class="container">
+                <div class="row justify-content-end">
+                    <div class="col-auto">
+                        <label>Rows : </label>
+                    </div>
+                    <div class="col-auto">
+                        <RadzenDropDown @bind-Value="inboxGrid.PageSize" TValue="int" AllowFiltering="true" Data="inboxGrid.PageSizeOption" Change="SearchData" Style="width:50px" />
+                    </div>
+                </div>
+            </div>
+            <RadzenGrid AllowFiltering="true" AllowSorting="true" AllowPaging="true" PageSize="inboxGrid.PageSize" @ref="inboxGrid.radzenGrid"
+                        Data="@gridDatas" TItem="ReceiveSampleListsDTO" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+                        ColumnWidth="120px" AllowColumnResize="true">
+                <Columns>
+                    <RadzenGridColumn TItem="ReceiveSampleListsDTO" Property="srr_stars_labno" Title="Lab no." Width="80px">
+                        <FooterTemplate>
+                            <label title="@inboxGrid.FooterLabelString">@inboxGrid.FooterLabelString</label>
+                        </FooterTemplate>
+                    </RadzenGridColumn>
+                    <RadzenGridColumn TItem="ReceiveSampleListsDTO" Property="srr_stars_specimendate" Title="CDate" Width="80px">
+                        <Template Context="data">
+                            @String.Format("{0:dd/MM/yyyy}", data.srr_stars_specimendate)
+                        </Template>
+                    </RadzenGridColumn>
+                    <RadzenGridColumn TItem="ReceiveSampleListsDTO" Property="srr_hnno" Title="HN" Width="80px" />
+                    <RadzenGridColumn TItem="ReceiveSampleListsDTO" Property="srr_name" Title="Name" Width="200px" />
+                    <RadzenGridColumn TItem="ReceiveSampleListsDTO" Property="srr_age" Title="Age" Width="80px" />
+                    <RadzenGridColumn TItem="ReceiveSampleListsDTO" Property="srr_sex" Title="Sex" Width="80px" />
+                    <RadzenGridColumn TItem="ReceiveSampleListsDTO" Property="srr_stars_orgnaism" Title="CORGANISM" Width="150px" />
+                    <RadzenGridColumn TItem="ReceiveSampleListsDTO" Property="srr_receive_organism" Title="Receive Organism" Width="150px">
+
+                        <Template Context="data">
+                            <RadzenDropDownDataGrid @bind-Value="data.srr_receive_organism" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowClear="true" AllowFiltering="true" Disabled="@(data.str_id != null)"
+                                                    TValue="string" Placeholder="Select..." Data="organismDatas" Style="width: 100%;" TextProperty="org_mst_ORGANISM" ValueProperty="org_mst_ORGANISM" AllowFilteringByAllStringColumns="true">
+                                <Columns>
+                                    <RadzenDropDownDataGridColumn Property="org_mst_ORG" Title="Code" Width="100px" />
+                                    <RadzenDropDownDataGridColumn Property="org_mst_ORGANISM" Title="Name" Width="200px" />
+                                </Columns>
+                            </RadzenDropDownDataGrid>
+                        </Template>
+                    </RadzenGridColumn>
+                    <RadzenGridColumn TItem="ReceiveSampleListsDTO" Property="srr_status" Title="ได้รับตัวอย่าง" Width="100px">
+                        <Template Context="data">
+                            <RadzenCheckBox TriState="false" Value="@(selectedReceives != null && selectedReceives.Contains(data.srr_id))" Disabled="@(data.str_id != null)"
+                                            TValue="bool" Change=@(args => { OnGridRowSelected(data); }) />
+                        </Template>
+                    </RadzenGridColumn>
+                    <RadzenGridColumn TItem="ReceiveSampleListsDTO" Property="str_cancelreason" Title="ระบุเหตุผลการปฏิเสธ" Width="200px">
+                        <Template Context="data">
+                            <RadzenDropDown Visible="@(data.srr_status == "R" || data.str_id != null)" Style="width: 100%;" @bind-Value="data.str_cancelreason" Disabled="true" TValue="string" Placeholder="Select..." Data="cancelReasonList.Select(x => x)">
+                            </RadzenDropDown>
+                            <RadzenDropDown Visible="@(data.srr_status != "R" || data.str_id != null)" Style="width: 100%;" @bind-Value="data.str_cancelreason" Change="@(() => data.str_cancelremark = string.Empty)" TValue="string" Placeholder="Select..." Data="cancelReasonList.Select(x => x)">
+                            </RadzenDropDown>
+                        </Template>
+                    </RadzenGridColumn>
+                    <RadzenGridColumn TItem="ReceiveSampleListsDTO" Property="str_cancelremark" Title="หมายเหตุ" Width="200px">
+                        <Template Context="data">
+                            <RadzenTextBox @bind-Value="data.str_cancelremark" Style="width: 100%;" Disabled="@(data.str_cancelreason != "อื่นๆ (โปรดระบุ)" || data.str_id != null)" MaxLength="200"></RadzenTextBox>
+                        </Template>
+                    </RadzenGridColumn>
+                    <RadzenGridColumn TItem="ReceiveSampleListsDTO" Property="srr_starsno" Title="STARS No." Width="100px" />
+                    <RadzenGridColumn TItem="ReceiveSampleListsDTO" Property="srr_recvdate" Title="Recv Date" Width="100px">
+                        <Template Context="data">
+                            @String.Format("{0:dd/MM/yyyy}", data.srr_recvdate)
+                        </Template>
+                    </RadzenGridColumn>
+                    <RadzenGridColumn TItem="ReceiveSampleListsDTO" Property="srr_tatdate" Title="TAT Date" Width="100px">
+                        <Template Context="data">
+                            @String.Format("{0:dd/MM/yyyy}", data.srr_tatdate)
+                        </Template>
+                    </RadzenGridColumn>
+
+                </Columns>
+
+            </RadzenGrid>
+        </div>
+    </div>
+}
+
+<Loading ShowModel="showModal" />
+
+
+@code {
+    [CascadingParameter] MainLayout mainLayout { get; set; }
+
+    private ConfigData configData = new ConfigData();
+    private string classLabel = "col-4";
+    private string classInput = "col-8";
+
+    private RadzenGridCustom<ReceiveSampleListsDTO> inboxGrid = new RadzenGridCustom<ReceiveSampleListsDTO>();
+
+    private List<DropDownListDTO> rol_List;
+    private List<HospitalDataDTO> arh_List;
+    private List<HospitalDataDTO> hos_List;
+
+    private List<HospitalLabDataDTO> lab_ddl_List;
+    private List<ParameterDTO> ParameterList;
+    private List<ReceiveSampleListsDTO> gridDatas;
+    private List<OrganismDTO> organismDatas;
+    private List<string> cancelReasonList = new List<string>() { "ภาชนะบรรจุเสียหาย", "รายละเอียดไม่ตรงกับใบนำส่ง", "อื่นๆ (โปรดระบุ)" };
+    private List<int> selectedReceives = new List<int>();
+
+    private bool showModal = false;
+
+    ReceiveSampleSearchDTO searchModel = new ReceiveSampleSearchDTO();
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await mainLayout.GetLoginUser();
+            if (mainLayout.loginUser.CheckPagePermission("MNU_0803") == false) navigationManager.NavigateTo("/NoPermissionPage");
+
+            configData.ConfigDTOList = await configDataService.Get_TBConfig_DataList_Async(new TBConfigDTO() { tbc_mnu_code = "MNU_0803" });
+            ParameterList = await ddlDataService.GetParameterListByModelAsync(new ParameterDTO() { prm_code_major = "RECEIVE_SAMPLE" });
+
+            var searchData = new HospitalLabDataDTO()
+            {
+                arh_code = searchModel.srr_arh_code = mainLayout.loginUser.arh_code,
+                hos_code = searchModel.srr_hos_code = mainLayout.loginUser.hos_code
+            };
+
+            lab_ddl_List = await ddlDataService.GetAllLabListByModelAsync(searchData);
+            rol_List = await ddlDataService.GetRoleListByModelAsync();
+
+            MasterTemplateSearchDTO searchMasterTemplate = new MasterTemplateSearchDTO();
+            MasterTemplateDTO ActiveMasterTemplate = await masterTemplateService.GetListByModelActiveAsync(searchMasterTemplate);
+
+            if (ActiveMasterTemplate == null)
+            {
+                await jsRuntime.InvokeAsync<object>("ShowAlert", "ไม่พบ Master Template ที่มีสถานะเป็น Active (กรุณาติดต่อผู้ดูแลระบบ)");
+                return;
+            }
+
+            organismDatas = await organismService.GetListByModelActiveAsync(new OrganismDTO() { org_mst_code = ActiveMasterTemplate.mst_code });
+
+            gridDatas = new List<ReceiveSampleListsDTO>();
+        }
+    }
+
+    private void DDL_Change(string ddl_name, object value)
+    {
+        if (ddl_name == "Arh" && value == null)
+        {
+            searchModel.srr_hos_code = null;
+        }
+        StateHasChanged();
+    }
+
+    private void boxnoEnter(KeyboardEventArgs e)
+    {
+        if (e.Key == "Enter")
+        {
+            SearchData();
+        }
+    }
+
+    private void OnGridRowSelected(ReceiveSampleListsDTO data)
+    {
+        if (selectedReceives.Contains(data.srr_id))
+        {
+            data.srr_status = "N";
+            selectedReceives.Remove(data.srr_id);
+        }
+        else
+        {
+
+            data.srr_status = "R";
+            selectedReceives.Add(data.srr_id);
+        }
+        data.str_cancelremark = string.Empty;
+        data.str_cancelreason = string.Empty;
+    }
+
+    private async void SearchData()
+    {
+        showModal = true;
+
+        gridDatas = await receiveSampleService.GetStarsResultListByParamAsync(searchModel);
+        if (gridDatas.Select(x => new { x.srr_hos_code }).Distinct().Count() == 1 && !string.IsNullOrEmpty(searchModel.srr_boxno))
+        {
+            var defaultRecord = gridDatas.FirstOrDefault();
+            searchModel.srr_hos_code = defaultRecord.srr_hos_code;
+            searchModel.srr_arh_code = defaultRecord.srr_arh_code;
+        }
+        foreach(var data in gridDatas)
+        {
+            if (string.IsNullOrEmpty(data.srr_starsno) && string.IsNullOrEmpty(data.str_cancelreason))
+            {
+                data.srr_status = "R";
+            }
+        }
+        if (inboxGrid.radzenGrid != null) inboxGrid.radzenGrid.GoToPage(0);
+        showModal = false;
+        selectedReceives = gridDatas.Where(x => x.srr_status == "R").Select(x => x.srr_id).ToList();
+
+        StateHasChanged();
+    }
+
+    private async void ReceiveSampleData()
+    {
+        showModal = true;
+        if (gridDatas.Where(x => string.IsNullOrEmpty(x.str_cancelreason) && x.srr_status != "R").Count() > 0)
+        {
+            await jsRuntime.InvokeAsync<object>("ShowAlert", "กรุณาระบุเหตุผลการปฏิเสธ รายการที่ไม่รับตัวอย่าง");
+            showModal = false;
+            return;
+        }
+        foreach (var data in gridDatas)
+            data.srr_updateuser = mainLayout.loginUser.Username;
+        var result = await receiveSampleService.SaveReceiveSampleDataAsync(gridDatas, ParameterList.FirstOrDefault(x => x.prm_code_minor == "RUNNING_FORMAT").prm_value);
+
+        SearchData();
+        showModal = false;
+
+        StateHasChanged();
+    }
+
+    private async void ClearInboxData()
+    {
+        searchModel.srr_arh_code = mainLayout.loginUser.arh_code;
+        searchModel.srr_hos_code = mainLayout.loginUser.hos_code;
+        searchModel.srr_boxno = string.Empty;
+
+        selectedReceives = new List<int>();
+        gridDatas = new List<ReceiveSampleListsDTO>();
+    }
+
+    private async Task ExportLogbook()
+    {
+        try
+        {
+            string tempPath = ParameterList.FirstOrDefault(x => x.prm_code_minor == "RECEIVE_SAMPLE_LOGBOOK_PATH").prm_value;
+            receiveSampleService.ExportLogbook(jsRuntime, gridDatas.Where(x => x.srr_status == "R").OrderBy(x => x.srr_starsno).ToList(), tempPath);
+        }
+        catch (Exception ex)
+        {
+            await jsRuntime.InvokeAsync<object>("ShowAlert", ex.Message);
+        }
+    }
+
+    private async Task ExportBarcode()
+    {
+        try
+        {
+            string tempPath = ParameterList.FirstOrDefault(x => x.prm_code_minor == "RECEIVE_SAMPLE_BARCODE_PATH").prm_value;
+            receiveSampleService.ExportBarcode(jsRuntime, gridDatas.Where(x => x.srr_status == "R" && !string.IsNullOrEmpty(x.srr_starsno)).OrderBy(x => x.srr_starsno).ToList(), tempPath);
+        }
+        catch (Exception ex)
+        {
+            await jsRuntime.InvokeAsync<object>("ShowAlert", ex.Message);
+        }
+    }
+}

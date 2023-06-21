@@ -1,0 +1,10 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!--
+https://go.microsoft.com/fwlink/?LinkID=208121. 
+-->
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <_PublishTargetUrl>D:\Project\Publish\ALISS\ALISS.STARS.Api</_PublishTargetUrl>
+    <History>True|2023-06-14T10:55:37.0642495Z;True|2023-06-12T12:13:55.1940336+07:00;True|2023-06-06T13:57:46.8612586+07:00;</History>
+  </PropertyGroup>
+</Project>

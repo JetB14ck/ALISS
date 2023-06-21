@@ -1,0 +1,335 @@
+﻿@page "/StarsPersonalReport"
+@using ALISS.Data.D7_StarsMapping
+@using ALISS.Data
+@using ALISS.STARS.DTO
+@using System.IO;
+@using Newtonsoft.Json;
+
+@inject IJSRuntime jsRuntime
+@inject STARSPersonalReportService starsReportservice
+@inject DropDownListDataService ddlDataService
+@inject NavigationManager navigationManager
+@inject ConfigDataService configDataService
+
+<style type="text/css">
+    .rz-chkbox-box .rzi, .rz-datatable-thead .rz-chkbox-box .rzi {
+        background-color: #0a6839;
+        color: white;
+    }
+
+    .rz-selectable .rz-datatable-even.rz-state-highlight .rz-cell-data, .rz-selectable .rz-datatable-odd.rz-state-highlight .rz-cell-data {
+        color: #0a6839;
+    }
+
+    .rz-selectable .rz-datatable-even.rz-state-highlight > td, .rz-selectable .rz-datatable-odd.rz-state-highlight > td {
+        background-color: #b8ddcc;
+    }
+
+    .rz-chkbox-box.rz-state-active {
+        background-color: #0a6839;
+    }
+
+    .rz-selectable .rz-datatable-odd:hover:not(.rz-state-highlight) .rz-cell-data, .rz-selectable .rz-datatable-even:hover:not(.rz-state-highlight) .rz-cell-data {
+        background-color: #e7f4ef;
+        color: #0a6839;
+    }
+
+    .rz-selectable .rz-datatable-odd:hover:not(.rz-state-highlight) > td,
+    .rz-selectable .rz-datatable-even:hover:not(.rz-state-highlight) > td {
+        background-color: #e7f4ef;
+    }
+</style>
+
+<div>
+    <div class="divHead">
+        STARS Personal Report
+    </div>
+</div>
+
+@if (gridDatas == null || lab_ddl_List == null)
+{
+    <Loading ShowModel="true" />
+    <p><em>Loading...</em></p>
+}
+else
+{
+<div class="container inputArea">
+    <div class="row justify-content-between">
+
+        <div class="col-12 col-xl-4">
+            <div class="row justify-content-center divGroup">
+                <div class="@classLabel">
+                    <LabelBox inputLabel="@configData.Get_Label("srr_arh_code")" />
+                </div>
+                <div class="@classInput">
+                    <RadzenDropDown @bind-Value="searchModel.srr_arh_code" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowClear="true" TValue="string" AllowFiltering="true" Placeholder="Select..." Data="lab_ddl_List.Select(x => new { x.stars_arh_code, x.stars_arh_name }).Distinct().OrderBy(o => o.stars_arh_code)" ValueProperty="stars_arh_code" TextProperty="stars_arh_name" Change="@(args => DDL_Change("Arh", args))" Disabled="(!string.IsNullOrEmpty(mainLayout.loginUser.arh_code))" Style="width: 100%;" />
+                </div>
+            </div>
+        </div>
+
+        <InputBox ConfigData="@(configData.Get_ConfigRow("srr_reportdate_from"))">
+            <RadzenDatePicker @bind-Value="searchModel.srr_reportdate_from" DateFormat="d" Style="width: 100%;" />
+        </InputBox>
+
+        <InputBox ConfigData="@(configData.Get_ConfigRow("srr_reportdate_to"))">
+            <RadzenDatePicker @bind-Value="searchModel.srr_reportdate_to" DateFormat="d" Style="width: 100%;" />
+        </InputBox>
+
+    </div>
+
+    <div class="row justify-content-between">
+
+        <div class="col-12 col-xl-4">
+            <div class="row justify-content-center divGroup">
+                <div class="@classLabel">
+                    <LabelBox inputLabel="@configData.Get_Label("srr_hos_code")" />
+                </div>
+                <div class="@classInput">
+                    <RadzenDropDown @bind-Value="searchModel.srr_hos_code" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowClear="true" TValue="string" AllowFiltering="true" Placeholder="Select..." Data="lab_ddl_List.Select(x => new { x.hos_code, x.hos_name }).Distinct().OrderBy(o => o.hos_name)" ValueProperty="hos_code" TextProperty="hos_name" Disabled="(!string.IsNullOrEmpty(mainLayout.loginUser.hos_code))" Style="width: 100%;" />
+                </div>
+            </div>
+        </div>
+
+        <InputBox ConfigData="@(configData.Get_ConfigRow("srr_approvedate_from"))">
+            <RadzenDatePicker @bind-Value="searchModel.srr_approvedate_from" DateFormat="d" Style="width: 100%;" />
+        </InputBox>
+
+        <InputBox ConfigData="@(configData.Get_ConfigRow("srr_approvedate_to"))">
+            <RadzenDatePicker @bind-Value="searchModel.srr_approvedate_to" DateFormat="d" Style="width: 100%;" />
+        </InputBox>
+
+    </div>
+    <div class="row justify-content-between">
+
+        <div class="col-12 col-xl-4">
+            <div class="row justify-content-center divGroup">
+                <div class="@classLabel">
+                    <LabelBox inputLabel="@configData.Get_Label("srr_starsno")" />
+                </div>
+                <div class="@classInput">
+                    <RadzenTextBox @bind-Value="searchModel.srr_starsno" Style="width: 100%;" />
+                </div>
+            </div>
+        </div>
+
+        <InputBox ConfigData="@(configData.Get_ConfigRow("srr_testdate_from"))">
+            <RadzenDatePicker @bind-Value="searchModel.srr_testdate_from" DateFormat="d" Style="width: 100%;" />
+        </InputBox>
+
+        <InputBox ConfigData="@(configData.Get_ConfigRow("srr_testdate_to"))">
+            <RadzenDatePicker @bind-Value="searchModel.srr_testdate_to" DateFormat="d" Style="width: 100%;" />
+        </InputBox>
+
+    </div>
+    <div class="row justify-content-between">
+
+        <div class="col-12 col-xl-4">
+            <div class="row justify-content-center divGroup">
+                <div class="@classLabel">
+                    <LabelBox inputLabel="@configData.Get_Label("srr_reportno")" />
+                </div>
+                <div class="@classInput">
+                    <RadzenTextBox @bind-Value="searchModel.srr_reportno" Style="width: 100%;" />
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12 col-xl-4">
+            <div class="row justify-content-center divGroup">
+                <div class="@classLabel">
+                    <LabelBox inputLabel="@configData.Get_Label("srr_status")" />
+                </div>
+                <div class="@classInput">
+                    <RadzenDropDown @bind-Value="searchModel.srr_status" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowClear="true" TValue="string" AllowFiltering="true" Placeholder="Select..." Data="ddl_status" ValueProperty="code" TextProperty="text" />
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12 col-xl-4">
+            <div class="row justify-content-center divGroup buttonArea">
+                <div class="col-auto">
+                    <RadzenButton class="btnSearch" Text="Search" Click="SearchData" />
+                </div>
+                <div class="col-auto">
+                    <RadzenButton class="btnClear" Text="Clear" Click="ClearInboxData" />
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+    <hr />
+
+    <div>
+        @if (mainLayout.loginUser.PagePermission.rop_create == true)
+        {
+            <div class="container">
+                <div class="row justify-content-end">
+                    <div class="col-auto buttonArea">
+                        <RadzenButton Text="Create Report" class="btnAdd" Click="@(() => OpenStarsPersonalReportDetail(""))" />
+                    </div>
+                </div>
+            </div>
+            <br />
+        }
+        <div style="width:100%;margin:0px auto;">
+            <div class="container">
+                <div class="row justify-content-end">
+                    <div class="col-auto">
+                        <label>Rows : </label>
+                    </div>
+                    <div class="col-auto">
+                        <RadzenDropDown @bind-Value="inboxGrid.PageSize" TValue="int" AllowFiltering="true" Data="inboxGrid.PageSizeOption" Change="SearchData" Style="width:50px" />
+                    </div>
+                </div>
+            </div>
+            <RadzenGrid AllowFiltering="true" AllowSorting="true" AllowPaging="true" Style="max-width: 1597px"
+                    PageSize="inboxGrid.PageSize" @ref="inboxGrid.radzenGrid" Data="@gridDatas" TItem="STARSPersonalReportListDTO"
+                    FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" RowDoubleClick="@((args) => OpenStarsPersonalReportDetail(args.srp_id.ToString()))" 
+                    AllowColumnResize="true">
+                <Columns>
+                    <RadzenGridColumn TItem="STARSPersonalReportListDTO" Property="srr_reportno" Title="Report No." Width="100px">
+                        <FooterTemplate>
+                            <label title="@inboxGrid.FooterLabelString">@inboxGrid.FooterLabelString</label>
+                        </FooterTemplate>
+                    </RadzenGridColumn>
+                    <RadzenGridColumn TItem="STARSPersonalReportListDTO" Property="srr_reportdate" Title="Report Date" Width="100px">
+                        <Template Context="data">
+                            @String.Format("{0:dd/MM/yyyy}", data.srr_reportdate)
+                        </Template>
+                    </RadzenGridColumn>
+                    <RadzenGridColumn TItem="STARSPersonalReportListDTO" Width="120px" Property="srr_starsno" Title="STARS No." />
+                    <RadzenGridColumn TItem="STARSPersonalReportListDTO" Property="srr_tatdate" Title="TAT Date" Width="100px">
+                        <Template Context="data">
+                            @String.Format("{0:dd/MM/yyyy}", data.srr_tatdate)
+                        </Template>
+                    </RadzenGridColumn>
+                    <RadzenGridColumn TItem="STARSPersonalReportListDTO" Property="srr_testdate" Title="Lab Date" Width="100px">
+                        <Template Context="data">
+                            @String.Format("{0:dd/MM/yyyy}", data.srr_testdate)
+                        </Template>
+                    </RadzenGridColumn>
+                    <RadzenGridColumn TItem="STARSPersonalReportListDTO" Property="srr_approvedate" Title="Approve Date" Width="100px">
+                        <Template Context="data">
+                            @String.Format("{0:dd/MM/yyyy}", data.srr_approvedate)
+                        </Template>
+                    </RadzenGridColumn>
+                    <RadzenGridColumn TItem="STARSPersonalReportListDTO" Width="120px" Property="srr_testuser" Title="Lab By" />
+                    <RadzenGridColumn TItem="STARSPersonalReportListDTO" Width="120px" Property="srr_approveuser" Title="Approve By" />
+                    <RadzenGridColumn TItem="STARSPersonalReportListDTO" Width="120px" Property="srr_reportuser" Title="Report By" />
+                    <RadzenGridColumn TItem="STARSPersonalReportListDTO" Width="120px" Property="srp_status_str" Title="Status" />
+
+                    <RadzenGridColumn TItem="STARSPersonalReportListDTO" Property="" Title="Preview" Width="50px" Context="data" Filterable="false" Sortable="false">
+                        <Template>
+                            <RadzenButton Icon="search" Style="background: #0A6839 0% 0% no-repeat padding-box;" Click="@(() => OnPreview(data.srp_id.ToString()))" />
+                        </Template>
+                    </RadzenGridColumn>
+                </Columns>
+            </RadzenGrid>
+        </div>
+    </div>
+}
+
+<Loading ShowModel="showModal" />
+
+@code {
+    [CascadingParameter] MainLayout mainLayout { get; set; }
+
+    private ConfigData configData = new ConfigData();
+
+    private string classLabel = "col-4";
+    private string classInput = "col-8";
+
+    private RadzenGridCustom<STARSPersonalReportListDTO> inboxGrid = new RadzenGridCustom<STARSPersonalReportListDTO>();
+    private List<DropDownListDTO> rol_List;
+    private List<DropDownListDTO> lab_List = new List<DropDownListDTO>();
+
+    private bool showModal = false;
+
+    private List<STARSPersonalReportListDTO> gridDatas;
+    IList<string> selectedStarsPersonalReports;
+
+    private List<ddl_status_model> ddl_status = new List<ddl_status_model>();
+
+    LoginUserRolePermissionDTO permission;
+    private IBrowserFile selectedFiles;
+
+    string LargeUploadMessage = "";
+    long UploadedBytes;
+    long TotalBytes;
+
+    STARSPersonalReportSearchDTO searchModel = new STARSPersonalReportSearchDTO();
+    STARSPersonalReportListDTO UploadFileData = new STARSPersonalReportListDTO();
+
+    private List<HospitalLabDataDTO> lab_ddl_List;
+    private List<ParameterDTO> ParameterList;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await mainLayout.GetLoginUser();
+
+            if (mainLayout.loginUser.CheckPagePermission("MNU_0806") == false) navigationManager.NavigateTo("/NoPermissionPage");
+
+            configData.ConfigDTOList = await configDataService.Get_TBConfig_DataList_Async(new TBConfigDTO() { tbc_mnu_code = "MNU_0806" });
+
+            var searchData = new HospitalLabDataDTO()
+            {
+                arh_code = searchModel.srr_arh_code = mainLayout.loginUser.arh_code,
+                hos_code = searchModel.srr_hos_code = mainLayout.loginUser.hos_code
+            };
+
+            ddl_status = JsonConvert.DeserializeObject<List<ddl_status_model>>("[{\"code\":\"D\", \"text\":\"Draft\"}, {\"code\":\"A\", \"text\":\"Complete\"}, {\"code\":\"C\", \"text\":\"Cancel\"}]");
+            lab_ddl_List = await ddlDataService.GetAllLabListByModelAsync(searchData);
+            rol_List = await ddlDataService.GetRoleListByModelAsync();
+            ParameterList = await ddlDataService.GetParameterListByModelAsync(new ParameterDTO() { prm_code_major = "STARS_PERSONAL_REPORT" });
+
+
+            gridDatas = await starsReportservice.GetSTARSPersonalReportListByModelAsync(searchModel);
+        }
+    }
+
+    private async void ClearInboxData()
+    {
+        searchModel.srr_arh_code = mainLayout.loginUser.arh_code;
+        searchModel.srr_hos_code = mainLayout.loginUser.hos_code;
+        selectedStarsPersonalReports = null;
+        SearchData();
+    }
+
+    private async void SearchData()
+    {
+        showModal = true;
+
+        gridDatas = await starsReportservice.GetSTARSPersonalReportListByModelAsync(searchModel);
+
+        if (inboxGrid.radzenGrid != null) inboxGrid.radzenGrid.GoToPage(0);
+        showModal = false;
+        StateHasChanged();
+    }
+
+    private void DDL_Change(string ddl_name, object value)
+    {
+        if (ddl_name == "Arh" && value == null)
+        {
+            searchModel.srr_hos_code = null;
+        }
+        StateHasChanged();
+    }
+
+    async Task OpenStarsPersonalReportDetail(string id)
+    {
+        if (string.IsNullOrEmpty(id))
+            navigationManager.NavigateTo("StarsPersonalReportDetail");
+        else
+            navigationManager.NavigateTo("StarsPersonalReportDetail/" + id);
+    }
+
+    async Task OnPreview(string id)
+    {
+
+    }
+
+}

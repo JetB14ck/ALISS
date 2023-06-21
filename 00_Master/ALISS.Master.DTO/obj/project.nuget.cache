@@ -1,0 +1,11 @@
+{
+  "version": 2,
+  "dgSpecHash": "vlmEfB+WjQLxXKDRAzNmWAWZ3xOwXpCDSzwNCDRqMF3Cn5rX48i2+R2bYWU+GRJWohbETufqnZRrYnEnnFjYQQ==",
+  "success": true,
+  "projectFilePath": "D:\\G-able\\GitHub\\ALISS\\00_Master\\ALISS.Master.DTO\\ALISS.Master.DTO.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\jedsa\\.nuget\\packages\\microsoft.netcore.platforms\\1.1.0\\microsoft.netcore.platforms.1.1.0.nupkg.sha512",
+    "C:\\Users\\jedsa\\.nuget\\packages\\netstandard.library\\2.0.3\\netstandard.library.2.0.3.nupkg.sha512"
+  ],
+  "logs": []
+}

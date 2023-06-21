@@ -1,0 +1,319 @@
+﻿@page "/UploadAutomateDetail/{id}"
+
+@using ALISS.Data.D7_StarsMapping
+@using ALISS.STARS.DTO
+
+
+@inject NavigationManager navigationManager
+@inject ConfigDataService configDataService
+@inject UploadAutomateService UploadAutomateservice
+
+@inject IJSRuntime iJSRuntime
+
+
+<div>
+    <div class="divHead">
+       @strTitle
+    </div>
+</div>
+
+@if (pageLoading)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <div class="container inputArea">
+        <div class="row">
+            <div class="col-12 col-xl-4">
+                <div class="row justify-content-center divGroup">
+                    <div class="@classLabel">
+                        <LabelBox inputLabel="Total Record(s)" />
+                    </div>
+                    <div class="@classInput">
+                        <Radzen.Blazor.RadzenNumeric TValue="int" @bind-Value="@UploadAutomateData.afu_totalrecord" Disabled="true" />
+                    </div>
+                </div>
+            </div>
+            @*@if (UploadAutomateData.afu_Program == "MLAB" && UploadAutomateData.afu_FileType != "ETEST")
+                {*@
+            @*<div class="col-12 col-xl-4">
+                <div class="row justify-content-center divGroup">
+                    <div class="col-6">
+                        <LabelBox inputLabel="Processed Record(s)" />
+                    </div>
+                    <div class="col-6">
+                        <Radzen.Blazor.RadzenNumeric TValue="int" @bind-Value="@UploadAutomateData.afu_AerobicCulture" Disabled="true" />
+                    </div>
+                </div>
+            </div>*@
+            @*}*@
+            <div class="col-12 col-xl-4">
+                <div class="row justify-content-center divGroup">
+                    <div class="@classLabel">
+                        <LabelBox inputLabel="Error Record(s)" />
+                    </div>
+                    <div class="@classInput">
+                        <Radzen.Blazor.RadzenNumeric TValue="int" @bind-Value="@UploadAutomateData.afu_errorrecord" Disabled="true" />
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <div>
+        <div class="row">
+            <div class="col-md-6">
+                <label>Organism List</label>
+                <div class="container">
+                    <div class="row justify-content-end">
+                        <div class="col-auto">
+                            <label>Rows : </label>
+                        </div>
+                        <div class="col-auto">
+                            <RadzenDropDown @bind-Value="UploadAutomateSummaryGrid.PageSize" TValue="int" AllowFiltering="true" Data="UploadAutomateSummaryGrid.PageSizeOption" Change="SearchInboxUploadAutomateSummaryGrid" Style="width:50px" />
+                        </div>
+                    </div>
+                </div>
+                <RadzenGrid AllowFiltering="true" AllowSorting="true" AllowPaging="true" PageSize="UploadAutomateSummaryGrid.PageSize" @ref="UploadAutomateSummaryGrid.radzenGrid" Data="@UploadAutomateSummaryHeader" ColumnWidth="70px"
+                            TItem="UploadAutomateSummaryHeaderListDTO" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowColumnResize="true">
+
+                    <Template Context="UploadAutomateSummaryHeader">
+                        @if (UploadAutomateSummaryHeader.UploadAutomateSummaryDetailLists.Count > 0)
+                        {
+                            <RadzenGrid AllowFiltering="true" AllowPaging="true" AllowSorting="true" Data="@UploadAutomateSummaryHeader.UploadAutomateSummaryDetailLists" TItem="UploadAutomateSummaryDetailListDTO" AllowColumnResize="true">
+                                <Columns>
+                                    <RadzenGridColumn TItem="UploadAutomateSummaryDetailListDTO" Property="asd_organismcode" Title="Organism" />
+                                    <RadzenGridColumn TItem="UploadAutomateSummaryDetailListDTO" Property="asd_organismdesc" Title="Description" />
+                                    <RadzenGridColumn TItem="UploadAutomateSummaryDetailListDTO" Property="asd_total" Title="Total">
+                                        <Template Context="data">
+                                            @String.Format("{0:n0}", data.asd_total)
+                                        </Template>
+                                    </RadzenGridColumn>
+                                </Columns>
+                            </RadzenGrid>
+                        }
+                    </Template>
+
+                    <Columns>
+                        <RadzenGridColumn TItem="UploadAutomateSummaryHeaderListDTO" Property="ash_code" Title="Specimen Type" />
+                        <RadzenGridColumn TItem="UploadAutomateSummaryHeaderListDTO" Property="ash_desc" Title="Description" />
+                        <RadzenGridColumn TItem="UploadAutomateSummaryHeaderListDTO" Property="ash_total" Title="Total">
+                            <Template Context="data">
+                                @String.Format("{0:n0}", data.ash_total)
+                            </Template>
+                        </RadzenGridColumn>
+                    </Columns>
+                </RadzenGrid>
+            </div>
+            <div class="col-md-6">
+                <label>Error List</label>
+                <div class="container">
+                    <div class="row justify-content-end">
+                        <div class="col-auto">
+                            <label>Rows : </label>
+                        </div>
+                        <div class="col-auto">
+                            <RadzenDropDown @bind-Value="UploadAutomateErrorGrid.PageSize" TValue="int" AllowFiltering="true" Data="UploadAutomateErrorGrid.PageSizeOption" Change="SearchInboxUploadAutomateErrorGrid" Style="width:50px" />
+                        </div>
+                    </div>
+                </div>
+                <RadzenGrid AllowFiltering="true" AllowSorting="true" AllowPaging="true" PageSize="UploadAutomateErrorGrid.PageSize" @ref="UploadAutomateErrorGrid.radzenGrid" Data="@UploadAutomateErrorHeader" ColumnWidth="70px"
+                            TItem="UploadAutomateErrorHeaderListDTO" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowColumnResize="true">
+                    <Columns>
+                        <RadzenGridColumn TItem="UploadAutomateErrorHeaderListDTO" Property="aeh_field" Title="Type" />
+                        <RadzenGridColumn TItem="UploadAutomateErrorHeaderListDTO" Property="aeh_message" Title="Description" />
+                        <RadzenGridColumn TItem="UploadAutomateErrorHeaderListDTO" Property="aeh_errorrecord" Title="Total" />
+                        <RadzenGridColumn TItem="UploadAutomateErrorHeaderListDTO" Property="" Title="" Width="50px" Filterable="false" Sortable="false">
+                            <Template>
+                                <RadzenButton Icon="edit" Style="background: #0A6839" Click="@(() => OpenMappingDetail(UploadAutomateData.afu_smp_id.ToString()))" />
+                            </Template>
+                        </RadzenGridColumn>
+                    </Columns>
+                </RadzenGrid>
+                <hr />
+
+            </div>
+        </div>
+    </div>
+    <br />
+    <div class="row justify-content-between buttonArea">
+        <div class="col-auto">
+            <RadzenButton Text="Export" class="btnSave" Click="GenerateExcelSummary" />
+        </div>
+    </div>
+    <br />
+    <div class="row justify-content-between buttonArea">
+
+        <div class="col-auto">
+            <RadzenButton Text="Back" class="btnCancel" Click="@OpenUploadAutomateIndex" />
+        </div>
+        @if (mainLayout.loginUser.PagePermission.rop_cancel == true)
+        {
+            <div class="col-auto">
+                <RadzenButton Text="Cancel" class="btnCancel" Click="@(() => ShowConfirmDialog("Cancel"))"
+                              Disabled="@(UploadAutomateData.afu_status == "W" || UploadAutomateData.afu_status == "D" ? true : false)" />
+            </div>
+        }
+        @if (mainLayout.loginUser.PagePermission.rop_edit == true)
+        {
+            <div class="col-auto">
+                <RadzenButton Text="Re-Process" class="btnSave" Click="@(() => ShowConfirmDialog("Reprocess"))"
+                              Disabled="@(UploadAutomateData.afu_status == "W" || UploadAutomateData.afu_status == "D" || UploadAutomateData.afu_status == "R"? true : false)" />
+            </div>
+        }
+    </div>
+}
+
+<Loading ShowModel="showModal" />
+
+@code
+{
+    [CascadingParameter] MainLayout mainLayout { get; set; }
+
+    [Parameter]
+    public string id { get; set; }
+
+    private string classLabel = "col-4";
+    private string classInput = "col-8";
+    private string strTitle = "";
+
+    private ConfigData configData = new ConfigData();
+    UploadAutomateDataDTO UploadAutomateData = new UploadAutomateDataDTO();
+    List<UploadAutomateSummaryHeaderListDTO> UploadAutomateSummaryHeader = new List<UploadAutomateSummaryHeaderListDTO>();
+    List<UploadAutomateSummaryDetailListDTO> UploadAutomateSummaryDetail = new List<UploadAutomateSummaryDetailListDTO>();
+    List<UploadAutomateErrorHeaderListDTO> UploadAutomateErrorHeader = new List<UploadAutomateErrorHeaderListDTO>();
+    List<UploadAutomateErrorDetailListDTO> UploadAutomateErrorDetail = new List<UploadAutomateErrorDetailListDTO>();
+
+    RadzenGridCustom<UploadAutomateSummaryHeaderListDTO> UploadAutomateSummaryGrid = new RadzenGridCustom<UploadAutomateSummaryHeaderListDTO>();
+    RadzenGridCustom<UploadAutomateErrorHeaderListDTO> UploadAutomateErrorGrid = new RadzenGridCustom<UploadAutomateErrorHeaderListDTO>();
+
+    private bool showModal = true;
+    private bool pageLoading { get { return (UploadAutomateData == null); } }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await mainLayout.GetLoginUser();
+
+            if (mainLayout.loginUser.CheckPagePermission("MNU_0802") == false) navigationManager.NavigateTo("/NoPermissionPage");
+
+            configData.ConfigDTOList = await configDataService.Get_TBConfig_DataList_Async(new TBConfigDTO() { tbc_mnu_code = "MNU_0802" });
+
+            UploadAutomateData = await UploadAutomateservice.GetUploadAutomateDataAsync(id);
+
+
+            strTitle = string.Format("Upload Summary - {0}", UploadAutomateData.afu_filename);
+
+            UploadAutomateSummaryHeader = await UploadAutomateservice.GetUploadAutomateSummaryHeaderListAsync(id);
+            UploadAutomateErrorHeader = await UploadAutomateservice.GetUploadAutomateErrorHeaderListAsync(id);
+
+            if (UploadAutomateSummaryHeader.Count != 0)
+            {
+                foreach (UploadAutomateSummaryHeaderListDTO item in UploadAutomateSummaryHeader)
+                {
+                    item.UploadAutomateSummaryDetailLists = await UploadAutomateservice.GetUploadAutomateSummaryDetailListAsync(item.ash_id.ToString());
+                }
+            }
+
+            showModal = false;
+            StateHasChanged();
+        }
+    }
+
+
+    void OpenUploadAutomateIndex()
+    {
+        navigationManager.NavigateTo("UploadAutomate");
+    }
+
+
+    private void SearchInboxUploadAutomateSummaryGrid()
+    {
+        if (UploadAutomateSummaryGrid.radzenGrid != null) UploadAutomateSummaryGrid.radzenGrid.GoToPage(0);
+        StateHasChanged();
+    }
+
+
+    private void SearchInboxUploadAutomateErrorGrid()
+    {
+        if (UploadAutomateErrorGrid.radzenGrid != null) UploadAutomateErrorGrid.radzenGrid.GoToPage(0);
+        StateHasChanged();
+    }
+
+
+    async Task OpenMappingDetail(string id)
+    {
+        //if (UploadAutomateData.afu_Program == "MLAB")
+        //{
+        //    navigationManager.NavigateTo("StarsAutomateTemplate/" + id);
+        //}
+        //else
+        //{
+        //    navigationManager.NavigateTo("MappingDetail/" + id);
+        //}
+        navigationManager.NavigateTo("StarsMappingDetail/" + id);
+
+    }
+
+    private async Task GenerateExcelSummary()
+    {
+        showModal = true;
+
+        UploadAutomateErrorDetail = await UploadAutomateservice.GetUploadAutomateErrorDetailListAsync(id);
+        UploadAutomateservice.GenerateExportSummary(iJSRuntime, UploadAutomateSummaryHeader, UploadAutomateErrorDetail, UploadAutomateData.afu_filename);
+
+        showModal = false;
+    }
+
+    private async Task ShowConfirmDialog(string type)
+    {
+        if (type.Equals("Reprocess"))
+        {
+            var result = await iJSRuntime.InvokeAsync<bool>("ShowConfirm", "Confirm re-process data.");
+            if (result)
+            {
+                UploadAutomateData.afu_status = "R";
+                UploadAutomateData.afu_updateuser = mainLayout.loginUser.Username;
+                await SaveUploadAutomate();
+            }
+        }
+        else if (type.Equals("Cancel"))
+        {
+            var result = await iJSRuntime.InvokeAsync<bool>("ShowConfirm", "Confirm cancel data.");
+            if (result)
+            {
+                UploadAutomateData.afu_status = "D";
+                UploadAutomateData.afu_updateuser = mainLayout.loginUser.Username;
+                await SaveUploadAutomate();
+            }
+        }
+
+    }
+
+
+    private async Task SaveUploadAutomate()
+    {
+        showModal = true;
+
+        UploadAutomateData = await UploadAutomateservice.SaveUploadAutomateDataAsync(UploadAutomateData);
+
+        UploadAutomateData = await UploadAutomateservice.GetUploadAutomateDataAsync(id);
+        UploadAutomateSummaryHeader = await UploadAutomateservice.GetUploadAutomateSummaryHeaderListAsync(id);
+        UploadAutomateErrorHeader = await UploadAutomateservice.GetUploadAutomateErrorHeaderListAsync(id);
+        UploadAutomateErrorDetail = await UploadAutomateservice.GetUploadAutomateErrorDetailListAsync(id);
+
+        if (UploadAutomateSummaryHeader.Count != 0)
+        {
+            foreach (UploadAutomateSummaryHeaderListDTO item in UploadAutomateSummaryHeader)
+            {
+                item.UploadAutomateSummaryDetailLists = await UploadAutomateservice.GetUploadAutomateSummaryDetailListAsync(item.ash_id.ToString());
+            }
+        }
+
+
+        showModal = false;
+        StateHasChanged();
+    }
+}

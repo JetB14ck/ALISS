@@ -1,0 +1,606 @@
+﻿@page "/UploadAutomate"
+@using ALISS.Data.D7_StarsMapping
+@using ALISS.Data
+@using ALISS.STARS.DTO
+@using System.IO;
+
+@inject IJSRuntime jsRuntime
+@inject UploadAutomateService UploadAutomateservice
+@inject StarsMappingService StarsMappingService
+@inject LoginUserData loginUserData
+@inject DropDownListDataService ddlDataService
+@inject NavigationManager navigationManager
+@inject ConfigDataService configDataService
+@inject MasterTemplateService masterTemplateService
+@inject IBlazorDownloadFileService downloadService
+@inject FileService fileService
+
+<style type="text/css">
+    .rz-chkbox-box .rzi, .rz-datatable-thead .rz-chkbox-box .rzi {
+        background-color: #0a6839;
+        color: white;
+    }
+
+    .rz-selectable .rz-datatable-even.rz-state-highlight .rz-cell-data, .rz-selectable .rz-datatable-odd.rz-state-highlight .rz-cell-data {
+        color: #0a6839;
+    }
+
+    .rz-selectable .rz-datatable-even.rz-state-highlight > td, .rz-selectable .rz-datatable-odd.rz-state-highlight > td {
+        background-color: #b8ddcc;
+    }
+
+    .rz-chkbox-box.rz-state-active {
+        background-color: #0a6839;
+    }
+
+    .rz-selectable .rz-datatable-odd:hover:not(.rz-state-highlight) .rz-cell-data, .rz-selectable .rz-datatable-even:hover:not(.rz-state-highlight) .rz-cell-data {
+        background-color: #e7f4ef;
+        color: #0a6839;
+    }
+
+    .rz-selectable .rz-datatable-odd:hover:not(.rz-state-highlight) > td,
+    .rz-selectable .rz-datatable-even:hover:not(.rz-state-highlight) > td {
+        background-color: #e7f4ef;
+    }
+</style>
+
+<div>
+    <div class="divHead">
+        Upload Lab File
+    </div>
+</div>
+
+@if (gridDatas == null || lab_ddl_List == null)
+{
+    <Loading ShowModel="true" />
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <div class="container inputArea">
+        <div class="row justify-content-between">
+
+            <div class="col-12 col-xl-4">
+                <div class="row justify-content-center divGroup">
+                    <div class="@classLabel">
+                        <LabelBox inputLabel="@configData.Get_Label("afu_Area")" />
+                    </div>
+                    <div class="@classInput">
+                        <RadzenDropDown @bind-Value="searchModel.afu_Area" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowClear="true" TValue="string" AllowFiltering="true" Placeholder="Select..." Data="lab_ddl_List.Select(x => new { x.stars_arh_code, x.stars_arh_name }).Distinct().OrderBy(o=>o.stars_arh_code)" ValueProperty="stars_arh_code" TextProperty="stars_arh_name" Disabled="(!string.IsNullOrEmpty(mainLayout.loginUser.arh_code))" />
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-12 col-xl-4">
+                <div class="row justify-content-center divGroup">
+                    <div class="@classLabel">
+                        <LabelBox inputLabel="@configData.Get_Label("afu_machinetype")" />
+                    </div>
+                    <div class="@classInput">
+                        <RadzenDropDown @bind-Value="searchModel.afu_machinetype" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowClear="true" TValue="string" AllowFiltering="true" Placeholder="Select..." Data="machine_ddl_list.Where(w => w.smp_status == 'A').Select(x => new { x.smp_machinetype }).Distinct().OrderBy(o=>o.smp_machinetype)" ValueProperty="smp_machinetype" TextProperty="smp_machinetype" />
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-12 col-xl-4">
+                <div class="row justify-content-center divGroup buttonArea">
+                    <div class="col-auto">
+                        <RadzenButton class="btnSearch" Text="Search" Click="SearchData" />
+                    </div>
+                    <div class="col-auto">
+                        <RadzenButton class="btnClear" Text="Clear" Click="ClearInboxData" />
+                    </div>
+                </div>
+            </div>
+
+
+        </div>
+    </div>
+
+    <hr />
+
+    <div>
+        @if (mainLayout.loginUser.PagePermission.rop_create == true)
+        {
+            <div class="container">
+                <div class="row justify-content-end">
+                    <div class="col-auto buttonArea">
+                        <RadzenButton Text="Upload File" class="btnAdd"
+                              Click="@ShowUploadEntryDialog" Disabled="@(string.IsNullOrEmpty(searchModel.afu_machinetype) || string.IsNullOrEmpty(searchModel.afu_Area))" />
+                    </div>
+                </div>
+            </div>
+            <br />
+        }
+        <div style="width:100%;margin:0px auto;">
+            <div class="container">
+                <div class="row justify-content-end">
+                    <div class="col-auto">
+                        <label>Rows : </label>
+                    </div>
+                    <div class="col-auto">
+                        <RadzenDropDown @bind-Value="inboxGrid.PageSize" TValue="int" AllowFiltering="true" Data="inboxGrid.PageSizeOption" Change="SearchData" Style="width:50px" />
+                    </div>
+                </div>
+            </div>
+            <RadzenGrid AllowFiltering="true" AllowSorting="true" AllowPaging="true" Style="max-width: 1597px"
+                    PageSize="inboxGrid.PageSize" @ref="inboxGrid.radzenGrid" Data="@gridDatas" TItem="UploadAutomateDataDTO"
+                    FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+                    AllowColumnResize="true">
+                <Columns>
+                    <RadzenGridColumn TItem="UploadAutomateDataDTO" Property="arh_name" Title="ศูนย์วิทย์" Width="200px">
+                        <FooterTemplate>
+                            <label title="@inboxGrid.FooterLabelString">@inboxGrid.FooterLabelString</label>
+                        </FooterTemplate>
+                    </RadzenGridColumn>
+                    <RadzenGridColumn TItem="UploadAutomateDataDTO" Width="120px" Property="afu_machinetype" Title="Machine" />
+                    <RadzenGridColumn TItem="UploadAutomateDataDTO" Width="120px" Property="afu_filename" Title="File Name" />
+                    <RadzenGridColumn TItem="UploadAutomateDataDTO" Width="100px" Property="afu_totalrecord" Title="Total STARS">
+                        <Template Context="data">
+                            @String.Format("{0:n0}", data.afu_totalrecord)
+                        </Template>
+                    </RadzenGridColumn>
+                    <RadzenGridColumn TItem="UploadAutomateDataDTO" Width="100px" Property="afu_errorrecord" Title="Error Record">
+                        <Template Context="data">
+                            @String.Format("{0:n0}", data.afu_errorrecord)
+                        </Template>
+                    </RadzenGridColumn>
+                    <RadzenGridColumn TItem="UploadAutomateDataDTO" Width="100px" Property="afu_repeat_automaterecord" Title="Repeat Automate">
+                        <Template Context="data">
+                            @String.Format("{0:n0}", data.afu_repeat_automaterecord)
+                        </Template>
+                    </RadzenGridColumn>
+                    <RadzenGridColumn TItem="UploadAutomateDataDTO" Width="100px" Property="afu_repeat_generecord" Title="Repeat Gene">
+                        <Template Context="data">
+                            @String.Format("{0:n0}", data.afu_repeat_generecord)
+                        </Template>
+                    </RadzenGridColumn>
+                    <RadzenGridColumn TItem="UploadAutomateDataDTO" Width="100px" Property="afu_wait_approverecord" Title="Wait Approve">
+                        <Template Context="data">
+                            @String.Format("{0:n0}", data.afu_wait_approverecord)
+                        </Template>
+                    </RadzenGridColumn>
+                    <RadzenGridColumn TItem="UploadAutomateDataDTO" Width="100px" Property="afu_approverecord" Title="Approved">
+                        <Template Context="data">
+                            @String.Format("{0:n0}", data.afu_approverecord)
+                        </Template>
+                    </RadzenGridColumn>
+                    <RadzenGridColumn TItem="UploadAutomateDataDTO" Width="70px" Property="afu_status_str" Title="Status" />
+                    <RadzenGridColumn TItem="UploadAutomateDataDTO" Width="110px" Property="afu_updatedate" Title="Upload Date" />
+                    <RadzenGridColumn TItem="UploadAutomateDataDTO" Width="80px" Property="afu_updateuser" Title="Upload By" />
+
+                    <RadzenGridColumn TItem="UploadAutomateDataDTO" Property="" Title="" Width="160px" Context="data" Filterable="false" Sortable="false">
+                        <Template>
+                            <RadzenButton Text="See detail" Style="background: #0A6839 0% 0% no-repeat padding-box;" Click="@(() => OpenUploadAutomateDetail(data.afu_id.ToString()))" Disabled="@(data.afu_status == "N"  || data.afu_status == "R" || data.afu_status == "M" || data.afu_status == "P" ? true : false)" />
+                        </Template>
+                    </RadzenGridColumn>
+                </Columns>
+            </RadzenGrid>
+        </div>
+    </div>
+}
+
+@if (ShowUploadEntryPopup == true)
+{
+    <div class="modal" tabindex="-1" style="display:block;" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                </div>
+                <div class="modal-body">
+                    <EditForm Model="@UploadFileData" OnValidSubmit="()=> ValidateFile()">
+                        <DataAnnotationsValidator />
+                        <div class="container inputArea">
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="row justify-content-center divGroup">
+                                        <div class="col">
+                                            <LabelBox inputLabel="@configData.Get_Label("afu_Area")" />
+                                        </div>
+                                        <div class="col">
+                                            <RadzenDropDown @bind-Value="UploadFileData.afu_arh_code" Disabled="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowClear="true" TValue="string" AllowFiltering="true" Placeholder="Select..." Data="lab_ddl_List.Select(x => new { x.stars_arh_code, x.stars_arh_name }).Distinct().OrderBy(o=>o.stars_arh_code)" TextProperty="stars_arh_code" ValueProperty="stars_arh_name" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-12">
+                                    <div class="row justify-content-center divGroup">
+                                        <div class="col">
+                                            <LabelBox inputLabel="@configData.Get_Label("afu_machinetype")" />
+                                        </div>
+                                        <div class="col">
+                                            <RadzenDropDown @bind-Value="UploadFileData.afu_machinetype" Disabled="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowClear="true" TValue="string" AllowFiltering="true" Placeholder="Select..." Data="machine_ddl_list.Where(w => w.smp_status == 'A').Select(x => new { x.smp_machinetype }).Distinct().OrderBy(o=>o.smp_machinetype)" ValueProperty="smp_machinetype" TextProperty="smp_machinetype" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+
+                            <div class="row justify-content-center">
+                                <div class="col-xl-12">
+                                    <div class="row justify-content-center divGroup buttonArea">
+                                        <div class="col-auto">
+                                            <RadzenButton class="btnCancel" Text="Cancel" Click="@(() => ControlPopup("UploadEntry",false))" />
+                                        </div>
+                                        <div class="col-auto">
+                                            <RadzenButton Icon="save" ButtonType="ButtonType.Submit" class="btnSave" Text="Upload"
+                                                      disabled="@(selectedFiles == null ? true : false)" />
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </EditForm>
+                </div>
+
+            </div>
+        </div>
+    </div>
+}
+
+<Loading ShowModel="showModal" />
+
+@code {
+    [CascadingParameter] MainLayout mainLayout { get; set; }
+
+    private ConfigData configData = new ConfigData();
+
+    private string classLabel = "col-4";
+    private string classInput = "col-8";
+
+    private RadzenGridCustom<UploadAutomateDataDTO> inboxGrid = new RadzenGridCustom<UploadAutomateDataDTO>();
+    private List<DropDownListDTO> rol_List;
+    private List<DropDownListDTO> lab_List = new List<DropDownListDTO>();
+
+    private bool showModal = false;
+    private bool ShowUploadEntryPopup = false;
+
+    private List<UploadAutomateDataDTO> gridDatas;
+    IList<string> selectedUploadAutomates;
+
+    LoginUserRolePermissionDTO permission;
+    private IBrowserFile selectedFiles;
+
+    string LargeUploadMessage = "";
+    long UploadedBytes;
+    long TotalBytes;
+
+    UploadAutomateSearchDTO searchModel = new UploadAutomateSearchDTO();
+    UploadAutomateDataDTO UploadFileData = new UploadAutomateDataDTO();
+
+    private List<HospitalLabDataDTO> lab_ddl_List;
+    private List<ParameterDTO> ParameterList;
+    private List<STARSMappingListsDTO> machine_ddl_list;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await mainLayout.GetLoginUser();
+
+            if (mainLayout.loginUser.CheckPagePermission("MNU_0802") == false) navigationManager.NavigateTo("/NoPermissionPage");
+
+            configData.ConfigDTOList = await configDataService.Get_TBConfig_DataList_Async(new TBConfigDTO() { tbc_mnu_code = "MNU_0802" });
+
+            var searchData = new HospitalLabDataDTO()
+            {
+                arh_code = searchModel.afu_Area = mainLayout.loginUser.arh_code
+            };
+
+
+            lab_ddl_List = await ddlDataService.GetAllLabListByModelAsync(searchData);
+            machine_ddl_list = await StarsMappingService.GetMappingListByParamAsync(new STARSMappingSearchDTO());
+            rol_List = await ddlDataService.GetRoleListByModelAsync();
+            ParameterList = await ddlDataService.GetParameterListByModelAsync(new ParameterDTO() { prm_code_major = "UPLOAD_AUTOMATE" });
+
+
+            gridDatas = await UploadAutomateservice.GetUploadAutomateListByModelAsync(searchModel);
+        }
+    }
+
+    private async void ClearInboxData()
+    {
+
+        searchModel.afu_Area = mainLayout.loginUser.arh_code;
+        selectedUploadAutomates = null;
+        SearchData();
+    }
+
+    private async void SearchData()
+    {
+        showModal = true;
+
+        gridDatas = await UploadAutomateservice.GetUploadAutomateListByModelAsync(searchModel);
+
+        if (inboxGrid.radzenGrid != null) inboxGrid.radzenGrid.GoToPage(0);
+        showModal = false;
+        StateHasChanged();
+    }
+
+    private void DDL_Change(string ddl_name, object value)
+    {
+        if (ddl_name == "Arh" && value == null)
+        {
+            searchModel.afu_machinetype = null;
+        }
+        StateHasChanged();
+    }
+
+
+    async Task ControlPopup(string type, bool control)
+    {
+        if (type == "UploadEntry")
+        {
+            ShowUploadEntryPopup = control;
+
+            if (control == false)
+            {
+                selectedFiles = null;
+            }
+        }
+    }
+
+    async Task ValidateFile()
+    {
+
+        //1. Upload file --> temp ** ไฟล์มี 2 แบบ
+        //2. อ่านไฟล์ไปเก็บไว้ที่ Temp table ** check template ตัด header ด้วย
+        //3. ดึงข้อมูลจาก temp table ==> process (batch)
+        //4. ลบ temp table
+
+        //string confirmMessage = "";
+        //confirmMessage = "Confirm upload data." + "\n" + " File Name: " + selectedFiles.Name + "\n";
+
+
+
+        //var result = await jsRuntime.InvokeAsync<bool>("ShowConfirm", confirmMessage);
+        //if (result == false)
+        //{
+        //    return;
+        //}
+
+        //showModal = true;
+
+        //**** automate mapping ==> where machine, active, order by last update => first()
+        //MasterTemplateSearchDTO searchMasterTemplate = new MasterTemplateSearchDTO();
+        //MappingDataDTO mappingSearch = new MappingDataDTO();
+        //mappingSearch.mp_hos_code = UploadFileData.afu_hos_code;
+        //mappingSearch.mp_lab = UploadFileData.afu_lab;
+        //mappingSearch.mp_program = UploadFileData.afu_Program;
+        //mappingSearch.mp_filetype = UploadFileData.afu_FileType;
+
+        ////if (UploadFileData.afu_Program == "MLAB")
+        ////{
+        ////    mappingSearch = new MappingDataDTO();
+        ////    mappingSearch.mp_hos_code = UploadFileData.afu_hos_code;
+
+        ////    List<ParameterDTO> parameterDTO = new List<ParameterDTO>();
+        ////    parameterDTO = await ddlDataService.GetParameterListByModelAsync(new ParameterDTO() { prm_code_major = "MLAB_MAPPING_TEMPLATE" });
+        ////    mappingSearch.mp_id = Guid.Parse(parameterDTO.FirstOrDefault(x => x.prm_code_minor == "mp_id").prm_value);
+        ////}
+        ////else
+        ////{
+        ////    mappingSearch.mp_filetype = null;
+        ////}
+
+        //var MappingTemplate = new MappingDataDTO();
+        //MasterTemplateDTO ActiveMasterTemplate = await masterTemplateService.GetListByModelActiveAsync(searchMasterTemplate);
+
+        //if (UploadFileData.afu_Program != "MLAB")
+        //{
+        //    MappingTemplate = await mappingservice.GetMappingDataActiveWithModelAsync(mappingSearch);
+
+        //    if (MappingTemplate.mp_id == Guid.Empty)
+        //    {
+        //        await jsRuntime.InvokeAsync<object>("ShowAlert", "ไม่พบ Mapping Template สำหรับใช้ในการ Upload File");
+        //        showModal = false;
+        //        return;
+        //    }
+
+        //    if (ActiveMasterTemplate == null)
+        //    {
+        //        await jsRuntime.InvokeAsync<object>("ShowAlert", "ไม่พบ Master Template ที่มีสถานะเป็น Active (กรุณาติดต่อผู้ดูแลระบบ)");
+        //        showModal = false;
+        //        return;
+        //    }
+        //}
+        //else
+        //{
+
+        //    MappingTemplate = await mappingservice.GetMappingDataAsync(mappingSearch.mp_id.ToString());
+
+        //    if (ActiveMasterTemplate == null)
+        //    {
+        //        await jsRuntime.InvokeAsync<object>("ShowAlert", "ไม่พบ Master Template ที่มีสถานะเป็น Active (กรุณาติดต่อผู้ดูแลระบบ)");
+        //        showModal = false;
+        //        return;
+        //    }
+        //}
+
+
+        //string str_CurrentDate = DateTime.Now.ToString("yyyyMMdd");
+
+        //string filepath = await fileUploadservice.GetPath();
+        //filepath = Path.Combine(filepath, str_CurrentDate, mappingSearch.mp_hos_code);
+        //bool exists = System.IO.Directory.Exists(filepath);
+
+        //if (!exists)
+        //    System.IO.Directory.CreateDirectory(filepath);
+
+        //var filename = Path.Combine(filepath, selectedFiles.Name);
+
+        //UploadedBytes = 0;
+
+        //TotalBytes = selectedFiles.Size;
+
+        //long percent = 0;
+        //long chunckSize = 400000;
+        //long numChunks = TotalBytes / chunckSize;
+        //long remainder = TotalBytes % chunckSize;
+
+        //if (File.Exists(filename)) File.Delete(filename);
+
+        //using (var inStream = selectedFiles.OpenReadStream(long.MaxValue))
+        //{
+        //    using (var outStream = File.OpenWrite(filename))
+        //    {
+        //        for (int i = 0; i < numChunks; i++)
+        //        {
+        //            var buffer = new byte[chunckSize];
+        //            await inStream.ReadAsync(buffer, 0, buffer.Length);
+
+        //            await outStream.WriteAsync(buffer, 0, buffer.Length);
+
+        //            UploadedBytes += chunckSize;
+
+        //            percent = UploadedBytes * 100 / TotalBytes;
+
+        //            LargeUploadMessage = $"กำลังอัปโหลดไฟล์ {percent}%";
+
+        //            await InvokeAsync(StateHasChanged);
+        //        }
+
+        //        if (remainder > 0)
+        //        {
+        //            var buffer = new byte[remainder];
+        //            await inStream.ReadAsync(buffer, 0, buffer.Length);
+
+        //            await outStream.WriteAsync(buffer, 0, buffer.Length);
+
+        //            UploadedBytes += remainder;
+
+        //            percent = UploadedBytes * 100 / TotalBytes;
+
+        //            LargeUploadMessage = $"กำลังอัปโหลดไฟล์ {percent}%";
+
+        //            await InvokeAsync(StateHasChanged);
+        //        }
+        //    }
+        //}
+
+        //LargeUploadMessage = "กำลังตรวจสอบไฟล์ ...";
+        //await InvokeAsync(StateHasChanged);
+
+        //var chkValidate = await fileUploadservice.ValidateLabFileAsync(filepath, selectedFiles.Name, MappingTemplate, UploadFileData.afu_FileType);
+
+        //LargeUploadMessage = "อัปโหลดเรียบร้อยแล้ว";
+        //await InvokeAsync(StateHasChanged);
+        //int totalRec = 0;
+        //if (chkValidate != null)
+        //{
+        //    string ErrorMessage = "";
+        //    foreach (UploadAutomateErrorMessageDTO item in chkValidate)
+        //    {
+        //        if (item.afu_status == 'I' && item.afu_Err_Column == "Total")
+        //        {
+        //            Int32.TryParse(item.afu_Err_Message, out totalRec);
+        //            ErrorMessage += "Total Record(s) = " + String.Format("{0:n0}", totalRec) + "\n";
+        //        }
+        //        else if (item.afu_status == 'E')
+        //            ErrorMessage += "- " + item.afu_Err_Message + "\n";
+        //    }
+
+        //    await jsRuntime.InvokeAsync<object>("ShowAlert", ErrorMessage);
+        //}
+
+        //var chkError = chkValidate.FirstOrDefault(x => x.afu_status == 'E');
+
+        //if (chkError == null)
+        //{
+        //    var path = chkValidate.FirstOrDefault(x => x.afu_status == 'I' && x.afu_Err_Column == "path").afu_Err_Message;
+        //    await UploadFile(MappingTemplate.mp_id, MappingTemplate.mp_version, totalRec, path);
+        //    await ControlPopup("UploadEntry", false);
+        //    showModal = false;
+
+        // ****** ==> process batch ไม่ต้องรอ response
+
+        //    SearchData();
+        //    StateHasChanged();
+
+        //}
+        //else
+        //{
+        //    showModal = false;
+        //    return;
+        //}
+
+        //UploadedBytes = 0;
+        //TotalBytes = 0;
+        //LargeUploadMessage = "";
+
+    }
+
+    async Task UploadFile(Guid mp_id, Decimal mp_version, int TotalRec, string path)
+    {
+
+        //UploadAutomateDataDTO UploadAutomate = new UploadAutomateDataDTO();
+        // ==> TRAutomateUploadFile
+        //UploadAutomate.afu_mp_id = mp_id;
+        //UploadAutomate.afu_mp_version = mp_version;
+        //UploadAutomate.afu_hos_code = UploadFileData.afu_hos_code;
+        //UploadAutomate.afu_lab = UploadFileData.afu_lab;
+        //UploadAutomate.afu_Program = UploadFileData.afu_Program;
+        //UploadAutomate.afu_Path = path;
+        //UploadAutomate.afu_DataYear = UploadFileData.afu_DataYear;
+        //UploadAutomate.afu_FileName = selectedFiles.Name;
+        //UploadAutomate.afu_TotalRecord = TotalRec;
+        //UploadAutomate.afu_FileType = UploadFileData.afu_FileType;
+        //UploadAutomate.afu_createuser = mainLayout.loginUser.Username;
+        //UploadAutomate.afu_updateuser = mainLayout.loginUser.Username;
+        //UploadAutomate.afu_FileTypeLabel = UploadFileData.afu_FileTypeLabel;
+        //UploadAutomate.afu_TestType = UploadFileData.afu_TestType;
+
+        //var x = await fileUploadservice.UploadFileAsync(UploadAutomate);
+
+    }
+
+    async Task ShowUploadEntryDialog()
+    {
+        ControlPopup("UploadEntry", true);
+        UploadFileData.afu_arh_code = searchModel.afu_Area;
+        UploadFileData.afu_machinetype = searchModel.afu_machinetype;
+    }
+
+    private async Task OnInputFileChange(InputFileChangeEventArgs e)
+    {
+        selectedFiles = e.File;
+
+        var type = Path.GetExtension(selectedFiles.Name);
+
+        long maxFileSize = 1024L; // 1KB
+        maxFileSize *= 1024L; // 1MB
+        maxFileSize *= 512L; // 0.5GB
+
+        if (selectedFiles.Size > maxFileSize)
+        {
+            await jsRuntime.InvokeAsync<object>("ShowAlert", "ไม่สามารถ Upload ไฟล์ ขนาดมากกว่า 500MB ได้");
+            selectedFiles = null;
+            return;
+        }
+    }
+
+    async Task OpenUploadAutomateDetail(string id)
+    {
+
+        navigationManager.NavigateTo("UploadAutomateDetail/" + id);
+
+    }
+
+    private async Task NavigateToDownloadFile(UploadAutomateDataDTO lab)
+    {
+        var FullPath = lab.afu_path;
+        if (File.Exists(FullPath))
+        {
+            byte[] bytes = File.ReadAllBytes(FullPath);
+            await downloadService.DownloadFile(lab.afu_filename, bytes, "application/octet-stream");
+        }
+        else
+        {
+            await jsRuntime.InvokeAsync<object>("ShowAlert", "File not Found");
+        }
+
+
+    }
+
+}

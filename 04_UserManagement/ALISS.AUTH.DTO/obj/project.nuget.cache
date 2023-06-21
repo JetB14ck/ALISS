@@ -1,0 +1,12 @@
+{
+  "version": 2,
+  "dgSpecHash": "NBBZb9BkE8FwLz+zjYBkUW/uCDcbA3S/thhe8g9E+nSTclwfgNhJHLi4W3N81wzah0g77Kn/QK9NJiFnGXRBTg==",
+  "success": true,
+  "projectFilePath": "D:\\G-able\\GitHub\\ALISS\\04_UserManagement\\ALISS.AUTH.DTO\\ALISS.AUTH.DTO.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\jedsa\\.nuget\\packages\\microsoft.netcore.platforms\\1.1.0\\microsoft.netcore.platforms.1.1.0.nupkg.sha512",
+    "C:\\Users\\jedsa\\.nuget\\packages\\netstandard.library\\2.0.3\\netstandard.library.2.0.3.nupkg.sha512",
+    "C:\\Users\\jedsa\\.nuget\\packages\\system.componentmodel.annotations\\4.7.0\\system.componentmodel.annotations.4.7.0.nupkg.sha512"
+  ],
+  "logs": []
+}
