@@ -24,7 +24,7 @@ namespace ALISS.STARS.Library
         List<STARSWHONetMappingListsDTO> GetWHONetMappingListWithModel(STARSWHONetMappingSearch searchModel);
         STARSWHONetMappingDataDTO GetWHONetMappingData(string wnm_id);
         STARSWHONetMappingDataDTO SaveWHONetMappingData(STARSWHONetMappingDataDTO model);
-        STARSWHONetMappingDataDTO GetWHONetMappingDataWithModel(STARSWHONetMappingDataDTO model);
+        STARSWHONetMappingDataDTO GetWHONetMappingDataWithModel(STARSWHONetMappingDataDTO model);      
         #endregion
 
 

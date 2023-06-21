@@ -23,7 +23,6 @@
 @inject MasterTemplateService masterTemplateService
 @inject DialogService dialogService
 @inject NavigationManager navManager
-@inject WHONETService whonetService
 
 @inject TemplateUploadService fileUpload
 @inject DropDownListDataService ddlDataService
@@ -189,7 +188,7 @@ else
             <div>
                 <RadzenTabs Change="onTabChange">
                     <Tabs>
-                        <RadzenTabsItem Text="WHONET Fields" Selected="@(_CurrentTab == "WHONET" ? true : false)">
+                        <RadzenTabsItem Text="STARS Automate Fields" Selected="@(_CurrentTab == "WHONET" ? true : false)">
                             <div>
                                 @if (mainLayout.loginUser.PagePermission.rop_create == true && Expired != true)
                                 {
@@ -207,7 +206,7 @@ else
                                 <br />
                                 <div class="row">
                                     <div class="col-md-5">
-                                        <label>WHONet Field</label>
+                                        <label>STARS Automate Field</label>
                                         <div class="container">
                                             <div class="row justify-content-end">
                                                 <div class="col-auto">
@@ -219,10 +218,10 @@ else
                                             </div>
                                         </div>
                                         <RadzenGrid AllowFiltering="true" AllowSorting="true" AllowPaging="true" PageSize="WHONETColumnGrid.PageSize" @ref="WHONETColumnGrid.radzenGrid" Data="@WHONetMasterList" ColumnWidth="70px"
-                                                    TItem="WHONETColumnDTO" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
-                                                    RowSelect="@((args) => OnWHONetFieldSeleted(args.wnc_name))" RowDoubleClick="@((args) => DoubleClickWHONETMapping())" AllowColumnResize="true">
+                                                    TItem="STARSAutomateColumnDTO" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+                                                    RowSelect="@((args) => OnWHONetFieldSeleted(args.stc_name))" RowDoubleClick="@((args) => DoubleClickWHONETMapping())" AllowColumnResize="true">
                                             <Columns>
-                                                <RadzenGridColumn TItem="WHONETColumnDTO" Property="wnc_name" Title="Column Name">
+                                                <RadzenGridColumn TItem="STARSAutomateColumnDTO" Property="stc_name" Title="Column Name">
                                                     <FooterTemplate>
                                                         <label title="@WHONETColumnGrid.FooterLabelString">@WHONETColumnGrid.FooterLabelString</label>
                                                     </FooterTemplate>
@@ -292,12 +291,12 @@ else
                                                 <RadzenButton Icon="edit" Style="background: #0A6839" Click="@(() => ShowWHONetMappingDialog("E",data.swm_id.ToString()))" />
                                             </Template>
                                         </RadzenGridColumn>
-                                        <RadzenGridColumn TItem="STARSWHONetMappingListsDTO" Property="swm_whonetfield" Title="WHONET Field">
+                                        <RadzenGridColumn TItem="STARSWHONetMappingListsDTO" Property="swm_whonetfield" Title="STARS Automate Field">
                                             <FooterTemplate>
                                                 <label title="@whonetGrid.FooterLabelString">@whonetGrid.FooterLabelString</label>
                                             </FooterTemplate>
                                         </RadzenGridColumn>
-                                        <RadzenGridColumn TItem="STARSWHONetMappingListsDTO" Property="swm_originalfield" Title="Original File" />
+                                        <RadzenGridColumn TItem="STARSWHONetMappingListsDTO" Property="swm_originalfield" Title="Original File" /> 
                                         <RadzenGridColumn TItem="STARSWHONetMappingListsDTO" Property="swm_type" Title="Data Type" />
                                         <RadzenGridColumn TItem="STARSWHONetMappingListsDTO" Property="swm_fieldformat" Title="Format" />
                                         <RadzenGridColumn TItem="STARSWHONetMappingListsDTO" Property="swm_fieldlength" Title="Lenght" />
@@ -351,13 +350,17 @@ else
                                             <RadzenButton Icon="edit" Style="background: #0A6839" Click="@(() => ShowSpecimenMappingDialog("E",data.ssm_id.ToString()))" />
                                         </Template>
                                     </RadzenGridColumn>
-                                    <RadzenGridColumn TItem="STARSSpecimenMappingListsDTO" Property="ssm_whonetcode" Title="WHONET Code">
+                                    @*<RadzenGridColumn TItem="STARSSpecimenMappingListsDTO" Property="ssm_whonetcode" Title="WHONET Code">
+                                        <FooterTemplate>
+                                            <label title="@specimenGrid.FooterLabelString">@specimenGrid.FooterLabelString</label>
+                                        </FooterTemplate>
+                                    </RadzenGridColumn>*@
+                                    <RadzenGridColumn TItem="STARSSpecimenMappingListsDTO" Property="ssm_localspecimencode" Title="Specimen Code">
                                         <FooterTemplate>
                                             <label title="@specimenGrid.FooterLabelString">@specimenGrid.FooterLabelString</label>
                                         </FooterTemplate>
                                     </RadzenGridColumn>
-                                    <RadzenGridColumn TItem="STARSSpecimenMappingListsDTO" Property="ssm_localspecimencode" Title="Source" />
-                                    <RadzenGridColumn TItem="STARSSpecimenMappingListsDTO" Property="ssm_localspecimendesc" Title="Csource" />
+                                    <RadzenGridColumn TItem="STARSSpecimenMappingListsDTO" Property="ssm_localspecimendesc" Title="Specimen Description" />
                                     @if (mainLayout.loginUser.PagePermission.rop_edit == true && Expired != true)
                                     {
                                         <RadzenGridColumn TItem="STARSSpecimenMappingListsDTO" Property="" Title="" Width="50px" Context="data" Filterable="false" Sortable="false">
@@ -397,14 +400,18 @@ else
                                             <RadzenButton Icon="edit" Style="background: #0A6839" Click="@(() => ShowOrganismMappingDialog("E",data.som_id.ToString()))" />
                                         </Template>
                                     </RadzenGridColumn>
-                                    <RadzenGridColumn TItem="STARSOrganismMappingListsDTO" Property="som_whonetcode" Title="WHONET Code">
+                                    @*<RadzenGridColumn TItem="STARSOrganismMappingListsDTO" Property="som_whonetcode" Title="WHONET Code">
                                         <FooterTemplate>
                                             <label title="@organismGrid.FooterLabelString">@organismGrid.FooterLabelString</label>
                                         </FooterTemplate>
-                                    </RadzenGridColumn>
-                                    <RadzenGridColumn TItem="STARSOrganismMappingListsDTO" Property="som_whonetdesc" Title="WHONET Description" />
-                                    <RadzenGridColumn TItem="STARSOrganismMappingListsDTO" Property="som_localorganismcode" Title="Local code" />
-                                    <RadzenGridColumn TItem="STARSOrganismMappingListsDTO" Property="som_localorganismdesc" Title="Local Description" />
+                                    </RadzenGridColumn>*@
+                                    @*<RadzenGridColumn TItem="STARSOrganismMappingListsDTO" Property="som_whonetdesc" Title="WHONET Description" />*@
+                                <RadzenGridColumn TItem="STARSOrganismMappingListsDTO" Property="som_localorganismcode" Title="Organism code">
+                                    <FooterTemplate>
+                                        <label title="@organismGrid.FooterLabelString">@organismGrid.FooterLabelString</label>
+                                    </FooterTemplate>
+                                </RadzenGridColumn>
+                                    <RadzenGridColumn TItem="STARSOrganismMappingListsDTO" Property="som_localorganismdesc" Title="Organism Description" />
                                     @if (mainLayout.loginUser.PagePermission.rop_edit == true && Expired != true)
                                     {
                                         <RadzenGridColumn TItem="STARSOrganismMappingListsDTO" Property="" Title="" Width="50px" Context="data" Filterable="false" Sortable="false">
@@ -655,11 +662,11 @@ else
                     <EditForm Model="@objSpecimenMapping" OnValidSubmit="()=> SaveSpecimenMappingData()">
                         <DataAnnotationsValidator />
                         <div class="container inputArea">
-                            <div class="row justify-content-center">
+                            @*<div class="row justify-content-center">
                                 <div class="col-xl-12">
                                     <div class="row justify-content-center divGroup">
                                         <div class="@classLabel">
-                                            <LabelBox inputLabel="@configData.Get_Label("ssm_whonetcode")" requireField="true" />
+                                            <LabelBox inputLabel="@configData.Get_Label("ssm_whonetcode")" />
                                         </div>
                                         <div class="@classInput">
                                             <RadzenDropDownDataGrid @bind-Value="objSpecimenMapping.ssm_whonetcode" disabled="@(objSpecimenMapping.ssm_status == 'E' ? true : false)" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowClear="true" TValue="string" AllowFiltering="true" Placeholder="Select..." Data="specimenDatas" TextProperty="spc_code" ValueProperty="spc_code" AllowFilteringByAllStringColumns="true">
@@ -672,7 +679,7 @@ else
                                         </div>
                                     </div>
                                 </div>
-                            </div>
+                            </div>*@
                             <div class="row justify-content-center">
                                 <div class="col-xl-12">
                                     <div class="row justify-content-center divGroup">
@@ -744,42 +751,34 @@ else
                         <DataAnnotationsValidator />
 
                         <div class="container inputArea">
-                            <div class="row justify-content-center">
+                            @*<div class="row justify-content-center">
                                 <div class="col-xl-12">
                                     <div class="row justify-content-center divGroup">
                                         <div class="@classLabel">
                                             <LabelBox inputLabel="@configData.Get_Label("som_whonetcode")" requireField="true" />
                                         </div>
                                         <div class="@classInput">
-                                            @*<RadzenDropDownDataGrid @bind-Value="objOrganismMapping.som_whonetcode" disabled="@(objOrganismMapping.som_status == 'E' ? true : false)" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowClear="true" AllowFiltering="true"
-                                                                        TValue="string" Placeholder="Select..." Data="organismDatas" TextProperty="org_mst_ORG" ValueProperty="org_mst_ORG"
-                                                                        Change="OrganismCode_DDL_Change" AllowFilteringByAllStringColumns="true">
-                                                    <Columns>
-                                                        <RadzenDropDownDataGridColumn Property="org_mst_ORG" Title="Code" Width="100px" />
-                                                        <RadzenDropDownDataGridColumn Property="org_mst_ORGANISM" Title="Name" Width="200px" />
-                                                    </Columns>
-                                                </RadzenDropDownDataGrid>
-                                                <ValidationMessage For="@(() => objOrganismMapping.som_whonetcode)" />*@
+                                           
                                             <RadzenTextBox @bind-Value="@objOrganismMapping.som_whonetcode" Disabled="true" />
                                             <ValidationMessage For="@(() => objOrganismMapping.som_whonetcode)" />
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="row justify-content-center">
+                            </div>*@
+                            <!--<div class="row justify-content-center">
                                 <div class="col-xl-12">
                                     <div class="row justify-content-center divGroup">
                                         <div class="@classLabel">
                                             <LabelBox inputLabel="@configData.Get_Label("som_whonetdesc")" requireField="true" />
                                         </div>
-                                        <div class="@classInput">
+                                        <div class="@classInput">-->
                                             @*<RadzenTextBox @bind-Value="@objOrganismMapping.som_whonetdesc" Disabled="true" />
                                                 <ValidationMessage For="@(() => objOrganismMapping.som_whonetdesc)" />*@
-                                            <RadzenDropDownDataGrid @bind-Value="objOrganismMapping.som_whonetdesc" disabled="@(objOrganismMapping.som_status == 'E' ? true : false)" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowClear="true" AllowFiltering="true"
+                                            <!--<RadzenDropDownDataGrid @bind-Value="objOrganismMapping.som_whonetdesc" disabled="@(objOrganismMapping.som_status == 'E' ? true : false)" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowClear="true" AllowFiltering="true"
                                                                     TValue="string" Placeholder="Select..." Data="organismDatas" TextProperty="org_mst_ORGANISM" ValueProperty="org_mst_ORGANISM" AllowFilteringByAllStringColumns="true"
-                                                                    Change="OrganismCode_DDL_Change">
+                                                                    Change="OrganismCode_DDL_Change">-->
                                                 @*TextProperty="org_mst_ORG" ValueProperty="org_mst_ORG"*@
-                                                <Columns>
+                                                <!--<Columns>
                                                     <RadzenDropDownDataGridColumn Property="org_mst_ORG" Title="Code" Width="100px" />
                                                     <RadzenDropDownDataGridColumn Property="org_mst_ORGANISM" Title="Name" Width="200px" />
                                                 </Columns>
@@ -787,7 +786,7 @@ else
                                         </div>
                                     </div>
                                 </div>
-                            </div>
+                            </div>-->
 
                             <div class="row justify-content-center">
                                 <div class="col-xl-12">
@@ -860,7 +859,7 @@ else
     RadzenGridCustom<STARSSpecimenMappingListsDTO> specimenGrid = new RadzenGridCustom<STARSSpecimenMappingListsDTO>();
     RadzenGridCustom<STARSOrganismMappingListsDTO> organismGrid = new RadzenGridCustom<STARSOrganismMappingListsDTO>();
     RadzenGridCustom<TemplateFileListsDTO> TemplateFileGrid = new RadzenGridCustom<TemplateFileListsDTO>();
-    RadzenGridCustom<WHONETColumnDTO> WHONETColumnGrid = new RadzenGridCustom<WHONETColumnDTO>();
+    RadzenGridCustom<STARSAutomateColumnDTO> WHONETColumnGrid = new RadzenGridCustom<STARSAutomateColumnDTO>();
 
     private ConfigData configData = new ConfigData();
     private List<SpecimenDTO> specimenDatas;
@@ -881,7 +880,7 @@ else
 
     private List<TemplateFileListsDTO> gridTemplateFileDatas;
 
-    private List<WHONETColumnDTO> WHONetMasterList;
+    private List<STARSAutomateColumnDTO> WHONetMasterList;
     private List<AntibioticDTO> AntibioticMasterList;
     private MasterTemplateDTO ActiveMasterTemplate;
 
@@ -1124,18 +1123,17 @@ else
                 gridSpecimenDatas = await mappingservice.GetSpecimenMappingListByModelAsync(searchSpecimen);
                 gridOrganismDatas = await mappingservice.GetOrganismMappingListByModelAsync(searchOrganism);
 
-                WHONETColumnDTO searchWHONETColumn = new WHONETColumnDTO();
-                searchWHONETColumn.wnc_code = mappingData.smp_mst_code;
-                WHONetMasterList = await whonetcolumnservice.GetListByModelActiveAsync(searchWHONETColumn);
+                STARSAutomateColumnDTO searchSTARSColumn = new STARSAutomateColumnDTO();
+                WHONetMasterList = await whonetcolumnservice.GetListByModelActiveAsync(searchSTARSColumn);
 
                 // Antibiotic Name from Master
 
-                var AntibioticData = await whonetService.GetDataList_TCWHONET_Antibiotics_Async();
+                var AntibioticData = await whonetcolumnservice.GetDataList_TCWHONET_Antibiotics_Async(new TCSTARS_AntibioticsDTO());
                 foreach (var item in AntibioticData)
                 {
-                    WHONetMasterList.Add(new WHONETColumnDTO()
+                    WHONetMasterList.Add(new STARSAutomateColumnDTO()
                     {
-                        wnc_name = item.who_ant_code
+                        stc_name = item.sta_ant_code
                     });
                 }
 
@@ -1143,7 +1141,7 @@ else
 
                 foreach (STARSWHONetMappingListsDTO item in gridWHONetDatas)
                 {
-                    var itemToRemove = WHONetMasterList.SingleOrDefault(r => r.wnc_name == item.swm_whonetfield);
+                    var itemToRemove = WHONetMasterList.SingleOrDefault(r => r.stc_name == item.swm_whonetfield);
                     if (itemToRemove != null)
                         WHONetMasterList.Remove(itemToRemove);
                 }
@@ -1225,26 +1223,25 @@ else
             gridSpecimenDatas = await mappingservice.GetSpecimenMappingListByModelAsync(searchSpecimen);
             gridOrganismDatas = await mappingservice.GetOrganismMappingListByModelAsync(searchOrganism);
 
-            WHONETColumnDTO searchWHONETColumn = new WHONETColumnDTO();
-            searchWHONETColumn.wnc_code = mappingData.smp_mst_code;
+            STARSAutomateColumnDTO searchWHONETColumn = new STARSAutomateColumnDTO();
             WHONetMasterList = await whonetcolumnservice.GetListByModelActiveAsync(searchWHONETColumn);
 
             //AntibioticDTO searchAntibiotic = new AntibioticDTO();
             //searchAntibiotic.ant_mst_code = mappingData.smp_mst_code;
             //AntibioticMasterList = await antibioticservice.GetListByModelActiveAsync(searchAntibiotic);
 
-            var AntibioticData = await whonetService.GetDataList_TCWHONET_Antibiotics_Async();
+            var AntibioticData = await whonetcolumnservice.GetDataList_TCWHONET_Antibiotics_Async(new TCSTARS_AntibioticsDTO());
             foreach (var item in AntibioticData)
             {
-                WHONetMasterList.Add(new WHONETColumnDTO()
+                WHONetMasterList.Add(new STARSAutomateColumnDTO()
                 {
-                    wnc_name = item.who_ant_code
+                    stc_name = item.sta_ant_code
                 });
             }
 
             foreach (STARSWHONetMappingListsDTO item in gridWHONetDatas)
             {
-                var itemToRemove = WHONetMasterList.SingleOrDefault(r => r.wnc_name == item.swm_whonetfield);
+                var itemToRemove = WHONetMasterList.SingleOrDefault(r => r.stc_name == item.swm_whonetfield);
                 if (itemToRemove != null)
                     WHONetMasterList.Remove(itemToRemove);
             }
@@ -1359,29 +1356,28 @@ else
                 ("ShowConfirm", "Confirm approve data.");
             if (result)
             {
-                string Param_labno = "";
+                string Param_starno = "";
                 string Param_organism = "";
                 string Param_date = "";
                 string ErrorMessage = "";
 
-                var ParameterList = await ddlDataService.GetParameterListByModelAsync("UPLOAD_KEY");
+                var ParameterList = await ddlDataService.GetParameterListByModelAsync("UPLOAD_AUTOMATE_KEY");
 
 
                 if (ParameterList.Count != 0)
                 {
-                    Param_labno = ParameterList.FirstOrDefault(x => x.prm_code_minor == "LAB_NO").prm_value;
+                    Param_starno = ParameterList.FirstOrDefault(x => x.prm_code_minor == "X_STARSNUM").prm_value;
                     Param_organism = ParameterList.FirstOrDefault(x => x.prm_code_minor == "ORGANISM").prm_value;
-                    Param_date = ParameterList.FirstOrDefault(x => x.prm_code_minor == "DATE").prm_value;
                 }
 
-                if (gridWHONetDatas.FirstOrDefault(x => x.swm_whonetfield == Param_labno) == null)
-                    ErrorMessage += "- ไม่มีการ Mapping " + Param_labno + "\n";
+                if (gridWHONetDatas.FirstOrDefault(x => x.swm_whonetfield == Param_starno) == null)
+                    ErrorMessage += "- ไม่มีการ Mapping " + Param_starno + "\n";
 
                 if (gridWHONetDatas.FirstOrDefault(x => x.swm_whonetfield == Param_organism) == null)
                     ErrorMessage += "- ไม่มีการ Mapping " + Param_organism + "\n";
 
-                if (gridWHONetDatas.FirstOrDefault(x => x.swm_whonetfield == Param_date) == null)
-                    ErrorMessage += "- ไม่มีการ Mapping " + Param_date + "\n";
+                //if (gridWHONetDatas.FirstOrDefault(x => x.swm_whonetfield == Param_date) == null)
+                //    ErrorMessage += "- ไม่มีการ Mapping " + Param_date + "\n";
 
                 if (ErrorMessage != "")
                 {
@@ -1487,10 +1483,10 @@ else
                     swm_status = 'N',
                     swm_whonetfield = _WHOnetFieldSelected,
                     swm_originalfield = _TemplateFieldSelected,
-                    swm_type = WHONetMasterList.FirstOrDefault(w => w.wnc_name == _WHOnetFieldSelected).wnc_data_type,
-                    swm_fieldformat = WHONetMasterList.FirstOrDefault(w => w.wnc_name == _WHOnetFieldSelected).wnc_date_format,
-                    swm_encrypt = WHONetMasterList.FirstOrDefault(w => w.wnc_name == _WHOnetFieldSelected).wnc_encrypt,
-                    swm_mandatory = WHONetMasterList.FirstOrDefault(w => w.wnc_name == _WHOnetFieldSelected).wnc_mendatory,
+                    swm_type = WHONetMasterList.FirstOrDefault(w => w.stc_name == _WHOnetFieldSelected).stc_data_type,
+                    swm_fieldformat = WHONetMasterList.FirstOrDefault(w => w.stc_name == _WHOnetFieldSelected).stc_date_format,
+                    swm_encrypt = WHONetMasterList.FirstOrDefault(w => w.stc_name == _WHOnetFieldSelected).stc_encrypt,
+                    swm_mandatory = WHONetMasterList.FirstOrDefault(w => w.stc_name == _WHOnetFieldSelected).stc_mendatory,
                     swm_createuser = mainLayout.loginUser.Username,
                     swm_updateuser = mainLayout.loginUser.Username
                 };
@@ -1545,7 +1541,7 @@ else
             var result = await mappingservice.SaveWHONetMappingDataAsync(objWHONetMapping);
             if (result.swm_status == 'N')
             {
-                WHONetMasterList.Remove(WHONetMasterList.Single(s => s.wnc_name == _WHOnetFieldSelected));
+                WHONetMasterList.Remove(WHONetMasterList.Single(s => s.stc_name == _WHOnetFieldSelected));
                 _WHOnetFieldSelected = "";
 
                 if (_isAntibioticField == false)
@@ -1558,7 +1554,7 @@ else
             }
             else if (result.swm_status == 'E' && result.swm_flagdelete == true)
             {
-                WHONetMasterList.Add(new WHONETColumnDTO() { wnc_name = result.swm_whonetfield });
+                WHONetMasterList.Add(new STARSAutomateColumnDTO() { stc_name = result.swm_whonetfield });
             }
 
             ControlPopup("WHONET", false);

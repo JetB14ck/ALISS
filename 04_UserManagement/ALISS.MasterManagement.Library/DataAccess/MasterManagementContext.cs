@@ -36,6 +36,8 @@ namespace ALISS.MasterManagement.Library.DataAccess
 
         public DbSet<TCWardType> TCWardTypes { get; set; }
         public DbSet<TCWHONETColumn> TCWHONETColumns { get; set; }
+        public DbSet<TCSTARSAutomateColumn> TCSTARSAutomateColumns { get; set; }
+        public DbSet<TCSTARS_AntibioticsDTO> TCSTARS_AntibioticsDTOs { get; set; }
         public DbSet<TCProcessExcelColumnDTO> TCProcessExcelColumnDTOs { get; set; }
         public DbSet<TCProcessExcelRowDTO> TCProcessExcelRowDTOs { get; set; }
         public DbSet<TCProcessExcelTemplateDTO> TCProcessExcelTemplateDTOs { get; set; }
@@ -87,6 +89,12 @@ namespace ALISS.MasterManagement.Library.DataAccess
 
             builder.Entity<TCWHONETColumn>().HasKey(x => x.wnc_id);
             builder.Entity<TCWHONETColumn>().ToTable("TCWHONETColumn");
+
+            builder.Entity<TCSTARSAutomateColumn>().HasKey(x => x.stc_id);
+            builder.Entity<TCSTARSAutomateColumn>().ToTable("TCSTARS_Column");
+
+            builder.Entity<TCSTARS_AntibioticsDTO>().HasKey(x => x.sta_ant_id);
+            builder.Entity<TCSTARS_AntibioticsDTO>().ToTable("TCSTARS_Antibiotics");
 
             builder.Entity<TCProcessExcelColumnDTO>().HasKey(x => x.pec_id);
             builder.Entity<TCProcessExcelColumnDTO>().ToTable("TCProcessExcelColumn");

@@ -29,6 +29,8 @@ namespace ALISS.MasterManagement.Library.AutoMapperConfiguration
                 .ReverseMap();
             CreateMap<TCWHONETColumn, WHONETColumnDTO>()
                 .ReverseMap();
+            CreateMap<TCSTARSAutomateColumn, STARSAutomateColumnDTO>()
+               .ReverseMap();
         }
     }
 }

@@ -12,16 +12,16 @@ namespace ALISS.STARS.DTO
         public bool? ssm_flagdelete { get; set; }
         public Guid ssm_mappingid { get; set; }
 
-        [Required (ErrorMessage = "WHONet Code is required")]
-        [StringLength(50, ErrorMessage = "WHONet Code is too long.")]
+        //[Required (ErrorMessage = "WHONet Code is required")]
+        //[StringLength(50, ErrorMessage = "WHONet Code is too long.")]
         public string ssm_whonetcode { get; set; }
 
-        [Required(ErrorMessage = "Source is required")]
-        [StringLength(50, ErrorMessage = "Source is too long.")]
+        [Required(ErrorMessage = "Specimen Code is required")]
+        [StringLength(50, ErrorMessage = "Specimen Code is too long.")]
         public string ssm_localspecimencode { get; set; }
 
-        [Required(ErrorMessage = "CSource is required")]
-        [StringLength(200, ErrorMessage = "CSource is too long.")]
+        [Required(ErrorMessage = "Specimen Description is required")]
+        [StringLength(200, ErrorMessage = "Specimen Description is too long.")]
         public string ssm_localspecimendesc { get; set; }
         public string ssm_createuser { get; set; }
         public DateTime? ssm_createdate { get; set; }

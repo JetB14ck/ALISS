@@ -6,6 +6,7 @@ using ALISS.STARS.DTO;
 using ALISS.STARS.Library.Models;
 using ALISS.MasterManagement.Library.Models;
 using ALISS.LabFileUpload.DTO;
+using ALISS.STARS.DTO.RepeatAutomate;
 
 namespace ALISS.STARS.Library.DataAccess
 {
@@ -40,6 +41,7 @@ namespace ALISS.STARS.Library.DataAccess
 
         #endregion
 
+
         #region Upload Automate
 
         public DbSet<TRAutomateUploadFile> TRAutomateUploadFiles { get; set; }
@@ -53,7 +55,7 @@ namespace ALISS.STARS.Library.DataAccess
         #endregion
 
         #region STARS Personal Report
-        
+
         public DbSet<STARSPersonalReportDataDTO> STARSPersonalReportDataDTOs { get; set; }
         public DbSet<STARSPersonalReportExportDTO> STARSPersonalReportExportDTOs { get; set; }
         public DbSet<STARSPersonalReportListDTO> STARSPersonalReportListDTOs { get; set; }
@@ -62,6 +64,10 @@ namespace ALISS.STARS.Library.DataAccess
         public DbSet<STARSAntibioticListDTO> STARSAntibioticListDTOs { get; set; }
         public DbSet<StarsAutomateResultDTO> StarsAutomateResultDTOs { get; set; }
 
+        #endregion
+
+        #region  Upload Automate & Repeat
+        public DbSet<RepeatAutomateDataDTO> RepeatAutomateDTOs { get; set; }
         #endregion
 
         public STARSContext(DbContextOptions<STARSContext> options) : base(options)
@@ -111,7 +117,6 @@ namespace ALISS.STARS.Library.DataAccess
 
             #endregion
 
-
             #region Upload Automate
 
             builder.Entity<UploadAutomateDataDTO>().HasKey(x => x.afu_id);
@@ -147,6 +152,13 @@ namespace ALISS.STARS.Library.DataAccess
             builder.Entity<TRSTARSPersonalReport>().HasKey(x => x.srp_id);
             builder.Entity<TRSTARSPersonalReport>().ToTable("TRStarsPersonalReport");
 
+            #endregion
+
+            #region Upload Automate & Repeat
+            builder.Entity<TRAutomateUploadFile>().HasKey(x => x.afu_id);
+            builder.Entity<TRAutomateUploadFile>().ToTable("TRAutomateUploadFile");
+
+            builder.Entity<RepeatAutomateDataDTO>().HasNoKey();
             #endregion
 
             builder.Entity<LogProcess>().HasKey(x => x.log_id);

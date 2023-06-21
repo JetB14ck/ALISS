@@ -24,6 +24,7 @@ namespace ALISS.STARS.Library.Models
         public string srr_name { get; set; }
         public string srr_age { get; set; }
         public string srr_sex { get; set; }
+        public int srr_afu_id { get; set; }
         public string srr_local_labno { get; set; }
         public string srr_local_organism { get; set; }
         public string srr_ident_org_code { get; set; }
@@ -31,6 +32,8 @@ namespace ALISS.STARS.Library.Models
         public string srr_local_specimen { get; set; }
         public string srr_ident_spec_code { get; set; }
         public string srr_ident_spec_name { get; set; }
+        public int srr_mi_id { get; set; }
+        public int srr_ma_id { get; set; }
         public string srr_testuser { get; set; }
         public DateTime? srr_testdate { get; set; }
         public string srr_approveuser { get; set; }

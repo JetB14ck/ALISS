@@ -428,6 +428,28 @@
         }
       ],
       "UpstreamPathTemplate": "/personal_report_api/{everything}"
+    },
+    {
+      "DownstreamPathTemplate": "/api/RepeatAutomate/{everything}",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": "44329"
+        }
+      ],
+      "UpstreamPathTemplate": "/repeat_automate_api/{everything}"
+    },
+    {
+      "DownstreamPathTemplate": "/api/STARSColumn/{everything}",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": "44314"
+        }
+      ],
+      "UpstreamPathTemplate": "/starcolumn_api/{everything}"
     }
   ],
   "GlobalConfiguration": {

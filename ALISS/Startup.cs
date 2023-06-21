@@ -42,6 +42,7 @@ using Microsoft.AspNetCore.Http;
 using BlazorDownloadFile;
 using System.Net.WebSockets;
 using ALISS.Data.D7_StarsMapping.MasterManagement;
+using ALISS.Data.D7_StarsRepeat;
 
 namespace ALISS
 {
@@ -165,6 +166,7 @@ namespace ALISS
             services.AddScoped<StarsSpecimenService>();
             services.AddScoped<StarsWHONETColumnService>();
             services.AddScoped<ReceiveSampleService>();
+            services.AddScoped<RepeatAutomateService>();
             services.AddScoped<UploadAutomateService>();
             services.AddScoped<STARSPersonalReportService>();
 

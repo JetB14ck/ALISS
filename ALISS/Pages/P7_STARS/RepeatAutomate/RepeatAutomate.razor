@@ -1,0 +1,713 @@
+﻿@page "/RepeatAutomate"
+
+@using ALISS.Data.D7_StarsRepeat
+@using ALISS.Data
+@using ALISS.STARS.DTO
+@using ALISS.Data.D1_Upload
+
+@using Radzen
+@using Radzen.Blazor
+@using System.IO;
+@using ALISS.STARS.DTO.RepeatAutomate;
+
+@inject IJSRuntime jsRuntime
+@inject NavigationManager navigationManager
+@inject RepeatAutomateService RepeatService
+@inject DropDownListDataService ddlDataService
+@inject ConfigDataService configDataService
+@inject IBlazorDownloadFileService downloadService
+
+<div style="width: 90%;">
+    <div class="divHead">
+        Repeat Automate
+    </div>
+</div>
+
+@if (gridDatas == null)
+{
+    <p><em>Loading...</em></p>
+    <Loading ShowModel="true" />
+}
+else
+{
+    <div class="container inputArea">
+        <div class="row justify-content-between">
+            <div class="col-12 col-xl-4">
+                <div class="row justify-content-center divGroup">
+                    <div class="@classLabel">
+                        <LabelBox inputLabel="@configData.Get_Label("AreaHealth")" />
+                    </div>
+                    <div class="@classInput">
+                        <RadzenDropDown @bind-Value="searchModel.arh_code" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+                                        AllowClear="true" TValue="string" AllowFiltering="true" Placeholder="Select..."
+                                        Data="lab_ddl_List.Select(x => new { x.arh_code, x.arh_name }).Distinct().OrderBy(o=>o.arh_code)" ValueProperty="arh_code" TextProperty="arh_name"
+                                        Disabled="(!string.IsNullOrEmpty(mainLayout.loginUser.arh_code))"
+                                        Change="@(args => DDL_Change("Arh", args))"/>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 col-xl-4">
+                <div class="row justify-content-center divGroup">
+                    <div class="@classLabel">
+                        <LabelBox inputLabel="@configData.Get_Label("RepeatDateFrom")" />
+                    </div>
+                    <div class="@classInput">
+                        <RadzenDatePicker @bind-Value=@RepeatFrom ShowTime="false" ShowSeconds="false" DateFormat="dd/MM/yyyy" />
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 col-xl-4">
+                <div class="row justify-content-center divGroup">
+                    <div class="@classLabel">
+                        <LabelBox inputLabel="@configData.Get_Label("RepeatDateTo")" />
+                    </div>
+                    <div class="@classInput">
+                        <RadzenDatePicker @bind-Value=@RepeatTo ShowTime="false" ShowSeconds="false" DateFormat="dd/MM/yyyy" />
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 col-xl-4">
+                <div class="row justify-content-center divGroup">
+                    <div class="@classLabel">
+                        <LabelBox inputLabel="@configData.Get_Label("Status")" />
+                    </div>
+                    <div class="@classInput">
+                        <RadzenDropDown @bind-Value="searchModel.repeat_status" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+                                        AllowClear="true" TValue="string" AllowFiltering="true" Placeholder="Select..."
+                                        Data="ss.Select(x => new { x.status_code, x.status_name }).Distinct()" ValueProperty="status_code" TextProperty="status_name" />
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 col-xl-4">
+                <div class="row justify-content-center divGroup">
+                    <div class="@classLabel">
+                        <LabelBox inputLabel="@configData.Get_Label("TesingDateFrom")" />
+                    </div>
+                    <div class="@classInput">
+                        <RadzenDatePicker @bind-Value=@TesingFrom ShowTime="false" ShowSeconds="false" DateFormat="dd/MM/yyyy" />
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 col-xl-4">
+                <div class="row justify-content-center divGroup">
+                    <div class="@classLabel">
+                        <LabelBox inputLabel="@configData.Get_Label("TesingDateTo")" />
+                    </div>
+                    <div class="@classInput">
+                        <RadzenDatePicker @bind-Value=@TestingTo ShowTime="false" ShowSeconds="false" DateFormat="dd/MM/yyyy" />
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 col-xl-4">
+                <div class="row justify-content-center divGroup">
+                    @*<div class="@classLabel">
+                            <LabelBox inputLabel="@configData.Get_Label("lfu_lab")" />
+                        </div>
+                        <div class="@classInput">
+                            <RadzenDropDown @bind-Value="searchModel.lfu_lab" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowClear="true" TValue="string" AllowFiltering="true" Placeholder="Select..." Data="lab_ddl_List.Where(x => x.hos_code == searchModel.lfu_Hos)" ValueProperty="lab_code" TextProperty="lab_name" Change="@(args => DDL_Change("Lab", args))" />
+                        </div>*@
+                </div>
+            </div>
+
+
+            <div class="col-12 col-xl-4">
+                <div class="row justify-content-center divGroup buttonArea">
+                    <div class="col-auto">
+                        <RadzenButton class="btnSearch" Text="Search" Click="SearchData" />
+                    </div>
+                    <div class="col-auto">
+                        <RadzenButton class="btnClear" Text="Clear" Click="ClearInboxData" />
+                    </div>
+                </div>
+            </div>
+
+
+        </div>
+    </div>
+
+    <hr />
+
+    <div>
+        <div class="container">
+            <div class="row justify-content-start">
+                <div class="col-auto">
+                    <RadzenButton class="btnAdd" Icon="print" Text="Print STARS Barcode" Click="ExportBarcode" />
+                </div>
+                <div class="col-auto">
+                    <RadzenButton class="btnAdd" Icon="list" Text="Print Logbook" Click="ExportLogbook" />
+                </div>
+            </div>
+
+            <div class="row justify-content-end">
+                <div class="col-auto">
+                    @*<RadzenButton class="btnCancel" Text="Cancel" Click="@(() => ControlPopup("UploadEntry",false))" />*@
+                </div>
+                <div class="col-auto">
+                    <RadzenButton Icon="save" class="btnAdd" Text="Upload Repeat Automate" 
+                                  Click="@(() => ControlPopup("UploadEntry",true))" Disabled="@(FileData.afu_arh_code != null ? false : true)"/>
+                </div>
+            </div>
+        </div>
+    </div>
+    <br />
+    <br />
+    <div style="width:100%;margin:0px auto;">
+        <div class="container">
+            <div class="row justify-content-end">
+                <div class="col-auto">
+                    <label>Rows : </label>
+                </div>
+                <div class="col-auto">
+                    <RadzenDropDown @bind-Value="inboxGrid.PageSize" TValue="int" AllowFiltering="true" Data="inboxGrid.PageSizeOption" Change="SearchData" Style="width:50px" />
+                </div>
+            </div>
+        </div>
+        <RadzenGrid AllowFiltering="true" AllowSorting="true" AllowPaging="true" Style="max-width: 1597px"
+                    PageSize="inboxGrid.PageSize" @ref="inboxGrid.radzenGrid" Data="@gridDatas" TItem="RepeatAutomateDataDTO"
+                    FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+                    AllowColumnResize="true">
+            <Columns>
+                <RadzenGridColumn TItem="RepeatAutomateDataDTO" Property="afu_id" Width="50px" Filterable="false" Sortable="false">
+                    <HeaderTemplate>
+                        <RadzenCheckBox TriState="false" TValue="bool" Value="@(gridDatas.Any(i => selectedRow != null && selectedRow.Contains(i.srr_starsno_ref)))"
+                                        Change="@(args => selectedRow = args ? gridDatas.Select(x => x.srr_starsno_ref).ToList() : null)" />
+                    </HeaderTemplate>
+                    <Template Context="data">
+                        <RadzenCheckBox TriState="false" Value="@(selectedRow != null && selectedRow.Contains(data.srr_starsno_ref))"
+                                        TValue="bool" Change=@(args => { OnGridRowSelected(data); }) />
+                    </Template>
+                </RadzenGridColumn>
+                <RadzenGridColumn TItem="RepeatAutomateDataDTO" Property="srr_starsno" Title="STARS No." Width="120px" />
+                <RadzenGridColumn TItem="RepeatAutomateDataDTO" Property="srr_starsno_ref" Title="STARS No. Ref" Width="120px">
+                    <FooterTemplate>
+                        <label title="@inboxGrid.FooterLabelString">@inboxGrid.FooterLabelString</label>
+                    </FooterTemplate>
+                </RadzenGridColumn>
+
+                <RadzenGridColumn TItem="RepeatAutomateDataDTO" Width="80px" Property="afu_repeatdate_str" Title="Repeat Date" />
+                <RadzenGridColumn TItem="RepeatAutomateDataDTO" Width="80px" Property="srr_tatdate" Title="TAT Date" />
+                <RadzenGridColumn TItem="RepeatAutomateDataDTO" Width="100px" Property="susp_organism" Title="Suspected Organism" />
+                <RadzenGridColumn TItem="RepeatAutomateDataDTO" Width="100px" Property="susp_spec_type" Title="Specimen Type" />
+
+                <RadzenGridColumn TItem="RepeatAutomateDataDTO" Width="140px" Property="srr_ident_organism" Title="Organism" />
+                <RadzenGridColumn TItem="RepeatAutomateDataDTO" Width="70px" Property="method_ident" Title="Method Identification" />
+                <RadzenGridColumn TItem="RepeatAutomateDataDTO" Width="110px" Property="afu_status_str" Title="Status" />
+                <RadzenGridColumn TItem="RepeatAutomateDataDTO" Width="80px" Property="afu_repeatuser" Title="Repeat By" />
+                <RadzenGridColumn TItem="RepeatAutomateDataDTO" Width="100px" Property="afu_filename" Title="Automate File Name" />
+                <RadzenGridColumn TItem="RepeatAutomateDataDTO" Width="50px" Context="data">
+                    <Template>
+                        <RadzenButton Icon="get_app" Style="background: #0A6839" Click="@(() => NavigateToDownloadFile(data))" />
+                    </Template>
+                </RadzenGridColumn>
+
+                <RadzenGridColumn TItem="RepeatAutomateDataDTO" Width="80px" Property="afu_createuser" Title="Upload By" />
+                <RadzenGridColumn TItem="RepeatAutomateDataDTO" Width="100px" Property="afu_createdate" Title="Upload Date" />
+
+            </Columns>
+        </RadzenGrid>
+    </div>
+
+}
+
+@if (ShowUploadPopup == true)
+{
+    <div class="modal" tabindex="-1" style="display:block;" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                </div>
+                <div class="modal-body">
+                    <EditForm Model="@FileData" OnValidSubmit="()=> ValidateFile()">
+                        <DataAnnotationsValidator />
+                        <div class="container inputArea">
+                            <div class="row">
+
+                                <div class="col-12">
+                                    <div class="row justify-content-center divGroup">
+                                        <div class="col">
+                                            <LabelBox inputLabel="@configData.Get_Label("AreaHealth")" />
+                                        </div>
+                                        <div class="col">
+                                            <RadzenDropDown @bind-Value="searchModel.arh_code" Disabled="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowClear="true" TValue="string" AllowFiltering="true" Placeholder="Select..." Data="lab_ddl_List" TextProperty="arh_name" ValueProperty="arh_code" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-12">
+                                    <div class="row justify-content-center divGroup">
+                                        <div class="col">
+                                            <LabelBox inputLabel="@configData.Get_Label("Machine")" />
+                                        </div>
+                                        <div class="col">
+                                            <RadzenDropDown @bind-Value="FileData.afu_machinetype" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowClear="true" TValue="string" AllowFiltering="true" Placeholder="Select..."
+                                                            Data="machineType_ddl_List" ValueProperty="data_Value" TextProperty="data_Value" />
+                                        </div>
+                                    </div>
+                                </div>
+
+                                @if (FileData.afu_machinetype != "")
+                                {
+                                    <div class="col-12">
+                                        <div class="row justify-content-center divGroup">
+                                            <div class="col">
+                                                <LabelBox inputLabel="Upload Lab File" />
+                                            </div>
+                                            <div class="col">
+                                                <InputFile OnChange="OnInputFileChange"></InputFile>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-12">
+                                        <div class="row justify-content-center divGroup">
+                                            <div class="col">
+                                                @*<LabelBox inputLabel="Upload Lab File" />*@
+                                            </div>
+                                            <div class="col" style="font-size:small">
+                                                <label>(ไฟล์ต้องมีขนาดไม่เกิน 500MB)</label>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    @if (selectedFiles != null)
+                                    {
+                                        <div class="col-12">
+                                            <div class="row justify-content-center divGroup">
+                                                <div class="col">
+                                                    <LabelBox inputLabel="@configData.Get_Label("Filename")" />
+                                                </div>
+                                                <div class="col">
+                                                    <label>@selectedFiles.Name</label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-12">
+                                            <div class="row justify-content-center divGroup">
+                                                <div class="col">
+                                                    <div>@LargeUploadMessage</div>
+                                                    <progress style="height:50px;width:100%;" value="@UploadedBytes" max="@TotalBytes"></progress>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    }
+                                }
+                                }
+                            </div>
+
+
+                            <div class="row justify-content-center">
+                                <div class="col-xl-12">
+                                    <div class="row justify-content-center divGroup buttonArea">
+                                        <div class="col-auto">
+                                            <RadzenButton class="btnCancel" Text="Cancel" Click="@(() => ControlPopup("UploadEntry",false))" />
+                                        </div>
+                                        <div class="col-auto">
+                                            <RadzenButton Icon="save" ButtonType="ButtonType.Submit" class="btnSave" Text="Upload"
+                                                          disabled="@(selectedFiles == null ? true : false)" />
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </EditForm>
+                </div>
+
+            </div>
+        </div>
+    </div>
+}
+
+<Loading ShowModel="showModal" />
+@code {
+    [CascadingParameter] MainLayout mainLayout { get; set; }
+    private const string MENU_CODE = "MNU_0804";
+    private ConfigData configData = new ConfigData();
+    private string classLabel = "col-4";
+    private string classInput = "col-8";
+
+    private RadzenGridCustom<RepeatAutomateDataDTO> inboxGrid = new RadzenGridCustom<RepeatAutomateDataDTO>();
+
+    private List<HospitalLabDataDTO> lab_ddl_List;
+    private List<ParameterDTO> ParameterList;
+    private List<RepeatAutomateDataDTO> gridDatas;
+    private List<DropDownListDTO> machineType_ddl_List;
+    private bool ShowUploadPopup = false;
+    RepeatAutomateDataDTO FileData = new RepeatAutomateDataDTO();
+    private IBrowserFile selectedFiles;
+    string LargeUploadMessage = "";
+    long UploadedBytes;
+    long TotalBytes;
+
+    private bool showModal = false;
+    DateTime? RepeatFrom = DateTime.Now.AddDays(-5);
+    DateTime? RepeatTo = DateTime.Now;
+    DateTime? TesingFrom = DateTime.Now.AddDays(-5);
+    DateTime? TestingTo = DateTime.Now;
+    private List<string> selectedRow = new List<string>();
+    private class StatusList
+    {
+        public string status_code { get; set; }
+        public string status_name { get; set; }
+    }
+
+
+    StatusList[] ss = new StatusList[]
+    {
+    new StatusList
+    {
+        status_code = "W",
+        status_name = "Wait-Inspect"
+    },
+        new StatusList
+    {
+        status_code = "P",
+        status_name = "Processing"
+    },
+        new StatusList
+    {
+        status_code = "R",
+        status_name = "Repeat Automate"
+    },
+        new StatusList
+    {
+        status_code = "C",
+        status_name = "Cancel"
+    },
+    };
+
+
+    RepeatAutomateSearchDTO searchModel = new RepeatAutomateSearchDTO();
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await mainLayout.GetLoginUser();
+
+            if (mainLayout.loginUser.CheckPagePermission(MENU_CODE) == false) navigationManager.NavigateTo("/NoPermissionPage");
+
+            configData.ConfigDTOList = await configDataService.Get_TBConfig_DataList_Async(new TBConfigDTO() { tbc_mnu_code = MENU_CODE });
+            ParameterList = await ddlDataService.GetParameterListByModelAsync(new ParameterDTO() { prm_code_major = "REPEAT_AUTOMATE" });
+
+            var searchData = new HospitalLabDataDTO()
+            {
+                arh_code = searchModel.arh_code = mainLayout.loginUser.arh_code,
+            };
+            var mm = new DropDownListDTO();
+            lab_ddl_List = await ddlDataService.GetAllLabListByModelAsync(searchData);
+            machineType_ddl_List = await ddlDataService.GetMachineTypeListByModelAsync(mm);
+
+            searchModel.repeat_start_date = RepeatFrom;
+            searchModel.repeat_end_date = RepeatTo;
+            searchModel.testing_start_date = TesingFrom;
+            searchModel.testing_end_date = TestingTo;
+
+            gridDatas = await RepeatService.GetRepeatAutomateListByParamAsync(searchModel);
+        }
+    }
+
+    private async void SearchData()
+    {
+        showModal = true;
+
+        searchModel.repeat_start_date = RepeatFrom;
+        searchModel.repeat_end_date = RepeatTo;
+        searchModel.testing_start_date = TesingFrom;
+        searchModel.testing_end_date = TestingTo;
+        gridDatas = await RepeatService.GetRepeatAutomateListByParamAsync(searchModel);
+        if (inboxGrid.radzenGrid != null) inboxGrid.radzenGrid.GoToPage(0);
+        showModal = false;
+        StateHasChanged();
+
+    }
+
+    private async void ClearInboxData()
+    {
+        searchModel.arh_code = mainLayout.loginUser.arh_code;
+        searchModel.repeat_start_date = DateTime.Now;
+        searchModel.repeat_end_date = DateTime.Now;
+        searchModel.testing_start_date = DateTime.Now;
+        searchModel.testing_end_date = DateTime.Now;
+        searchModel.repeat_status = null;
+
+        selectedRow = new List<string>();
+        SearchData();
+    }
+
+    private async Task ExportBarcode()
+    {
+        try
+        {
+            if (selectedRow.Count() > 0)
+            {
+                string tempPath = ParameterList.FirstOrDefault(x => x.prm_code_minor == "REPEAT_AUTOMATE_BARCODE_PATH").prm_value;
+                RepeatService.ExportBarcode(jsRuntime, gridDatas.Where(x => selectedRow.Any(s => s.Contains(x.srr_starsno_ref))).ToList(), tempPath);
+            }
+            else
+            {
+                await jsRuntime.InvokeAsync<object>("ShowAlert", "กรุณาเลือกอย่างน้อย 1 รายการ");
+            }
+
+        }
+        catch (Exception ex)
+        {
+            await jsRuntime.InvokeAsync<object>("ShowAlert", ex.Message);
+        }
+    }
+
+    private async Task ExportLogbook()
+    {
+        try
+        {
+            if (selectedRow.Count() > 0)
+            {
+                string tempPath = ParameterList.FirstOrDefault(x => x.prm_code_minor == "REPEAT_AUTOMATE_LOGBOOK_PATH").prm_value;
+                RepeatService.ExportLogbook(jsRuntime, gridDatas.Where(x => selectedRow.Any(s => s.Contains(x.srr_starsno_ref))).ToList(), tempPath);
+            }
+            else
+            {
+                await jsRuntime.InvokeAsync<object>("ShowAlert", "กรุณาเลือกอย่างน้อย 1 รายการ");
+            }
+
+        }
+        catch (Exception ex)
+        {
+            await jsRuntime.InvokeAsync<object>("ShowAlert", ex.Message);
+        }
+    }
+
+    private async Task NavigateToDownloadFile(RepeatAutomateDataDTO file)
+    {
+
+        var FullPath = file.afu_path;
+        if (File.Exists(FullPath))
+        {
+            byte[] bytes = File.ReadAllBytes(FullPath);
+            await downloadService.DownloadFile(file.afu_filename, bytes, "application/octet-stream");
+        }
+        else
+        {
+            await jsRuntime.InvokeAsync<object>("ShowAlert", "File not Found");
+        }
+
+
+    }
+
+    private async Task OpenRepeatAutomateDetail(string id)
+    {
+
+        navigationManager.NavigateTo("RepeatAutomateDetail/" + id);
+
+    }
+
+    private void OnGridRowSelected(RepeatAutomateDataDTO row)
+    {
+        selectedRow = selectedRow ?? new List<string>();
+        if (!selectedRow.Contains(row.srr_starsno_ref))
+            selectedRow.Add(row.srr_starsno_ref);
+        else if (selectedRow.Contains(row.srr_starsno_ref))
+            selectedRow.Remove(row.srr_starsno_ref);
+    }
+
+    private async Task ControlPopup(string type, bool control)
+    {
+        ShowUploadPopup = control;
+
+        if (control == false)
+        {
+            selectedFiles = null;
+            //LabFileData.lfu_Program = null;
+            //LabFileData.lfu_FileType = null;
+        }
+
+    }
+
+    private async Task ValidateFile()
+    {
+        string confirmMessage = "";
+        confirmMessage = "Confirm upload data." + "\n" + " File Name: " + selectedFiles.Name + "\n";
+
+        var result = await jsRuntime.InvokeAsync<bool>("ShowConfirm", confirmMessage);
+        if (result == false)
+        {
+            return;
+        }
+        showModal = true;
+
+        string str_CurrentDate = DateTime.Now.ToString("yyyyMMdd");
+
+        string filepath = await RepeatService.GetPath();
+        filepath = Path.Combine(filepath, searchModel.arh_code, str_CurrentDate);
+        bool exists = System.IO.Directory.Exists(filepath);
+
+        if (!exists)
+            System.IO.Directory.CreateDirectory(filepath);
+
+        var filename = Path.Combine(filepath, selectedFiles.Name);
+
+        UploadedBytes = 0;
+
+        TotalBytes = selectedFiles.Size;
+
+        long percent = 0;
+        long chunckSize = 400000;
+        long numChunks = TotalBytes / chunckSize;
+        long remainder = TotalBytes % chunckSize;
+
+        if (File.Exists(filename)) File.Delete(filename);
+
+        using (var inStream = selectedFiles.OpenReadStream(long.MaxValue))
+        {
+            using (var outStream = File.OpenWrite(filename))
+            {
+                for (int i = 0; i < numChunks; i++)
+                {
+                    var buffer = new byte[chunckSize];
+                    await inStream.ReadAsync(buffer, 0, buffer.Length);
+
+                    await outStream.WriteAsync(buffer, 0, buffer.Length);
+
+                    UploadedBytes += chunckSize;
+
+                    percent = UploadedBytes * 100 / TotalBytes;
+
+                    LargeUploadMessage = $"กำลังอัปโหลดไฟล์ {percent}%";
+
+                    await InvokeAsync(StateHasChanged);
+                }
+
+                if (remainder > 0)
+                {
+                    var buffer = new byte[remainder];
+                    await inStream.ReadAsync(buffer, 0, buffer.Length);
+
+                    await outStream.WriteAsync(buffer, 0, buffer.Length);
+
+                    UploadedBytes += remainder;
+
+                    percent = UploadedBytes * 100 / TotalBytes;
+
+                    LargeUploadMessage = $"กำลังอัปโหลดไฟล์ {percent}%";
+
+                    await InvokeAsync(StateHasChanged);
+                }
+            }
+        }
+
+        LargeUploadMessage = "กำลังตรวจสอบไฟล์ ...";
+        await InvokeAsync(StateHasChanged);
+
+        var strMappingId = machineType_ddl_List.Find(x => x.data_Text == FileData.afu_machinetype).data_id;
+        Guid mappingId = new Guid(strMappingId);
+        FileData.afu_smp_id = mappingId;
+        var chkValidate = await RepeatService.ValidateLabFileAsync(filepath, selectedFiles.Name, mappingId);
+
+        LargeUploadMessage = "อัปโหลดเรียบร้อยแล้ว";
+        await InvokeAsync(StateHasChanged);
+        int totalRec = 0;
+
+        if (chkValidate != null)
+        {
+            string ErrorMessage = "";
+            foreach (AutomateFileUploadErrorMessageDTO item in chkValidate)
+            {
+                if (item.afu_status == 'I' && item.afu_Err_Column == "Total")
+                {
+                    Int32.TryParse(item.afu_Err_Message, out totalRec);
+                    ////ErrorMessage += "Total Record(s) = " + totalRec + "\n";
+                    ErrorMessage += "Total Record(s) = " + String.Format("{0:n0}", totalRec) + "\n";
+                }
+                else if (item.afu_status == 'E')
+                    ErrorMessage += "- " + item.afu_Err_Message + "\n";
+            }
+
+            await jsRuntime.InvokeAsync<object>("ShowAlert", ErrorMessage);
+        }
+
+        var chkError = chkValidate.FirstOrDefault(x => x.afu_status == 'E');
+
+        if (chkError == null)
+        {
+            var path = chkValidate.FirstOrDefault(x => x.afu_status == 'I' && x.afu_Err_Column == "path").afu_Err_Message;
+            await UploadFile(FileData.afu_smp_id, totalRec, path);
+            await ControlPopup("UploadEntry", false);
+            showModal = false;
+
+            SearchData();
+            StateHasChanged();
+
+        }
+        else
+        {
+            showModal = false;
+            return;
+        }
+
+        UploadedBytes = 0;
+        TotalBytes = 0;
+        LargeUploadMessage = "";
+    }
+
+    private async Task UploadFile(Guid mapping_id, int TotalRec, string path)
+    {
+
+        RepeatAutomateDataDTO RepeatFileUpload = new RepeatAutomateDataDTO();
+
+        RepeatFileUpload.afu_smp_id= mapping_id;
+
+        RepeatFileUpload.afu_arh_code = FileData.afu_arh_code;
+        RepeatFileUpload.afu_machinetype = FileData.afu_machinetype;//machineType_ddl_List.Find(x => x.data_id == mapping_id.ToString()).data_Text;
+        RepeatFileUpload.afu_filename = selectedFiles.Name;
+        RepeatFileUpload.afu_path = path;
+        RepeatFileUpload.afu_totalrecord = TotalRec;
+        RepeatFileUpload.afu_repeat_flag = true;
+        RepeatFileUpload.afu_status = "N";
+
+        RepeatFileUpload.afu_createuser = mainLayout.loginUser.Username;
+        RepeatFileUpload.afu_repeatuser = mainLayout.loginUser.Username;
+
+        var x = await RepeatService.UploadFileAsync(RepeatFileUpload);
+
+    }
+
+
+    private async Task OnInputFileChange(InputFileChangeEventArgs e)
+    {
+
+        selectedFiles = e.File;
+
+        var type = Path.GetExtension(selectedFiles.Name).ToLower();
+        if (type != ".xlsx" && type != ".xls" && type != ".csv" && type != ".txt" )
+        {
+            await jsRuntime.InvokeAsync<object>("ShowAlert", "ไม่สามารถ Upload ไฟล์ประเภท " + type + "ได้ (ระบบรองรับ .xlsx .xls .csv .txt เท่านั้น)");
+            selectedFiles = null;
+            return;
+        }
+
+        long maxFileSize = 1024L; // 1KB
+        maxFileSize *= 1024L; // 1MB
+        maxFileSize *= 512L; // 0.5GB
+
+        if (selectedFiles.Size > maxFileSize)
+        {
+            await jsRuntime.InvokeAsync<object>("ShowAlert", "ไม่สามารถ Upload ไฟล์ ขนาดมากกว่า 500MB ได้");
+            selectedFiles = null;
+            return;
+        }
+    }
+
+    private void DDL_Change(string ddl_name, object value)
+    {
+        if (ddl_name == "Arh" && value == null)
+        {
+            FileData.afu_arh_code = null;
+        }
+        else
+        {
+            FileData.afu_arh_code = value.ToString();
+        }
+        StateHasChanged();
+    }
+}

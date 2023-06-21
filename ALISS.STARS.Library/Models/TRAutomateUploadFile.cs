@@ -13,6 +13,10 @@ namespace ALISS.STARS.Library.Models
         public string afu_path { get; set; }
         public int afu_totalrecord { get; set; }
         public int afu_errorrecord { get; set; }
+        public int afu_repeat_automaterecord { get; set; }
+        public int afu_repeat_generecord { get; set; }
+        public int  afu_wait_approverecord { get; set; }
+        public int afu_approverecord { get; set; }
         public Guid? afu_smp_id { get; set; }
         public string afu_status { get; set; }
         public bool? afu_repeat_flag { get; set; }

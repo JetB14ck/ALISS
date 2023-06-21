@@ -742,10 +742,11 @@ else
             mappingSearch.mp_filetype = null;
         }
 
+
         var MappingTemplate = new MappingDataDTO();
         MasterTemplateDTO ActiveMasterTemplate = await masterTemplateService.GetListByModelActiveAsync(searchMasterTemplate);
 
-        if (LabFileData.lfu_Program != "MLAB")
+        if (LabFileData.lfu_Program != "MLAB" & LabFileData.lfu_Program != "HIS")
         {
             MappingTemplate = await mappingservice.GetMappingDataActiveWithModelAsync(mappingSearch);
 
@@ -769,7 +770,26 @@ else
             //    return;
             //}
         }
-        else
+        else if (LabFileData.lfu_Program == "HIS")
+        {
+            mappingSearch = new MappingDataDTO();
+            mappingSearch.mp_hos_code = LabFileData.lfu_hos_code;
+
+            List<ParameterDTO> parameterDTO = new List<ParameterDTO>();
+            parameterDTO = await ddlDataService.GetParameterListByModelAsync(new ParameterDTO() { prm_code_major = "HIS_MAPPING_TEMPLATE" });
+            mappingSearch.mp_id = Guid.Parse(parameterDTO.FirstOrDefault(x => x.prm_code_minor == "mp_id").prm_value);
+
+            MappingTemplate = await mappingservice.GetMappingDataAsync(mappingSearch.mp_id.ToString());
+
+            if (ActiveMasterTemplate == null)
+            {
+                await jsRuntime.InvokeAsync<object>("ShowAlert", "ไม่พบ Master Template ที่มีสถานะเป็น Active (กรุณาติดต่อผู้ดูแลระบบ)");
+                showModal = false;
+                return;
+            }
+
+        }
+        else //MLAB
         {
 
             MappingTemplate = await mappingservice.GetMappingDataAsync(mappingSearch.mp_id.ToString());

@@ -660,11 +660,8 @@ namespace ALISS.STARS.Library
             log.MethodFinish();
 
             return objModel;
-
-
-
         }
-
+        
         #endregion
 
         #region SpecimenMapping
