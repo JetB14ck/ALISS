@@ -297,7 +297,7 @@ else
                                                 <label title="@whonetGrid.FooterLabelString">@whonetGrid.FooterLabelString</label>
                                             </FooterTemplate>
                                         </RadzenGridColumn>
-                                        <RadzenGridColumn TItem="STARSWHONetMappingListsDTO" Property="swm_originalfield" Title="Original File" /> 
+                                        <RadzenGridColumn TItem="STARSWHONetMappingListsDTO" Property="swm_originalfield" Title="Original File" />
                                         <RadzenGridColumn TItem="STARSWHONetMappingListsDTO" Property="swm_type" Title="Data Type" />
                                         <RadzenGridColumn TItem="STARSWHONetMappingListsDTO" Property="swm_fieldformat" Title="Format" />
                                         <RadzenGridColumn TItem="STARSWHONetMappingListsDTO" Property="swm_fieldlength" Title="Lenght" />
@@ -352,10 +352,10 @@ else
                                         </Template>
                                     </RadzenGridColumn>
                                     @*<RadzenGridColumn TItem="STARSSpecimenMappingListsDTO" Property="ssm_whonetcode" Title="WHONET Code">
-                                        <FooterTemplate>
-                                            <label title="@specimenGrid.FooterLabelString">@specimenGrid.FooterLabelString</label>
-                                        </FooterTemplate>
-                                    </RadzenGridColumn>*@
+                                            <FooterTemplate>
+                                                <label title="@specimenGrid.FooterLabelString">@specimenGrid.FooterLabelString</label>
+                                            </FooterTemplate>
+                                        </RadzenGridColumn>*@
                                     <RadzenGridColumn TItem="STARSSpecimenMappingListsDTO" Property="ssm_localspecimencode" Title="Specimen Code">
                                         <FooterTemplate>
                                             <label title="@specimenGrid.FooterLabelString">@specimenGrid.FooterLabelString</label>
@@ -402,16 +402,16 @@ else
                                         </Template>
                                     </RadzenGridColumn>
                                     @*<RadzenGridColumn TItem="STARSOrganismMappingListsDTO" Property="som_whonetcode" Title="WHONET Code">
+                                            <FooterTemplate>
+                                                <label title="@organismGrid.FooterLabelString">@organismGrid.FooterLabelString</label>
+                                            </FooterTemplate>
+                                        </RadzenGridColumn>*@
+                                    @*<RadzenGridColumn TItem="STARSOrganismMappingListsDTO" Property="som_whonetdesc" Title="WHONET Description" />*@
+                                    <RadzenGridColumn TItem="STARSOrganismMappingListsDTO" Property="som_localorganismcode" Title="Organism code">
                                         <FooterTemplate>
                                             <label title="@organismGrid.FooterLabelString">@organismGrid.FooterLabelString</label>
                                         </FooterTemplate>
-                                    </RadzenGridColumn>*@
-                                    @*<RadzenGridColumn TItem="STARSOrganismMappingListsDTO" Property="som_whonetdesc" Title="WHONET Description" />*@
-                                <RadzenGridColumn TItem="STARSOrganismMappingListsDTO" Property="som_localorganismcode" Title="Organism code">
-                                    <FooterTemplate>
-                                        <label title="@organismGrid.FooterLabelString">@organismGrid.FooterLabelString</label>
-                                    </FooterTemplate>
-                                </RadzenGridColumn>
+                                    </RadzenGridColumn>
                                     <RadzenGridColumn TItem="STARSOrganismMappingListsDTO" Property="som_localorganismdesc" Title="Organism Description" />
                                     @if (mainLayout.loginUser.PagePermission.rop_edit == true && Expired != true)
                                     {
@@ -664,23 +664,23 @@ else
                         <DataAnnotationsValidator />
                         <div class="container inputArea">
                             @*<div class="row justify-content-center">
-                                <div class="col-xl-12">
-                                    <div class="row justify-content-center divGroup">
-                                        <div class="@classLabel">
-                                            <LabelBox inputLabel="@configData.Get_Label("ssm_whonetcode")" />
-                                        </div>
-                                        <div class="@classInput">
-                                            <RadzenDropDownDataGrid @bind-Value="objSpecimenMapping.ssm_whonetcode" disabled="@(objSpecimenMapping.ssm_status == 'E' ? true : false)" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowClear="true" TValue="string" AllowFiltering="true" Placeholder="Select..." Data="specimenDatas" TextProperty="spc_code" ValueProperty="spc_code" AllowFilteringByAllStringColumns="true">
-                                                <Columns>
-                                                    <RadzenDropDownDataGridColumn Property="spc_code" Title="Code" Width="100px" />
-                                                    <RadzenDropDownDataGridColumn Property="spc_name" Title="Name" Width="200px" />
-                                                </Columns>
-                                            </RadzenDropDownDataGrid>
-                                            <ValidationMessage For="@(() => objSpecimenMapping.ssm_whonetcode)" />
+                                    <div class="col-xl-12">
+                                        <div class="row justify-content-center divGroup">
+                                            <div class="@classLabel">
+                                                <LabelBox inputLabel="@configData.Get_Label("ssm_whonetcode")" />
+                                            </div>
+                                            <div class="@classInput">
+                                                <RadzenDropDownDataGrid @bind-Value="objSpecimenMapping.ssm_whonetcode" disabled="@(objSpecimenMapping.ssm_status == 'E' ? true : false)" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowClear="true" TValue="string" AllowFiltering="true" Placeholder="Select..." Data="specimenDatas" TextProperty="spc_code" ValueProperty="spc_code" AllowFilteringByAllStringColumns="true">
+                                                    <Columns>
+                                                        <RadzenDropDownDataGridColumn Property="spc_code" Title="Code" Width="100px" />
+                                                        <RadzenDropDownDataGridColumn Property="spc_name" Title="Name" Width="200px" />
+                                                    </Columns>
+                                                </RadzenDropDownDataGrid>
+                                                <ValidationMessage For="@(() => objSpecimenMapping.ssm_whonetcode)" />
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                            </div>*@
+                                </div>*@
                             <div class="row justify-content-center">
                                 <div class="col-xl-12">
                                     <div class="row justify-content-center divGroup">
@@ -753,19 +753,19 @@ else
 
                         <div class="container inputArea">
                             @*<div class="row justify-content-center">
-                                <div class="col-xl-12">
-                                    <div class="row justify-content-center divGroup">
-                                        <div class="@classLabel">
-                                            <LabelBox inputLabel="@configData.Get_Label("som_whonetcode")" requireField="true" />
-                                        </div>
-                                        <div class="@classInput">
-                                           
-                                            <RadzenTextBox @bind-Value="@objOrganismMapping.som_whonetcode" Disabled="true" />
-                                            <ValidationMessage For="@(() => objOrganismMapping.som_whonetcode)" />
+                                    <div class="col-xl-12">
+                                        <div class="row justify-content-center divGroup">
+                                            <div class="@classLabel">
+                                                <LabelBox inputLabel="@configData.Get_Label("som_whonetcode")" requireField="true" />
+                                            </div>
+                                            <div class="@classInput">
+
+                                                <RadzenTextBox @bind-Value="@objOrganismMapping.som_whonetcode" Disabled="true" />
+                                                <ValidationMessage For="@(() => objOrganismMapping.som_whonetcode)" />
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                            </div>*@
+                                </div>*@
                             <!--<div class="row justify-content-center">
                                 <div class="col-xl-12">
                                     <div class="row justify-content-center divGroup">
@@ -773,13 +773,13 @@ else
                                             <LabelBox inputLabel="@configData.Get_Label("som_whonetdesc")" requireField="true" />
                                         </div>
                                         <div class="@classInput">-->
-                                            @*<RadzenTextBox @bind-Value="@objOrganismMapping.som_whonetdesc" Disabled="true" />
-                                                <ValidationMessage For="@(() => objOrganismMapping.som_whonetdesc)" />*@
-                                            <!--<RadzenDropDownDataGrid @bind-Value="objOrganismMapping.som_whonetdesc" disabled="@(objOrganismMapping.som_status == 'E' ? true : false)" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowClear="true" AllowFiltering="true"
-                                                                    TValue="string" Placeholder="Select..." Data="organismDatas" TextProperty="org_mst_ORGANISM" ValueProperty="org_mst_ORGANISM" AllowFilteringByAllStringColumns="true"
-                                                                    Change="OrganismCode_DDL_Change">-->
-                                                @*TextProperty="org_mst_ORG" ValueProperty="org_mst_ORG"*@
-                                                <!--<Columns>
+                            @*<RadzenTextBox @bind-Value="@objOrganismMapping.som_whonetdesc" Disabled="true" />
+                                <ValidationMessage For="@(() => objOrganismMapping.som_whonetdesc)" />*@
+                            <!--<RadzenDropDownDataGrid @bind-Value="objOrganismMapping.som_whonetdesc" disabled="@(objOrganismMapping.som_status == 'E' ? true : false)" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowClear="true" AllowFiltering="true"
+                                                    TValue="string" Placeholder="Select..." Data="organismDatas" TextProperty="org_mst_ORGANISM" ValueProperty="org_mst_ORGANISM" AllowFilteringByAllStringColumns="true"
+                                                    Change="OrganismCode_DDL_Change">-->
+                            @*TextProperty="org_mst_ORG" ValueProperty="org_mst_ORG"*@
+                            <!--<Columns>
                                                     <RadzenDropDownDataGridColumn Property="org_mst_ORG" Title="Code" Width="100px" />
                                                     <RadzenDropDownDataGridColumn Property="org_mst_ORGANISM" Title="Name" Width="200px" />
                                                 </Columns>
@@ -808,7 +808,7 @@ else
                                 <div class="col-xl-12">
                                     <div class="row justify-content-center divGroup">
                                         <div class="@classLabel">
-                                            <LabelBox inputLabel="@configData.Get_Label("som_localorganismdesc")" />
+                                            <LabelBox inputLabel="@configData.Get_Label("som_localorganismdesc")" requireField="true" />
                                         </div>
                                         <div class="@classInput">
                                             <RadzenTextBox @bind-Value="@objOrganismMapping.som_localorganismdesc" />

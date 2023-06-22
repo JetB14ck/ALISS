@@ -1,0 +1,468 @@
+﻿@page "/STARSMonitoring"
+
+@using ALISS.Data.D7_StarsMonitoring
+@using ALISS.Data
+@using ALISS.STARS.DTO
+
+@using Radzen
+@using Radzen.Blazor
+@using System.IO;
+
+@inject IJSRuntime jsRuntime
+@inject NavigationManager navigationManager
+@inject ConfigDataService configDataService
+@inject STARSMonitoringService StarsMonitoringService
+@inject DropDownListDataService ddlDataService
+
+<div style="width: 90%;">
+    <div class="divHead">
+        STARS Monitoring
+    </div>
+</div>
+
+@if (gridDatas == null)
+{
+    <p><em>Loading...</em></p>
+    <Loading ShowModel="true" />
+}
+else
+{
+    <div class="container inputArea">
+        <div class="row justify-content-between">
+            <div class="col-12 col-xl-4">
+                <div class="row justify-content-center divGroup">
+                    <div class="@classLabel">
+                        <LabelBox inputLabel="@configData.Get_Label("AreaHealth")" />
+                    </div>
+                    <div class="@classInput">
+                        <RadzenDropDown @bind-Value="searchModel.arh_code" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+                                        AllowClear="true" TValue="string" AllowFiltering="true" Placeholder="Select..."
+                                        Data="lab_ddl_List.Select(x => new { x.arh_code, x.arh_name }).Distinct().OrderBy(o=>o.arh_code)" ValueProperty="arh_code" TextProperty="arh_name"
+                                        Disabled="(!string.IsNullOrEmpty(mainLayout.loginUser.arh_code))"
+                                        Change="@(args => DDL_Change("Arh", args))" />
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-12 col-xl-4">
+                <div class="row justify-content-center divGroup">
+                    <div class="@classLabel">
+                        <LabelBox inputLabel="@configData.Get_Label("Hos")" />
+                    </div>
+                    <div class="@classInput">
+                        <RadzenDropDown @bind-Value="searchModel.hos_code" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+                                        AllowClear="true" TValue="string" AllowFiltering="true" Placeholder="Select..."
+                                        Data="lab_ddl_List.Select(x => new { x.arh_code, x.arh_name, x.prv_code, x.prv_name, x.hos_code, x.hos_name }).Where(x => (searchModel.arh_code == null || x.arh_code == searchModel.arh_code))" ValueProperty="hos_code" TextProperty="hos_name"
+                                        Change="@(args => DDL_Change("Hos", args))" Disabled="(!string.IsNullOrEmpty(mainLayout.loginUser.hos_code))" />
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-12 col-xl-4">
+                <div class="row justify-content-center divGroup">
+
+                </div>
+            </div>
+
+        </div>
+
+        <div class="row justify-content-between">
+            <div class="col-12 col-xl-4">
+                <div class="row justify-content-center divGroup">
+                    <div class="@classLabel">
+                        <LabelBox inputLabel="@configData.Get_Label("STARSNo")" />
+                    </div>
+                    <div class="@classInput">
+                        <RadzenTextBox @bind-Value="searchModel.stars_no" Style="width: 100%;" />
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-12 col-xl-4">
+                <div class="row justify-content-center divGroup">
+                    <div class="@classLabel">
+                        <LabelBox inputLabel="@configData.Get_Label("RecvDateFrom")" />
+                    </div>
+                    <div class="@classInput">
+                        <RadzenDatePicker @bind-Value=@ReceiveFrom ShowTime="false" ShowSeconds="false" DateFormat="dd/MM/yyyy" />
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-12 col-xl-4">
+                <div class="row justify-content-center divGroup">
+                    <div class="@classLabel">
+                        <LabelBox inputLabel="@configData.Get_Label("RecvDateTo")" />
+                    </div>
+                    <div class="@classInput">
+                        <RadzenDatePicker @bind-Value=@ReceiveTo ShowTime="false" ShowSeconds="false" DateFormat="dd/MM/yyyy" />
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row justify-content-between">
+
+            <div class="col-12 col-xl-4">
+                <div class="row justify-content-center divGroup">
+                    <div class="@classLabel">
+                        <LabelBox inputLabel="@configData.Get_Label("Status")" />
+                    </div>
+                    <div class="@classInput">
+                        <RadzenDropDown @bind-Value="searchModel.status" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+                                        AllowClear="true" TValue="string" AllowFiltering="true" Placeholder="Select..."
+                                        Data="ss.Select(x => new { x.status_code, x.status_name }).Distinct()" ValueProperty="status_code" TextProperty="status_name" />
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-12 col-xl-4">
+                <div class="row justify-content-center divGroup">
+                    <div class="@classLabel">
+                        <LabelBox inputLabel="@configData.Get_Label("TATDateFrom")" />
+                    </div>
+                    <div class="@classInput">
+                        <RadzenDatePicker @bind-Value=@TATFrom ShowTime="false" ShowSeconds="false" DateFormat="dd/MM/yyyy" />
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-12 col-xl-4">
+                <div class="row justify-content-center divGroup">
+                    <div class="@classLabel">
+                        <LabelBox inputLabel="@configData.Get_Label("TATDateTo")" />
+                    </div>
+                    <div class="@classInput">
+                        <RadzenDatePicker @bind-Value=@TATTo ShowTime="false" ShowSeconds="false" DateFormat="dd/MM/yyyy" />
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="col-12 col-xl-12">
+            <div class="row justify-content-end divGroup buttonArea">
+                <div class="col-auto">
+                    <RadzenButton class="btnSearch" Text="Search" Click="SearchData" />
+                </div>
+                <div class="col-auto">
+                    <RadzenButton class="btnClear" Text="Clear" Click="ClearInboxData" />
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <hr />
+
+    <div style="width:100%;margin:0px auto;">
+        <div class="container">
+            <div class="row justify-content-end">
+                <div class="col-auto">
+                    <label>Rows : </label>
+                </div>
+                <div class="col-auto">
+                    <RadzenDropDown @bind-Value="inboxGrid.PageSize" TValue="int" AllowFiltering="true" Data="inboxGrid.PageSizeOption" Change="SearchData" Style="width:50px" />
+                </div>
+            </div>
+        </div>
+
+        <RadzenGrid AllowFiltering="true" AllowSorting="true" AllowPaging="true" Style="max-width: 1750px"
+                    PageSize="inboxGrid.PageSize" @ref="inboxGrid.radzenGrid" Data="@gridDatas" TItem="STARSMonitoringListsDTO"
+                    FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+                    AllowColumnResize="true" EditMode="DataGridEditMode.Single" RowUpdate="@OnUpdateRow">
+            <Columns>
+                <RadzenGridColumn TItem="STARSMonitoringListsDTO" Width="100px" Property="srr_starsno" Title="STARS No.">
+                    <FooterTemplate>
+                        <label title="@inboxGrid.FooterLabelString">@inboxGrid.FooterLabelString</label>
+                    </FooterTemplate>
+                </RadzenGridColumn>
+                <RadzenGridColumn TItem="STARSMonitoringListsDTO" Width="100px" Property="srr_senddate_str" Title="Send Date" />
+                <RadzenGridColumn TItem="STARSMonitoringListsDTO" Width="100px" Property="srr_recvdate_str" Title="Receive Date" />
+                <RadzenGridColumn TItem="STARSMonitoringListsDTO" Width="100px" Property="srr_tatdate_str" Title="TAT Date" />
+                <RadzenGridColumn TItem="STARSMonitoringListsDTO" Width="120px" Property="srr_reportno" Title="ReportNo." />
+                <RadzenGridColumn TItem="STARSMonitoringListsDTO" Width="100px" Property="srr_reportdate_str" Title="Report Date" />
+
+                <RadzenGridColumn TItem="STARSMonitoringListsDTO" Width="100px" Property="srr_stars_labno" Title="Lab No." />
+                <RadzenGridColumn TItem="STARSMonitoringListsDTO" Width="100px" Property="srr_stars_specimendate_str" Title="CDATE" />
+                <RadzenGridColumn TItem="STARSMonitoringListsDTO" Width="110px" Property="srr_name" Title="Name" />
+                <RadzenGridColumn TItem="STARSMonitoringListsDTO" Width="50px" Property="srr_sex" Title="Age" />
+                <RadzenGridColumn TItem="STARSMonitoringListsDTO" Width="50px" Property="srr_age" Title="Sex" />
+                <RadzenGridColumn TItem="STARSMonitoringListsDTO" Width="100px" Property="srr_ident_organism" Title="Organism" />
+                <RadzenGridColumn TItem="STARSMonitoringListsDTO" Width="100px" Property="srr_ident_spec_name" Title="Specimen Type" />
+                <RadzenGridColumn TItem="STARSMonitoringListsDTO" Width="100px" Property="srr_status_str" Title="Status" />
+                <RadzenGridColumn TItem="STARSMonitoringListsDTO" Width="100px" Property="str_cancelreason" Title="Reject Remark" />
+                <RadzenGridColumn TItem="STARSMonitoringListsDTO" Width="200px" Property="srr_remark" Title="Remark">
+                    <Template Context="data">
+                        <RadzenTextBox @bind-Value="data.srr_remark" Style="width: 100%;" Disabled="@(data.str_cancelreason != "")" MaxLength="500"></RadzenTextBox>
+                    </Template>
+                    <EditTemplate Context="data">
+                        <RadzenTextBox @bind-Value="data.srr_remark" Style="width:100%; display: block" Name="Remark" />
+                    </EditTemplate>
+                </RadzenGridColumn>
+                <RadzenGridColumn TItem="STARSMonitoringListsDTO" Context="data" Filterable="false" Sortable="false" TextAlign="TextAlign.Right" Width="120px">
+                    <Template Context="data">
+                        <RadzenButton Icon="edit" ButtonStyle="ButtonStyle.Light" Variant="Variant.Flat" Size="ButtonSize.Medium" Click="@(args => EditRow(data))" @onclick:stopPropagation="true">
+                        </RadzenButton>
+                    </Template>
+                    <EditTemplate Context="data">
+                        <RadzenButton Icon="check" ButtonStyle="ButtonStyle.Success" Variant="Variant.Flat" Size="ButtonSize.Medium" Click="@((args) => SaveRow(data))">
+                        </RadzenButton>
+                        <RadzenButton Icon="close" ButtonStyle="ButtonStyle.Light" Variant="Variant.Flat" Size="ButtonSize.Medium" class="my-1 ms-1" Click="@((args) => CancelEdit(data))">
+                        </RadzenButton>
+                    </EditTemplate>
+                </RadzenGridColumn>
+
+                <RadzenGridColumn TItem="STARSMonitoringListsDTO" Width="230px" Context="data">
+                    <Template>
+                        <RadzenButton Icon="print" Text="STARS Barcode" Style="background: #0A6839" Click="@(() => ExportBarcode(data))"
+                                      Visible="@(!string.IsNullOrEmpty(data.srr_starsno) ? true : false)" />
+                    </Template>
+                </RadzenGridColumn>
+                <RadzenGridColumn TItem="STARSMonitoringListsDTO" Width="230px" Context="data">
+                    <Template>
+                        <RadzenButton Icon="grade" Text="Personal Report" Style="background: #0A6839" Click="@(() => ExportPersonalReport(data))"
+                                      Visible="@(!string.IsNullOrEmpty(data.srr_reportno) ? true : false)" />
+                    </Template>
+                </RadzenGridColumn>
+            </Columns>
+        </RadzenGrid>
+    </div>
+
+}
+
+@code {
+    [CascadingParameter] MainLayout mainLayout { get; set; }
+    private const string MENU_CODE = "MNU_0807";
+    private ConfigData configData = new ConfigData();
+    private string classLabel = "col-4";
+    private string classInput = "col-8";
+
+    private RadzenGridCustom<STARSMonitoringListsDTO> inboxGrid = new RadzenGridCustom<STARSMonitoringListsDTO>();
+
+    private List<HospitalLabDataDTO> lab_ddl_List;
+    private List<ParameterDTO> ParameterList;
+    private List<STARSMonitoringListsDTO> gridDatas;
+    STARSMonitoringSearchDTO searchModel = new STARSMonitoringSearchDTO();
+    private string tempRemarks = "";
+
+    private bool showModal = false;
+    DateTime? ReceiveFrom = DateTime.Now.AddDays(-14);
+    DateTime? ReceiveTo = DateTime.Now;
+    DateTime? TATFrom = DateTime.Now.AddDays(-14);
+    DateTime? TATTo = DateTime.Now;
+
+    private class StatusList
+    {
+        public string status_code { get; set; }
+        public string status_name { get; set; }
+    }
+
+
+    StatusList[] ss = new StatusList[]
+    {
+    new StatusList
+    {
+        status_code = "V",
+        status_name = "Received"
+    },
+    new StatusList
+    {
+        status_code = "G",
+        status_name = "Transporting"
+    },
+    new StatusList
+    {
+        status_code = "W",
+        status_name = "Wait-Inspect"
+    },
+        new StatusList
+    {
+        status_code = "A",
+        status_name = "Lab-Processing"
+    },
+        new StatusList
+    {
+        status_code = "R",
+        status_name = "Repeat Automate"
+    },
+        new StatusList
+    {
+        status_code = "C",
+        status_name = "Complete"
+    },
+        new StatusList
+    {
+        status_code = "J",
+        status_name = "Reject Sample"
+    },
+                };
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await mainLayout.GetLoginUser();
+
+            if (mainLayout.loginUser.CheckPagePermission(MENU_CODE) == false) navigationManager.NavigateTo("/NoPermissionPage");
+
+            configData.ConfigDTOList = await configDataService.Get_TBConfig_DataList_Async(new TBConfigDTO() { tbc_mnu_code = MENU_CODE });
+            ParameterList = await ddlDataService.GetParameterListByModelAsync(new ParameterDTO() { prm_code_major = "STARS_MONITORING" });
+
+            var searchData = new HospitalLabDataDTO()
+            {
+                arh_code = searchModel.arh_code = mainLayout.loginUser.arh_code,
+                hos_code = searchModel.hos_code = mainLayout.loginUser.hos_code,
+            };
+            var mm = new DropDownListDTO();
+            lab_ddl_List = await ddlDataService.GetAllLabListByModelAsync(searchData);
+
+            searchModel.recvdate_start = ReceiveFrom;
+            searchModel.recvdatet_end = ReceiveTo;
+            searchModel.tatdate_start = TATFrom;
+            searchModel.tatdatet_end = TATTo;
+
+            gridDatas = await StarsMonitoringService.GetRepeatAutomateListByParamAsync(searchModel);
+        }
+    }
+    private async void SearchData()
+    {
+        showModal = true;
+
+        searchModel.recvdate_start = ReceiveFrom;
+        searchModel.recvdatet_end = ReceiveTo;
+        searchModel.tatdate_start = TATFrom;
+        searchModel.tatdatet_end = TATTo;
+
+        gridDatas = await StarsMonitoringService.GetRepeatAutomateListByParamAsync(searchModel);
+        if (inboxGrid.radzenGrid != null) inboxGrid.radzenGrid.GoToPage(0);
+        showModal = false;
+        StateHasChanged();
+
+    }
+
+    private async void ClearInboxData()
+    {
+        searchModel.arh_code = mainLayout.loginUser.arh_code;
+        searchModel.hos_code = mainLayout.loginUser.hos_code;
+        searchModel.recvdate_start = DateTime.Now.AddDays(-14);
+        searchModel.recvdatet_end = DateTime.Now;
+        searchModel.tatdate_start = DateTime.Now.AddDays(-14);
+        searchModel.tatdatet_end = DateTime.Now;
+        searchModel.status = null;
+        searchModel.hos_code = null;
+
+        SearchData();
+    }
+
+    private void DDL_Change(string ddl_name, object value)
+    {
+        if (ddl_name == "Arh" && value == null)
+        {
+            searchModel.hos_code = null;
+        }
+
+        else if (ddl_name == "Hos" && value == null)
+        {
+            //searchModel.lfu_lab = null;
+        }
+        else if (ddl_name == "Hos" && value != null)
+        {
+            var hos_select = lab_ddl_List.FirstOrDefault(x => x.hos_code == value.ToString());
+
+            searchModel.arh_code = hos_select.arh_code;
+        }
+
+        StateHasChanged();
+    }
+
+    private async Task ExportBarcode(STARSMonitoringListsDTO file)
+    {
+        try
+        {
+            if (file != null && file.srr_starsno != "")
+            {
+                string tempPath = ParameterList.FirstOrDefault(x => x.prm_code_minor == "STARS_BARCODE_PATH").prm_value;
+                StarsMonitoringService.ExportBarcode(jsRuntime, file, tempPath);
+            }
+            else
+            {
+                await jsRuntime.InvokeAsync<object>("ShowAlert", "รายการนี้ไม่มี STARS No.");
+            }
+
+        }
+        catch (Exception ex)
+        {
+            await jsRuntime.InvokeAsync<object>("ShowAlert", ex.Message);
+        }
+    }
+
+    private async Task ExportPersonalReport(STARSMonitoringListsDTO file)
+    {
+        try
+        {
+            if (file != null && file.srr_reportno != "")
+            {
+                //string tempPath = ParameterList.FirstOrDefault(x => x.prm_code_minor == "STARS_BARCODE_PATH").prm_value;
+                //RepeatService.ExportBarcode(jsRuntime, gridDatas.Where(x => selectedRow.Any(s => s.Contains(x.srr_starsno_ref))).ToList(), tempPath);
+            }
+            else
+            {
+                await jsRuntime.InvokeAsync<object>("ShowAlert", "รายการนี้ยังไม่ได้สร้าง Personal Report");
+            }
+
+        }
+        catch (Exception ex)
+        {
+            await jsRuntime.InvokeAsync<object>("ShowAlert", ex.Message);
+        }
+    }
+
+    private async Task EditRow(STARSMonitoringListsDTO selectedRow)
+    {
+        if (selectedRow != null)
+        {
+            tempRemarks = selectedRow.srr_remark;
+            await inboxGrid.radzenGrid.EditRow(selectedRow);
+        }
+        StateHasChanged();
+    }
+
+    private async Task SaveRow(STARSMonitoringListsDTO selectedRow)
+    {
+        showModal = true;
+
+        await StarsMonitoringService.SaveRemarkForRejectSampleAsync(selectedRow);
+
+        showModal = false;
+
+        StateHasChanged();
+    }
+
+    void CancelEdit(STARSMonitoringListsDTO selectedRow)
+    {
+        selectedRow.srr_remark = tempRemarks;
+        inboxGrid.radzenGrid.CancelEditRow(selectedRow);
+        StateHasChanged();
+
+        //var orderEntry = dbContext.Entry(order);
+        //if (orderEntry.State == EntityState.Modified)
+        //{
+        //    orderEntry.CurrentValues.SetValues(orderEntry.OriginalValues);
+        //    orderEntry.State = EntityState.Unchanged;
+        //}
+    }
+
+    void OnUpdateRow(STARSMonitoringListsDTO order)
+    {
+        //if (order == orderToInsert)
+        //{
+        //    orderToInsert = null;
+        //}
+
+        //orderToUpdate = null;
+
+        //dbContext.Update(order);
+
+        //dbContext.SaveChanges();
+    }
+}

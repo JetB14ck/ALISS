@@ -22,6 +22,9 @@ namespace ALISS.STARS.Library.AutoMapperConfiguration
 
             CreateMap<TRSTARSOrganismMapping, STARSOrganismMappingDataDTO>();
             CreateMap<STARSOrganismMappingDataDTO, TRSTARSOrganismMapping>();
+
+            CreateMap<TRStarsResult, STARSMonitoringListsDTO>();
+            CreateMap<STARSMonitoringListsDTO, TRStarsResult>();
         }
     }
 }

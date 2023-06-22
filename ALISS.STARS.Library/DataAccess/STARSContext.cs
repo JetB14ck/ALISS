@@ -67,9 +67,9 @@ namespace ALISS.STARS.Library.DataAccess
         #endregion
 
         #region  Upload Automate & Repeat
-        public DbSet<RepeatAutomateDataDTO> RepeatAutomateDTOs { get; set; }
+        public DbSet<RepeatAutomateDataDTO> RepeatAutomateDTOs { get; set; }     
         #endregion
-
+        public DbSet<STARSMonitoringListsDTO> STARSMonitoringListsDTOs { get; set; }
         public STARSContext(DbContextOptions<STARSContext> options) : base(options)
         {
 
@@ -167,6 +167,7 @@ namespace ALISS.STARS.Library.DataAccess
             builder.Entity<TrRunningNoDTO>().HasKey(x => x.trn_id);
             builder.Entity<TrRunningNoDTO>().ToTable("TR_RUNNING_NUMBER");
 
+            builder.Entity<STARSMonitoringListsDTO>().HasKey(x => x.srr_id);
 
             base.OnModelCreating(builder);
         }

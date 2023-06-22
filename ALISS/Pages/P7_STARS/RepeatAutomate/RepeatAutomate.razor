@@ -130,7 +130,7 @@ else
     <div>
         <div class="container">
             <div class="row justify-content-start">
-                <div class="col-auto">
+                <div class="col-auto buttonArea">
                     <RadzenButton class="btnAdd" Icon="print" Text="Print STARS Barcode" Click="ExportBarcode" />
                 </div>
                 <div class="col-auto">
@@ -142,9 +142,9 @@ else
                 <div class="col-auto">
                     @*<RadzenButton class="btnCancel" Text="Cancel" Click="@(() => ControlPopup("UploadEntry",false))" />*@
                 </div>
-                <div class="col-auto">
-                    <RadzenButton Icon="save" class="btnAdd" Text="Upload Repeat Automate" 
-                                  Click="@(() => ControlPopup("UploadEntry",true))" Disabled="@(FileData.afu_arh_code != null ? false : true)"/>
+                <div class="col-auto buttonArea">
+                    <RadzenButton Icon="save" class="btnAdd" Text="Upload Repeat Automate"
+                                  Click="@(() => ControlPopup("UploadEntry",true))" Disabled="@(FileData.afu_arh_code != null ? false : true)" />
                 </div>
             </div>
         </div>
@@ -184,8 +184,8 @@ else
                     </FooterTemplate>
                 </RadzenGridColumn>
 
-                <RadzenGridColumn TItem="RepeatAutomateDataDTO" Width="80px" Property="afu_repeatdate_str" Title="Repeat Date" />
-                <RadzenGridColumn TItem="RepeatAutomateDataDTO" Width="80px" Property="srr_tatdate" Title="TAT Date" />
+                <RadzenGridColumn TItem="RepeatAutomateDataDTO" Width="100px" Property="afu_repeatdate_str" Title="Repeat Date" />
+                <RadzenGridColumn TItem="RepeatAutomateDataDTO" Width="100px" Property="srr_tatdate_str" Title="TAT Date" />
                 <RadzenGridColumn TItem="RepeatAutomateDataDTO" Width="100px" Property="susp_organism" Title="Suspected Organism" />
                 <RadzenGridColumn TItem="RepeatAutomateDataDTO" Width="100px" Property="susp_spec_type" Title="Specimen Type" />
 
@@ -194,7 +194,7 @@ else
                 <RadzenGridColumn TItem="RepeatAutomateDataDTO" Width="110px" Property="afu_status_str" Title="Status" />
                 <RadzenGridColumn TItem="RepeatAutomateDataDTO" Width="80px" Property="afu_repeatuser" Title="Repeat By" />
                 <RadzenGridColumn TItem="RepeatAutomateDataDTO" Width="100px" Property="afu_filename" Title="Automate File Name" />
-                <RadzenGridColumn TItem="RepeatAutomateDataDTO" Width="50px" Context="data">
+                <RadzenGridColumn TItem="RepeatAutomateDataDTO" Width="70px" Context="data">
                     <Template>
                         <RadzenButton Icon="get_app" Style="background: #0A6839" Click="@(() => NavigateToDownloadFile(data))" />
                     </Template>
@@ -225,7 +225,7 @@ else
                                 <div class="col-12">
                                     <div class="row justify-content-center divGroup">
                                         <div class="col">
-                                            <LabelBox inputLabel="@configData.Get_Label("AreaHealth")" />
+                                            <LabelBox inputLabel="@configData.Get_Label("AreaHealth")" requireField="true" />
                                         </div>
                                         <div class="col">
                                             <RadzenDropDown @bind-Value="searchModel.arh_code" Disabled="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowClear="true" TValue="string" AllowFiltering="true" Placeholder="Select..." Data="lab_ddl_List" TextProperty="arh_name" ValueProperty="arh_code" />
@@ -235,7 +235,7 @@ else
                                 <div class="col-12">
                                     <div class="row justify-content-center divGroup">
                                         <div class="col">
-                                            <LabelBox inputLabel="@configData.Get_Label("Machine")" />
+                                            <LabelBox inputLabel="@configData.Get_Label("Machine")" requireField="true"/>
                                         </div>
                                         <div class="col">
                                             <RadzenDropDown @bind-Value="FileData.afu_machinetype" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowClear="true" TValue="string" AllowFiltering="true" Placeholder="Select..."
@@ -244,7 +244,7 @@ else
                                     </div>
                                 </div>
 
-                                @if (FileData.afu_machinetype != "")
+                                @if (FileData.afu_machinetype != "" && FileData.afu_machinetype != null)
                                 {
                                     <div class="col-12">
                                         <div class="row justify-content-center divGroup">

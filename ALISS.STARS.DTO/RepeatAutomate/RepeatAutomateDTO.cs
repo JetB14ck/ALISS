@@ -72,14 +72,14 @@ namespace ALISS.STARS.DTO.RepeatAutomate
         {
             get
             {
-                return repeat_start_date != null ? repeat_start_date.Value.ToString("yyyy/MM/dd", new CultureInfo("en-US")) : "1900-01-01";
+                return repeat_start_date != null ? repeat_start_date.Value.ToString("yyyy/MM/dd", new CultureInfo("en-US")) : "";
             }
         }
         public string repeat_enddate_str
         {
             get
             {
-                return repeat_end_date != null ? repeat_end_date.Value.ToString("yyyy/MM/dd", new CultureInfo("en-US")) : "1900-01-01";
+                return repeat_end_date != null ? repeat_end_date.Value.ToString("yyyy/MM/dd", new CultureInfo("en-US")) : "";
             }
         }
         public DateTime? testing_start_date { get; set; }
@@ -88,14 +88,14 @@ namespace ALISS.STARS.DTO.RepeatAutomate
         {
             get
             {
-                return testing_start_date != null ? testing_start_date.Value.ToString("yyyy/MM/dd", new CultureInfo("en-US")) : "1900-01-01";
+                return testing_start_date != null ? testing_start_date.Value.ToString("yyyy/MM/dd", new CultureInfo("en-US")) : "";
             }
         }
         public string testing_enddate_str
         {
             get
             {
-                return testing_end_date != null ? testing_end_date.Value.ToString("yyyy/MM/dd", new CultureInfo("en-US")) : "1900-01-01";
+                return testing_end_date != null ? testing_end_date.Value.ToString("yyyy/MM/dd", new CultureInfo("en-US")) : "";
             }
         }
         public string repeat_status { get; set; }

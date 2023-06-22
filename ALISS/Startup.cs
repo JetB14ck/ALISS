@@ -43,6 +43,7 @@ using BlazorDownloadFile;
 using System.Net.WebSockets;
 using ALISS.Data.D7_StarsMapping.MasterManagement;
 using ALISS.Data.D7_StarsRepeat;
+using ALISS.Data.D7_StarsMonitoring;
 
 namespace ALISS
 {
@@ -169,6 +170,7 @@ namespace ALISS
             services.AddScoped<RepeatAutomateService>();
             services.AddScoped<UploadAutomateService>();
             services.AddScoped<STARSPersonalReportService>();
+            services.AddScoped<STARSMonitoringService>();
 
             services.AddSignalR();
         }

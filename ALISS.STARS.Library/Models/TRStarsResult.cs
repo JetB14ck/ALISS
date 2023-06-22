@@ -49,5 +49,7 @@ namespace ALISS.STARS.Library.Models
         public DateTime? srr_createddate { get; set; }
         public string srr_updateuser { get; set; }
         public DateTime? srr_updatedate { get; set; }
+        public string srr_remark { get; set; }
+        public Boolean srr_repeat_flag { get; set; }
     }
 }

@@ -450,6 +450,17 @@
         }
       ],
       "UpstreamPathTemplate": "/starcolumn_api/{everything}"
+    },
+    {
+      "DownstreamPathTemplate": "/api/STARSMonitoring/{everything}",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": "44329"
+        }
+      ],
+      "UpstreamPathTemplate": "/stars_monitoring/{everything}"
     }
   ],
   "GlobalConfiguration": {

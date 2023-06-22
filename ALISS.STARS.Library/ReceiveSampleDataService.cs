@@ -115,6 +115,7 @@ namespace ALISS.STARS.Library
                         {
                             objTRStarsResult.srr_starsno = GenerateRunningNumber("stars_no", format, objTRStarsResult.srr_arh_code);
                             objTRStarsResult.srr_recvdate = currentDate;
+                            objTRStarsResult.srr_recvuser = objTRStarsResult.srr_updateuser;
                             objTRStarsResult.srr_tatdate = currentDate.AddDays(model.arh_days_receive);
                         }
 
