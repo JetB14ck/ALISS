@@ -536,6 +536,9 @@ else
             {
                 _StrControl = "N";
                 reportData.srp_remarks = ParameterList.FirstOrDefault(x => x.prm_code_minor == "REMARK").prm_value;
+                report_date = DateTime.Now.ToString("dd/MM/yyyy");
+                reportData.srr_reportuser = mainLayout.loginUser.Username;
+                reportData.srp_status = "D";
             }
             else
             {

@@ -77,6 +77,7 @@
     <Content Remove="Pages\P5_HISData\LabFileUpload.razor" />
     <Content Remove="Pages\P6_Report\Antibiotrend\AMRGraph - Copy.razor" />
     <Content Remove="Pages\P6_Report\JsChart.razor" />
+    <Content Remove="Pages\P7_STARS\StarsReport\StarsAMRGraph.razor" />
   </ItemGroup>
 
   <ItemGroup>
@@ -121,6 +122,7 @@
   <ItemGroup>
     <None Include="Pages\P6_Report\Antibiotrend\AMRGraph.razor" />
     <None Include="Pages\P6_Report\Antibiotrend\AMRMap.razor" />
+    <None Include="Pages\P7_STARS\StarsReport\StarsAMRGraph.razor" />
   </ItemGroup>
 
   <ItemGroup>

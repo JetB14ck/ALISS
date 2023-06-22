@@ -45,8 +45,8 @@ namespace ALISS.EXPORT.Api.Controllers
             rpt.SetParameterValue("srr_stars_labno", model.srr_stars_labno);
             rpt.SetParameterValue("srr_ident_organism", model.srr_ident_organism);
             rpt.SetParameterValue("stars_automate_result", string.IsNullOrEmpty(model.stars_automate_result) ? "": model.stars_automate_result.Replace("\\n", Environment.NewLine));
-            rpt.SetParameterValue("srr_testuser", model.srr_testuser);
-            rpt.SetParameterValue("srr_approveuser", model.srr_approveuser);
+            rpt.SetParameterValue("srr_testuser", model.srp_testing_user);
+            rpt.SetParameterValue("srr_approveuser", model.srp_approve_user);
             rpt.SetParameterValue("srp_director_path", model.srp_director_path);
             rpt.SetParameterValue("srp_director_name", model.srp_director_name);
             rpt.SetParameterValue("srp_director_position", model.srp_director_position);

@@ -85,7 +85,7 @@ else
                     <LabelBox inputLabel="@configData.Get_Label("srr_hos_code")" />
                 </div>
                 <div class="@classInput">
-                    <RadzenDropDown @bind-Value="searchModel.srr_hos_code" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowClear="true" TValue="string" AllowFiltering="true" Placeholder="Select..." Data="lab_ddl_List.Select(x => new { x.hos_code, x.hos_name }).Distinct().OrderBy(o => o.hos_name)" ValueProperty="hos_code" TextProperty="hos_name" Disabled="(!string.IsNullOrEmpty(mainLayout.loginUser.hos_code))" Style="width: 100%;" />
+                    <RadzenDropDown @bind-Value="searchModel.srr_hos_code" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowClear="true" TValue="string" AllowFiltering="true" Placeholder="Select..." Data="lab_ddl_List.Where(x => (x.arh_code == searchModel.srr_arh_code ||string.IsNullOrEmpty(searchModel.srr_arh_code))).Select(x => new { x.hos_code, x.hos_name }).Distinct().OrderBy(o => o.hos_name)" ValueProperty="hos_code" TextProperty="hos_name" Disabled="(!string.IsNullOrEmpty(mainLayout.loginUser.hos_code))" Style="width: 100%;" />
                 </div>
             </div>
         </div>
@@ -222,7 +222,7 @@ else
 
                     <RadzenGridColumn TItem="STARSPersonalReportListDTO" Property="" Title="Preview" Width="50px" Context="data" Filterable="false" Sortable="false">
                         <Template>
-                            <RadzenButton Icon="search" Style="background: #0A6839 0% 0% no-repeat padding-box;" Click="@(() => OnPreview(data.srp_id.ToString()))" />
+                            <RadzenButton Icon="search" Style="background: #0A6839 0% 0% no-repeat padding-box;" Click="@(() => PreviewReport(data))" />
                         </Template>
                     </RadzenGridColumn>
                 </Columns>
@@ -327,9 +327,26 @@ else
             navigationManager.NavigateTo("StarsPersonalReportDetail/" + id);
     }
 
-    async Task OnPreview(string id)
-    {
 
+
+    private async Task PreviewReport(STARSPersonalReportListDTO data)
+    {
+        showModal = true;
+        try
+        {
+
+            var exportData = await starsReportservice.GetStarsPersonalExportDataAsync(data.srp_id.ToString());
+            var starsAutomateResult = await starsReportservice.GetStarsAutomateResultDataAsync(data.srr_starsno);
+            exportData.stars_automate_result = starsAutomateResult.stars_automate_result;
+            string tempPath = ParameterList.FirstOrDefault(x => x.prm_code_minor == "PERSONAL_REPORT_PATH").prm_value;
+            starsReportservice.PreviewReport(jsRuntime, exportData, tempPath);
+        }
+        catch (Exception ex)
+        {
+            await jsRuntime.InvokeAsync<object>("ShowAlert", ex.Message);
+        }
+
+        showModal = false;
     }
 
 }

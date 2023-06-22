@@ -23,8 +23,8 @@ namespace ALISS.STARS.DTO
         public string srr_stars_labno { get; set; }
         public string srr_ident_organism { get; set; }
         public string stars_automate_result { get; set; }
-        public string srr_testuser { get; set; }
-        public string srr_approveuser { get; set; }
+        public string srp_testing_user { get; set; }
+        public string srp_approve_user { get; set; }
         public DateTime? srr_testdate { get; set; }
         public DateTime? srr_approvedate { get; set; }
         public DateTime? srr_reportdate { get; set; }
