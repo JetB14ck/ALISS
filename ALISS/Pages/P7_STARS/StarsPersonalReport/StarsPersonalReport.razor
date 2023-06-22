@@ -293,6 +293,7 @@ else
 
     private async void ClearInboxData()
     {
+        searchModel = new STARSPersonalReportSearchDTO();
         searchModel.srr_arh_code = mainLayout.loginUser.arh_code;
         searchModel.srr_hos_code = mainLayout.loginUser.hos_code;
         selectedStarsPersonalReports = null;
