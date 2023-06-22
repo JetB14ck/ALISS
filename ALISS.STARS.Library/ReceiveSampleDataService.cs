@@ -101,6 +101,7 @@ namespace ALISS.STARS.Library
             {
                 try
                 {
+                    DateTime currentDate = DateTime.Now;
                     foreach (var model in models)
                     {
                         if (model.str_id != null)
@@ -108,23 +109,40 @@ namespace ALISS.STARS.Library
                         var objTRStarsResult = _mapper.Map<TRStarsResult>(model);
                         var objTRStarsReceiveSample = _mapper.Map<TRStarsReceiveSample>(model);
 
-                        objTRStarsResult.srr_updatedate = DateTime.Now;
+                        objTRStarsResult.srr_updatedate = currentDate;
 
                         if (model.srr_status == "R")
                         {
                             objTRStarsResult.srr_starsno = GenerateRunningNumber("stars_no", format, objTRStarsResult.srr_arh_code);
-                            objTRStarsResult.srr_recvdate = DateTime.Now;
-                            objTRStarsResult.srr_tatdate = DateTime.Now.AddDays(model.arh_days_receive);
+                            objTRStarsResult.srr_recvdate = currentDate;
+                            objTRStarsResult.srr_tatdate = currentDate.AddDays(model.arh_days_receive);
                         }
 
                         if (!string.IsNullOrEmpty(model.str_cancelreason))
                         {
                             objTRStarsResult.srr_status = "J";
+                            objTRStarsReceiveSample.str_canceldate = currentDate;
                         }
 
                         objTRStarsReceiveSample.srr_id = objTRStarsResult.srr_id;
-                        objTRStarsReceiveSample.str_createdate = DateTime.Now;
-                        objTRStarsReceiveSample.str_updatedate = DateTime.Now;
+                        objTRStarsReceiveSample.str_starsno = objTRStarsResult.srr_starsno;
+                        objTRStarsReceiveSample.str_recvdate = objTRStarsResult.srr_recvdate;
+                        objTRStarsReceiveSample.str_tatdate = objTRStarsResult.srr_tatdate;
+                        objTRStarsReceiveSample.str_boxno = objTRStarsResult.srr_boxno;
+                        objTRStarsReceiveSample.str_hos_code = objTRStarsResult.srr_hos_code;
+                        objTRStarsReceiveSample.str_labno = objTRStarsResult.srr_stars_labno;
+                        objTRStarsReceiveSample.str_hnno = objTRStarsResult.srr_hnno;
+                        objTRStarsReceiveSample.str_idcard = objTRStarsResult.srr_idcard;
+                        objTRStarsReceiveSample.str_ident_organism = objTRStarsResult.srr_ident_org_code;
+                        objTRStarsReceiveSample.str_ident_organismdesc = objTRStarsResult.srr_ident_organism;
+                        objTRStarsReceiveSample.str_specimen = objTRStarsResult.srr_stars_specimen;
+                        objTRStarsReceiveSample.str_susp_organism = objTRStarsResult.srr_stars_orgnaism;
+                        objTRStarsReceiveSample.str_prename = objTRStarsResult.srr_prename;
+                        objTRStarsReceiveSample.str_fullname = objTRStarsResult.srr_name;
+                        objTRStarsReceiveSample.str_age = objTRStarsResult.srr_age;
+                        objTRStarsReceiveSample.str_receiveflag = objTRStarsResult.srr_status == "R";
+                        objTRStarsReceiveSample.str_createdate = currentDate;
+                        objTRStarsReceiveSample.str_updatedate = currentDate;
                         objTRStarsReceiveSample.str_createduser = objTRStarsResult.srr_updateuser;
                         objTRStarsReceiveSample.str_updateuser = objTRStarsResult.srr_updateuser;
                         _db.TRStarsReceiveSamples.Add(objTRStarsReceiveSample);
