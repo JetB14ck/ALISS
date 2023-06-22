@@ -215,6 +215,54 @@ else
                                         </div>
                                     </div>
                                 </div>
+
+                                @if (UploadFileData.afu_machinetype != "")
+                                {
+                                    <div class="col-12">
+                                        <div class="row justify-content-center divGroup">
+                                            <div class="col">
+                                                <LabelBox inputLabel="Upload Lab File" />
+                                            </div>
+                                            <div class="col">
+                                                <InputFile OnChange="OnInputFileChange"></InputFile>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-12">
+                                        <div class="row justify-content-center divGroup">
+                                            <div class="col">
+                                                @*<LabelBox inputLabel="Upload Lab File" />*@
+                                            </div>
+                                            <div class="col" style="font-size:small">
+                                                <label>(ไฟล์ต้องมีขนาดไม่เกิน 500MB)</label>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    @if (selectedFiles != null)
+                                    {
+                                        <div class="col-12">
+                                            <div class="row justify-content-center divGroup">
+                                                <div class="col">
+                                                    <LabelBox inputLabel="@configData.Get_Label("Filename")" />
+                                                </div>
+                                                <div class="col">
+                                                    <label>@selectedFiles.Name</label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-12">
+                                            <div class="row justify-content-center divGroup">
+                                                <div class="col">
+                                                    <div>@LargeUploadMessage</div>
+                                                    <progress style="height:50px;width:100%;" value="@UploadedBytes" max="@TotalBytes"></progress>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    }
+                                }
                             </div>
 
 
