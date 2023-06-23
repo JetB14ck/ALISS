@@ -201,7 +201,7 @@ else
                                             <LabelBox inputLabel="@configData.Get_Label("afu_Area")" />
                                         </div>
                                         <div class="col">
-                                            <RadzenDropDown @bind-Value="UploadFileData.afu_arh_code" Disabled="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowClear="true" TValue="string" AllowFiltering="true" Placeholder="Select..." Data="lab_ddl_List.Select(x => new { x.stars_arh_code, x.stars_arh_name }).Distinct().OrderBy(o=>o.stars_arh_code)" TextProperty="stars_arh_code" ValueProperty="stars_arh_name" />
+                                            <RadzenDropDown @bind-Value="UploadFileData.afu_arh_code" Disabled="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowClear="true" TValue="string" AllowFiltering="true" Placeholder="Select..." Data="lab_ddl_List.Select(x => new { x.stars_arh_code, x.stars_arh_name }).Distinct().OrderBy(o=>o.stars_arh_code)" TextProperty="stars_arh_name" ValueProperty="stars_arh_code" />
                                         </div>
                                     </div>
                                 </div>
@@ -336,7 +336,7 @@ else
 
             var searchData = new HospitalLabDataDTO()
             {
-                arh_code = searchModel.afu_Area = mainLayout.loginUser.arh_code
+                arh_code = searchModel.afu_Area = UploadFileData.afu_arh_code = mainLayout.loginUser.arh_code
             };
 
 
@@ -353,7 +353,8 @@ else
     private async void ClearInboxData()
     {
 
-        searchModel.afu_Area = mainLayout.loginUser.arh_code;
+        searchModel.afu_Area = UploadFileData.afu_arh_code = mainLayout.loginUser.arh_code;
+        searchModel.afu_machinetype = "";
         selectedUploadAutomates = null;
         SearchData();
     }
@@ -407,7 +408,7 @@ else
         string str_CurrentDate = DateTime.Now.ToString("yyyyMMdd");
 
         string filepath = await RepeatService.GetPath();
-        filepath = Path.Combine(filepath, searchModel.afu_Area, str_CurrentDate);
+        filepath = Path.Combine(filepath, UploadFileData.afu_arh_code, str_CurrentDate);
         bool exists = System.IO.Directory.Exists(filepath);
 
         if (!exists)
@@ -540,9 +541,9 @@ else
 
     async Task ShowUploadEntryDialog()
     {
-        ControlPopup("UploadEntry", true);
         UploadFileData.afu_arh_code = searchModel.afu_Area;
         UploadFileData.afu_machinetype = searchModel.afu_machinetype;
+        ControlPopup("UploadEntry", true);
     }
 
     private async Task OnInputFileChange(InputFileChangeEventArgs e)
