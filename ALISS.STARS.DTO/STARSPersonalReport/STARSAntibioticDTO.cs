@@ -6,7 +6,6 @@ namespace ALISS.STARS.DTO
 {
     public class STARSAntibioticListDTO
     {
-        public int sta_ant_id { get; set; }
         public string sta_ant_code { get; set; }
         public string sta_ant_name { get; set; }
         public string sta_ant_MIC { get; set; }

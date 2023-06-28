@@ -73,5 +73,14 @@ namespace ALISS.Data.D7_StarsMonitoring
                 throw ex;
             }
         }
+
+        public async Task<STARSMonitoringDetailDTO> GetRepeatAutomateDetailByParamAsync(string starsno)
+        {
+            STARSMonitoringDetailDTO obj = new STARSMonitoringDetailDTO();
+
+            obj = await _apiHelper.GetDataByIdAsync<STARSMonitoringDetailDTO>("stars_monitoring/GetSTARSMonitoringDataDetailByParam", starsno);
+
+            return obj;
+        }
     }
 }

@@ -42,5 +42,14 @@ namespace ALISS.STARS.Api.Controllers
 
             return objReturn;
         }
+
+        [HttpGet]
+        [Route("api/STARSMonitoring/GetSTARSMonitoringDataDetailByParam/{starsno}")]
+        public STARSMonitoringDetailDTO GetSTARSMonitoringDataDetailByParam(string starsno)
+        {
+            var objReturn = _service.GetSTARSMonitoringDataDetailByParam(starsno);
+
+            return objReturn;
+        }
     }
 }

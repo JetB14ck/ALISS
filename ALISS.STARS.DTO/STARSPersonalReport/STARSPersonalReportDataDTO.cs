@@ -60,13 +60,13 @@ namespace ALISS.STARS.DTO
         public bool? X_COL_MIC_flag { get; set; }
         public bool? X_COL_RIS_flag { get; set; }
         public bool? X_CPO_MIC_flag { get; set; }
-        public bool? X_CPO_SIR_flag { get; set; }
+        public bool? X_CPO_RIS_flag { get; set; }
         public bool? X_CZO_MIC_flag { get; set; }
-        public bool? X_CZO_SIR_flag { get; set; }
+        public bool? X_CZO_RIS_flag { get; set; }
         public bool? X_CXA_MIC_flag { get; set; }
-        public bool? X_CXA_SIR_flag { get; set; }
+        public bool? X_CXA_RIS_flag { get; set; }
         public bool? X_CSL_MIC_flag { get; set; }
-        public bool? X_CSL_SIR_flag { get; set; }
+        public bool? X_CSL_RIS_flag { get; set; }
         public bool? X_DAP_MIC_flag { get; set; }
         public bool? X_DAP_RIS_flag { get; set; }
         public bool? X_DOR_MIC_flag { get; set; }
@@ -78,9 +78,9 @@ namespace ALISS.STARS.DTO
         public bool? X_ERY_MIC_flag { get; set; }
         public bool? X_ERY_RIS_flag { get; set; }
         public bool? X_FUS_MIC_flag { get; set; }
-        public bool? X_FUS_SIR_flag { get; set; }
+        public bool? X_FUS_RIS_flag { get; set; }
         public bool? X_FOS_MIC_flag { get; set; }
-        public bool? X_FOS_SIR_flag { get; set; }
+        public bool? X_FOS_RIS_flag { get; set; }
         public bool? X_GEH_MIC_flag { get; set; }
         public bool? X_GEH_RIS_flag { get; set; }
         public bool? X_GEN_MIC_flag { get; set; }
@@ -117,6 +117,8 @@ namespace ALISS.STARS.DTO
         public bool? X_SXT_RIS_flag { get; set; }
         public bool? X_VAN_MIC_flag { get; set; }
         public bool? X_VAN_RIS_flag { get; set; }
+        public bool? X_CBDE_MIC_flag { get; set; }
+        public bool? X_CBDE_RIS_flag { get; set; }
         public string srp_status { get; set; }
         public string srp_createduser { get; set; }
         public DateTime? srp_createddate { get; set; }

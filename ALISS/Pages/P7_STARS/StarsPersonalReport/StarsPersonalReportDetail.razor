@@ -107,7 +107,7 @@ else
                             <LabelBox inputLabel="@configData.Get_Label("srp_testing_user")" requireField="true" />
                         </div>
                         <div class="@classInput">
-                            <RadzenDropDown @bind-Value="reportData.srp_testing_user" TextProperty="arc_testuser" ValueProperty="arc_testuser" Style="width: 100%;" Data="ddl_contact.Select(x => new { x.arc_testuser})" Disabled="@(_StrControl.Equals("E") ? true : false)" />
+                            <RadzenDropDown @bind-Value="reportData.srp_testing_user" TextProperty="arc_testuser" ValueProperty="arc_testuser" Style="width: 100%;" Data="ddl_contact.Where(x => !string.IsNullOrEmpty(x.arc_testuser)).Select(x => new { x.arc_testuser})" Disabled="@(_StrControl.Equals("E") ? true : false)" />
                         </div>
                     </div>
                 </div>
@@ -117,7 +117,7 @@ else
                             <LabelBox inputLabel="@configData.Get_Label("srp_approve_user")" requireField="true" />
                         </div>
                         <div class="@classInput">
-                            <RadzenDropDown @bind-Value="reportData.srp_approve_user" TextProperty="arc_approveuser" ValueProperty="arc_approveuser" Style="width: 100%;" Data="ddl_contact.Select(x => new { x.arc_approveuser})" Change="@(args => DDL_Change("Approver", args))" Disabled="@(_StrControl.Equals("E") ? true : false)" />
+                            <RadzenDropDown @bind-Value="reportData.srp_approve_user" TextProperty="arc_approveuser" ValueProperty="arc_approveuser" Style="width: 100%;" Data="ddl_contact.Where(x => !string.IsNullOrEmpty(x.arc_approveuser)).Select(x => new { x.arc_approveuser})" Change="@(args => DDL_Change("Approver", args))" Disabled="@(_StrControl.Equals("E") ? true : false)" />
                         </div>
                     </div>
                 </div>
@@ -523,8 +523,6 @@ else
             ddl_contact = await ddlDataService.GetAreaHealthListContactByModelAsync(new TCAreaHealthContact() { arc_arh_code = mainLayout.loginUser.arh_code });
             ParameterList = await ddlDataService.GetParameterListByModelAsync(new ParameterDTO() { prm_code_major = "STARS_PERSONAL_REPORT" });
 
-            gridAntibioticDatas = await starsReportservice.GetSTARSAntibioticListByModelAsync(new STARSAntibioticSearchDTO());
-
             var searchData = new HospitalLabDataDTO()
             {
                 arh_code = searchModel.srr_arh_code = mainLayout.loginUser.arh_code,
@@ -657,6 +655,10 @@ else
             if (!control)
             {
                 antibioticSearchDTO = new STARSAntibioticSearchDTO();
+            }
+            else
+            {
+                gridAntibioticDatas = await starsReportservice.GetSTARSAntibioticListByModelAsync(antibioticSearchDTO);
             }
         }
     }

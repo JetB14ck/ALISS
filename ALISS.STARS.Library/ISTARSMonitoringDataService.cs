@@ -9,5 +9,6 @@ namespace ALISS.STARS.Library
     {
         List<STARSMonitoringListsDTO> GetSTARSMonitoringDataList(STARSMonitoringSearchDTO searchModel);
         STARSMonitoringListsDTO SaveTRSTARSResultData(STARSMonitoringListsDTO model);
+        STARSMonitoringDetailDTO GetSTARSMonitoringDataDetailByParam(string starsno);
     }
 }

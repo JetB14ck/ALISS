@@ -41,10 +41,10 @@ namespace ALISS.STARS.Library
                 {
                     objList = _db.RepeatAutomateDTOs.FromSqlRaw<RepeatAutomateDataDTO>("sp_GET_TRRepeatAutomateFileList {0}, {1}, {2}, {3}, {4}, {5}"
                                                                                                    , searchModel.arh_code
-                                                                                                   , searchModel.repeat_startdate_str
-                                                                                                   , searchModel.repeat_enddate_str
-                                                                                                   , searchModel.testing_startdate_str
-                                                                                                   , searchModel.testing_enddate_str
+                                                                                                   , searchModel.repeat_start_date
+                                                                                                   , searchModel.repeat_end_date
+                                                                                                   , searchModel.testing_start_date
+                                                                                                   , searchModel.testing_end_date
                                                                                                    , searchModel.repeat_status
                                                                                                    ).ToList();
 

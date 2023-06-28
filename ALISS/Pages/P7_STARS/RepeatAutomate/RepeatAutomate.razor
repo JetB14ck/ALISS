@@ -52,7 +52,7 @@ else
                         <LabelBox inputLabel="@configData.Get_Label("RepeatDateFrom")" />
                     </div>
                     <div class="@classInput">
-                        <RadzenDatePicker @bind-Value=@RepeatFrom ShowTime="false" ShowSeconds="false" DateFormat="dd/MM/yyyy" />
+                        <RadzenDatePicker @bind-Value="searchModel.repeat_start_date" ShowTime="false" ShowSeconds="false" DateFormat="dd/MM/yyyy" />
                     </div>
                 </div>
             </div>
@@ -62,7 +62,7 @@ else
                         <LabelBox inputLabel="@configData.Get_Label("RepeatDateTo")" />
                     </div>
                     <div class="@classInput">
-                        <RadzenDatePicker @bind-Value=@RepeatTo ShowTime="false" ShowSeconds="false" DateFormat="dd/MM/yyyy" />
+                        <RadzenDatePicker @bind-Value="searchModel.repeat_end_date" ShowTime="false" ShowSeconds="false" DateFormat="dd/MM/yyyy" />
                     </div>
                 </div>
             </div>
@@ -84,7 +84,7 @@ else
                         <LabelBox inputLabel="@configData.Get_Label("TesingDateFrom")" />
                     </div>
                     <div class="@classInput">
-                        <RadzenDatePicker @bind-Value=@TesingFrom ShowTime="false" ShowSeconds="false" DateFormat="dd/MM/yyyy" />
+                        <RadzenDatePicker @bind-Value="searchModel.testing_start_date" ShowTime="false" ShowSeconds="false" DateFormat="dd/MM/yyyy" />
                     </div>
                 </div>
             </div>
@@ -94,7 +94,7 @@ else
                         <LabelBox inputLabel="@configData.Get_Label("TesingDateTo")" />
                     </div>
                     <div class="@classInput">
-                        <RadzenDatePicker @bind-Value=@TestingTo ShowTime="false" ShowSeconds="false" DateFormat="dd/MM/yyyy" />
+                        <RadzenDatePicker @bind-Value="searchModel.testing_end_date" ShowTime="false" ShowSeconds="false" DateFormat="dd/MM/yyyy" />
                     </div>
                 </div>
             </div>
@@ -133,7 +133,7 @@ else
                 <div class="col-auto buttonArea">
                     <RadzenButton class="btnAdd" Icon="print" Text="Print STARS Barcode" Click="ExportBarcode" />
                 </div>
-                <div class="col-auto">
+                <div class="col-auto buttonArea">
                     <RadzenButton class="btnAdd" Icon="list" Text="Print Logbook" Click="ExportLogbook" />
                 </div>
             </div>
@@ -340,10 +340,6 @@ else
     long TotalBytes;
 
     private bool showModal = false;
-    DateTime? RepeatFrom = DateTime.Now.AddDays(-5);
-    DateTime? RepeatTo = DateTime.Now;
-    DateTime? TesingFrom = DateTime.Now.AddDays(-5);
-    DateTime? TestingTo = DateTime.Now;
     private List<string> selectedRow = new List<string>();
     private class StatusList
     {
@@ -392,16 +388,16 @@ else
 
             var searchData = new HospitalLabDataDTO()
             {
-                arh_code = searchModel.arh_code = mainLayout.loginUser.arh_code,
+                arh_code = searchModel.arh_code = FileData.afu_arh_code = mainLayout.loginUser.arh_code,
             };
             var mm = new DropDownListDTO();
             lab_ddl_List = await ddlDataService.GetAllLabListByModelAsync(searchData);
             machineType_ddl_List = await ddlDataService.GetMachineTypeListByModelAsync(mm);
 
-            searchModel.repeat_start_date = RepeatFrom;
-            searchModel.repeat_end_date = RepeatTo;
-            searchModel.testing_start_date = TesingFrom;
-            searchModel.testing_end_date = TestingTo;
+            searchModel.repeat_start_date = DateTime.Now.AddDays(-5);
+            searchModel.repeat_end_date = DateTime.Now;
+            searchModel.testing_start_date = DateTime.Now.AddDays(-5);
+            searchModel.testing_end_date = DateTime.Now;
 
             gridDatas = await RepeatService.GetRepeatAutomateListByParamAsync(searchModel);
         }
@@ -410,11 +406,6 @@ else
     private async void SearchData()
     {
         showModal = true;
-
-        searchModel.repeat_start_date = RepeatFrom;
-        searchModel.repeat_end_date = RepeatTo;
-        searchModel.testing_start_date = TesingFrom;
-        searchModel.testing_end_date = TestingTo;
         gridDatas = await RepeatService.GetRepeatAutomateListByParamAsync(searchModel);
         if (inboxGrid.radzenGrid != null) inboxGrid.radzenGrid.GoToPage(0);
         showModal = false;
@@ -424,10 +415,10 @@ else
 
     private async void ClearInboxData()
     {
-        searchModel.arh_code = mainLayout.loginUser.arh_code;
-        searchModel.repeat_start_date = DateTime.Now;
+        searchModel.arh_code = FileData.afu_arh_code = mainLayout.loginUser.arh_code;
+        searchModel.repeat_start_date = DateTime.Now.AddDays(-5);
         searchModel.repeat_end_date = DateTime.Now;
-        searchModel.testing_start_date = DateTime.Now;
+        searchModel.testing_start_date = DateTime.Now.AddDays(-5);
         searchModel.testing_end_date = DateTime.Now;
         searchModel.repeat_status = null;
 

@@ -37,14 +37,14 @@ namespace ALISS.STARS.Library
 
                 try
                 {
-                    objList = _db.STARSMonitoringListsDTOs.FromSqlRaw<STARSMonitoringListsDTO>("sp_GET_STARSMonitoringList {0}, {1}, {2}, {3}, {4}, {5}, {6}"
+                    objList = _db.STARSMonitoringListsDTOs.FromSqlRaw<STARSMonitoringListsDTO>("sp_GET_STARSMonitoringList {0}, {1}, {2}, {3}, {4}, {5}, {6}, {7}"
                                                                                                    , searchModel.arh_code
                                                                                                    , searchModel.hos_code
                                                                                                    , searchModel.stars_no
-                                                                                                   , searchModel.recvdate_start_date_str
-                                                                                                   , searchModel.recvdatet_end_date_str
-                                                                                                   , searchModel.tatdate_start_date_str
-                                                                                                   , searchModel.tatdatet_end_date_str
+                                                                                                   , searchModel.recvdate_start
+                                                                                                   , searchModel.recvdatet_end
+                                                                                                   , searchModel.tatdate_start
+                                                                                                   , searchModel.tatdatet_end
                                                                                                    , searchModel.status
                                                                                                    ).ToList();
 
@@ -105,6 +105,39 @@ namespace ALISS.STARS.Library
             }
 
             return objList;
+        }
+
+        public STARSMonitoringDetailDTO GetSTARSMonitoringDataDetailByParam(string starsno)
+        {
+            log.MethodStart();
+
+            STARSMonitoringDetailDTO obj = new STARSMonitoringDetailDTO();
+
+            //var searchModel = JsonSerializer.Deserialize<RepeatAutomateSearchDTO>(Param);
+
+            using (var trans = _db.Database.BeginTransaction())
+            {
+
+                try
+                {
+                    obj = _db.STARSMonitoringDetailDTOs.FromSqlRaw<STARSMonitoringDetailDTO>("sp_GET_STARSMonitoringDetail {0}", starsno).ToList().FirstOrDefault();
+
+                    trans.Commit();
+                }
+                catch (Exception ex)
+                {
+                    // TODO: Handle failure
+                    trans.Rollback();
+                }
+                finally
+                {
+                    trans.Dispose();
+                }
+            }
+            log.MethodFinish();
+
+            return obj;
+
         }
 
     }

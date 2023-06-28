@@ -70,6 +70,7 @@ namespace ALISS.STARS.Library.DataAccess
         public DbSet<RepeatAutomateDataDTO> RepeatAutomateDTOs { get; set; }     
         #endregion
         public DbSet<STARSMonitoringListsDTO> STARSMonitoringListsDTOs { get; set; }
+        public DbSet<STARSMonitoringDetailDTO> STARSMonitoringDetailDTOs { get; set; }
         public STARSContext(DbContextOptions<STARSContext> options) : base(options)
         {
 
@@ -146,7 +147,7 @@ namespace ALISS.STARS.Library.DataAccess
             builder.Entity<STARSPersonalReportDataDTO>().HasKey(x => x.srp_id);
             builder.Entity<STARSPersonalReportExportDTO>().HasKey(x => x.srp_id);
             builder.Entity<STARSPersonalReportSelectListDTO>().HasKey(x => x.srr_id);
-            builder.Entity<STARSAntibioticListDTO>().HasKey(x => x.sta_ant_id);
+            builder.Entity<STARSAntibioticListDTO>().HasNoKey();
             builder.Entity<StarsAutomateResultDTO>().HasNoKey();
 
             builder.Entity<TRSTARSPersonalReport>().HasKey(x => x.srp_id);
@@ -168,6 +169,7 @@ namespace ALISS.STARS.Library.DataAccess
             builder.Entity<TrRunningNoDTO>().ToTable("TR_RUNNING_NUMBER");
 
             builder.Entity<STARSMonitoringListsDTO>().HasKey(x => x.srr_id);
+            builder.Entity<STARSMonitoringDetailDTO>().HasKey(x => x.srr_id);
 
             base.OnModelCreating(builder);
         }

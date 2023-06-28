@@ -30,6 +30,7 @@ namespace ALISS.STARS.DTO
 		public string srr_remark { get; set; }
 		public string srr_hos_code { get; set; }
 		public string srr_arh_code { get; set; }
+        public int? srp_id { get; set; }
         public string srr_senddate_str
         {
             get
@@ -79,7 +80,7 @@ namespace ALISS.STARS.DTO
                 else if (srr_status == "R") objReturn = "Received";
                 else if (srr_status == "C") objReturn = "Complete";
                 else if (srr_status == "J") objReturn = "Reject Sample";
-                else if (srr_status == "R") objReturn = "Repeat";
+                else if (srr_status == "T") objReturn = "Repeat Automate";
 
                 return objReturn;
             }

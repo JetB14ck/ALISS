@@ -49,6 +49,7 @@ namespace ALISS.STARS.DTO.RepeatAutomate
         public string susp_spec_type { get; set; }
         public string srr_ident_organism { get; set; }
         public string method_ident { get; set; }
+        public DateTime? srr_recvdate { get; set; }
         public string afu_status_str
         {
             get

@@ -3,6 +3,7 @@
 @using ALISS.Data.D7_StarsMonitoring
 @using ALISS.Data
 @using ALISS.STARS.DTO
+@using ALISS.Data.D7_StarsMapping
 
 @using Radzen
 @using Radzen.Blazor
@@ -13,7 +14,13 @@
 @inject ConfigDataService configDataService
 @inject STARSMonitoringService StarsMonitoringService
 @inject DropDownListDataService ddlDataService
+@inject STARSPersonalReportService starsReportservice
+<style>
+    .ant-padding {
+        padding: 0px 0px 0px 10px;
+    }
 
+</style>
 <div style="width: 90%;">
     <div class="divHead">
         STARS Monitoring
@@ -37,7 +44,7 @@ else
                     <div class="@classInput">
                         <RadzenDropDown @bind-Value="searchModel.arh_code" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
                                         AllowClear="true" TValue="string" AllowFiltering="true" Placeholder="Select..."
-                                        Data="lab_ddl_List.Select(x => new { x.arh_code, x.arh_name }).Distinct().OrderBy(o=>o.arh_code)" ValueProperty="arh_code" TextProperty="arh_name"
+                                        Data="lab_ddl_List.Select(x => new { x.arh_code, x.arh_name }).Distinct().OrderBy(o => o.arh_code)" ValueProperty="arh_code" TextProperty="arh_name"
                                         Disabled="(!string.IsNullOrEmpty(mainLayout.loginUser.arh_code))"
                                         Change="@(args => DDL_Change("Arh", args))" />
                     </div>
@@ -84,7 +91,7 @@ else
                         <LabelBox inputLabel="@configData.Get_Label("RecvDateFrom")" />
                     </div>
                     <div class="@classInput">
-                        <RadzenDatePicker @bind-Value=@ReceiveFrom ShowTime="false" ShowSeconds="false" DateFormat="dd/MM/yyyy" />
+                        <RadzenDatePicker @bind-Value="searchModel.recvdate_start" ShowTime="false" ShowSeconds="false" DateFormat="dd/MM/yyyy" />
                     </div>
                 </div>
             </div>
@@ -95,7 +102,7 @@ else
                         <LabelBox inputLabel="@configData.Get_Label("RecvDateTo")" />
                     </div>
                     <div class="@classInput">
-                        <RadzenDatePicker @bind-Value=@ReceiveTo ShowTime="false" ShowSeconds="false" DateFormat="dd/MM/yyyy" />
+                        <RadzenDatePicker @bind-Value="searchModel.recvdatet_end" ShowTime="false" ShowSeconds="false" DateFormat="dd/MM/yyyy" />
                     </div>
                 </div>
             </div>
@@ -122,7 +129,7 @@ else
                         <LabelBox inputLabel="@configData.Get_Label("TATDateFrom")" />
                     </div>
                     <div class="@classInput">
-                        <RadzenDatePicker @bind-Value=@TATFrom ShowTime="false" ShowSeconds="false" DateFormat="dd/MM/yyyy" />
+                        <RadzenDatePicker @bind-Value="searchModel.tatdate_start" ShowTime="false" ShowSeconds="false" DateFormat="dd/MM/yyyy" />
                     </div>
                 </div>
             </div>
@@ -133,7 +140,7 @@ else
                         <LabelBox inputLabel="@configData.Get_Label("TATDateTo")" />
                     </div>
                     <div class="@classInput">
-                        <RadzenDatePicker @bind-Value=@TATTo ShowTime="false" ShowSeconds="false" DateFormat="dd/MM/yyyy" />
+                        <RadzenDatePicker @bind-Value="searchModel.tatdatet_end" ShowTime="false" ShowSeconds="false" DateFormat="dd/MM/yyyy" />
                     </div>
                 </div>
             </div>
@@ -171,10 +178,13 @@ else
                     FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
                     AllowColumnResize="true" EditMode="DataGridEditMode.Single" RowUpdate="@OnUpdateRow">
             <Columns>
-                <RadzenGridColumn TItem="STARSMonitoringListsDTO" Width="100px" Property="srr_starsno" Title="STARS No.">
+                <RadzenGridColumn TItem="STARSMonitoringListsDTO" Width="120px" Property="srr_starsno" Title="STARS No.">
                     <FooterTemplate>
                         <label title="@inboxGrid.FooterLabelString">@inboxGrid.FooterLabelString</label>
                     </FooterTemplate>
+                    <Template Context="data">
+                        <RadzenButton ButtonStyle="ButtonStyle.Light" Style="font-size: 14px;" Size="ButtonSize.Small" Text="@data.srr_starsno" Click="@(args => OnViewDetail(data.srr_starsno))"></RadzenButton>
+                    </Template>
                 </RadzenGridColumn>
                 <RadzenGridColumn TItem="STARSMonitoringListsDTO" Width="100px" Property="srr_senddate_str" Title="Send Date" />
                 <RadzenGridColumn TItem="STARSMonitoringListsDTO" Width="100px" Property="srr_recvdate_str" Title="Receive Date" />
@@ -227,6 +237,1031 @@ else
             </Columns>
         </RadzenGrid>
     </div>
+    @if (showDetail)
+    {
+        <hr />
+
+        <div class="container inputArea">
+            <div class="row justify-content-between">
+
+                <div class="col-12 col-xl-12">
+                    <div class="row justify-content-end divGroup buttonArea">
+                        <div class="col-auto">
+                            <RadzenButton Icon="close" Click="@(() => showDetail = false)" />
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-xl-3">
+                    <div class="row justify-content-center divGroup">
+                        <div class="@classLabel">
+                            <LabelBox inputLabel="@configData.Get_Label("srr_starsno")" />
+                        </div>
+                        <div class="@classInput">
+                            <RadzenTextBox Disabled="true" @bind-Value="viewData.srr_starsno" Style="width: 100%;" />
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-xl-3">
+                    <div class="row justify-content-center divGroup">
+                        <div class="@classLabel">
+                            <LabelBox inputLabel="@configData.Get_Label("srr_recvdate")" />
+                        </div>
+                        <div class="@classInput">
+                            <RadzenTextBox Disabled="true" @bind-Value="recvdate_str" Style="width: 100%;" />
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-xl-3">
+                    <div class="row justify-content-center divGroup">
+                        <div class="@classLabel">
+                            <LabelBox inputLabel="@configData.Get_Label("srr_starsno_ref")" />
+                        </div>
+                        <div class="@classInput">
+                            <RadzenTextBox Disabled="true" @bind-Value="viewData.srr_starsno_ref" Style="width: 100%;" />
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-xl-3">
+                    <div class="row justify-content-center divGroup">
+                        <div class="@classLabel">
+                            <LabelBox inputLabel="@configData.Get_Label("afu_repeatdate")" />
+                        </div>
+                        <div class="@classInput">
+                            <RadzenTextBox Disabled="true" @bind-Value="repeatdate_str" Style="width: 100%;" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12 col-xl-3">
+                    <div class="row justify-content-center divGroup">
+                        <div class="@classLabel">
+                            <LabelBox inputLabel="@configData.Get_Label("srr_stars_orgnaism")" />
+                        </div>
+                        <div class="@classInput">
+                            <RadzenTextBox Disabled="true" @bind-Value="viewData.srr_stars_orgnaism" Style="width: 100%;" />
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-xl-3">
+                    <div class="row justify-content-center divGroup">
+                        <div class="@classLabel">
+                            <LabelBox inputLabel="@configData.Get_Label("srr_ident_organism")" />
+                        </div>
+                        <div class="@classInput">
+                            <RadzenTextBox Disabled="true" @bind-Value="viewData.srr_ident_organism" Style="width: 100%;" />
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-xl-3">
+                    <div class="row justify-content-center divGroup">
+                        <div class="@classLabel">
+                            <LabelBox inputLabel="@configData.Get_Label("method_ident")" />
+                        </div>
+                        <div class="@classInput">
+                            <RadzenTextBox Disabled="true" @bind-Value="viewData.method_ident" Style="width: 100%;" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12 col-xl-3">
+                    <div class="row justify-content-center divGroup">
+                        <div class="@classLabel">
+                            <LabelBox inputLabel="@configData.Get_Label("specimen_type")" />
+                        </div>
+                        <div class="@classInput">
+                            <RadzenTextBox Disabled="true" @bind-Value="viewData.specimen_type" Style="width: 100%;" />
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-xl-3">
+                    <div class="row justify-content-center divGroup">
+                        <div class="@classLabel">
+                            <LabelBox inputLabel="@configData.Get_Label("method_antibiotic")" />
+                        </div>
+                        <div class="@classInput">
+                            <RadzenTextBox Disabled="true" @bind-Value="viewData.method_antibiotic" Style="width: 100%;" />
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-xl-3">
+                    <div class="row justify-content-center divGroup">
+                        <div class="@classLabel">
+                            <LabelBox inputLabel="@configData.Get_Label("method_resistance")" />
+                        </div>
+                        <div class="@classInput">
+                            <RadzenTextBox Disabled="true" @bind-Value="viewData.method_resistance" Style="width: 100%;" />
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-xl-3">
+                    <div class="row justify-content-center divGroup">
+                        <div class="@classLabel">
+                            <LabelBox inputLabel="@configData.Get_Label("srr_status")" />
+                        </div>
+                        <div class="@classInput">
+                            <RadzenTextBox Disabled="true" @bind-Value="status_str" Style="width: 100%;" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <hr />
+            <div class="row">
+                <div class="col-12">
+                    <b>Gene</b>
+                </div>
+                <div class="col-12 col-xl-3">
+                    <div class="row justify-content-center divGroup">
+                        <div class="@classLabel">
+                            @*<LabelBox inputLabel="@configData.Get_Label("srg_imp_gene")" />*@
+                            <i>bla</i> IMP Gene :
+                        </div>
+                        <div class="@classInput">
+                            <RadzenTextBox Disabled="true" @bind-Value="viewData.srg_imp_gene" Style="width: 100%;" />
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-xl-3">
+                    <div class="row justify-content-center divGroup">
+                        <div class="@classLabel">
+                            @*<LabelBox inputLabel="@configData.Get_Label("srg_vim_gene")" />*@
+                            <i>bla</i> VIM Gene :
+                        </div>
+                        <div class="@classInput">
+                            <RadzenTextBox Disabled="true" @bind-Value="viewData.srg_vim_gene" Style="width: 100%;" />
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-xl-3">
+                    <div class="row justify-content-center divGroup">
+                        <div class="@classLabel">
+                            @*<LabelBox inputLabel="@configData.Get_Label("srg_ndm_gene")" />*@
+                            <i>bla</i> NDM Gene :
+                        </div>
+                        <div class="@classInput">
+                            <RadzenTextBox Disabled="true" @bind-Value="viewData.srg_ndm_gene" Style="width: 100%;" />
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-xl-3">
+                    <div class="row justify-content-center divGroup">
+                        <div class="@classLabel">
+                            @*<LabelBox inputLabel="@configData.Get_Label("srg_kpc_gene")" />*@
+                            <i>bla</i> KPC Gene :
+                        </div>
+                        <div class="@classInput">
+                            <RadzenTextBox Disabled="true" @bind-Value="viewData.srg_kpc_gene" Style="width: 100%;" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12 col-xl-3">
+                    <div class="row justify-content-center divGroup">
+                        <div class="@classLabel">
+                            @*<LabelBox inputLabel="@configData.Get_Label("dxa_gene")" />*@
+                            <i>bla</i> OXA-48-like Gene :
+                        </div>
+                        <div class="@classInput">
+                            <RadzenTextBox Disabled="true" @bind-Value="viewData.srg_oxa_gene" Style="width: 100%;" />
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-xl-3">
+                    <div class="row justify-content-center divGroup">
+                        <div class="@classLabel">
+                            <LabelBox inputLabel="@configData.Get_Label("serotype_gene")" />
+                        </div>
+                        <div class="@classInput">
+                            <RadzenTextBox Disabled="true" @bind-Value="viewData.srg_serotype_gene" Style="width: 100%;" />
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-xl-3">
+                    <div class="row justify-content-center divGroup">
+                        <div class="@classLabel">
+                            <LabelBox inputLabel="@configData.Get_Label("serogroup_gene")" />
+                        </div>
+                        <div class="@classInput">
+                            <RadzenTextBox Disabled="true" @bind-Value="viewData.srg_serogroup_gene" Style="width: 100%;" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12 col-xl-3">
+                    <div class="row justify-content-center divGroup">
+                        <div class="@classLabel">
+                            <LabelBox inputLabel="@configData.Get_Label("srg_vana_gene")" />
+                        </div>
+                        <div class="@classInput">
+                            <RadzenTextBox Disabled="true" @bind-Value="viewData.srg_vana_gene" Style="width: 100%;" />
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-xl-3">
+                    <div class="row justify-content-center divGroup">
+                        <div class="@classLabel">
+                            <LabelBox inputLabel="@configData.Get_Label("srg_vanb_gene")" />
+                        </div>
+                        <div class="@classInput">
+                            <RadzenTextBox Disabled="true" @bind-Value="viewData.srg_vanb_gene" Style="width: 100%;" />
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-xl-3">
+                    <div class="row justify-content-center divGroup">
+                        <div class="@classLabel">
+                            <LabelBox inputLabel="@configData.Get_Label("srg_vanc1_gene")" />
+                        </div>
+                        <div class="@classInput">
+                            <RadzenTextBox Disabled="true" @bind-Value="viewData.srg_vanc1_gene" Style="width: 100%;" />
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-xl-3">
+                    <div class="row justify-content-center divGroup">
+                        <div class="@classLabel">
+                            <LabelBox inputLabel="@configData.Get_Label("srg_vanc2c3_gene")" />
+                        </div>
+                        <div class="@classInput">
+                            <RadzenTextBox Disabled="true" @bind-Value="viewData.srg_vanc2c3_gene" Style="width: 100%;" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12 col-xl-3">
+                    <div class="row justify-content-center divGroup">
+                        <div class="@classLabel">
+                            <LabelBox inputLabel="@configData.Get_Label("srg_meca_gene")" />
+                        </div>
+                        <div class="@classInput">
+                            <RadzenTextBox Disabled="true" @bind-Value="viewData.srg_meca_gene" Style="width: 100%;" />
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-xl-3">
+                    <div class="row justify-content-center divGroup">
+                        <div class="@classLabel">
+                            <LabelBox inputLabel="@configData.Get_Label("srg_mecc_gene")" />
+                        </div>
+                        <div class="@classInput">
+                            <RadzenTextBox Disabled="true" @bind-Value="viewData.srg_mecc_gene" Style="width: 100%;" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12 col-xl-3">
+                    <div class="row justify-content-center divGroup">
+                        <div class="@classLabel">
+                            <LabelBox inputLabel="@configData.Get_Label("srg_mcr1_gene")" />
+                        </div>
+                        <div class="@classInput">
+                            <RadzenTextBox Disabled="true" @bind-Value="viewData.srg_mcr1_gene" Style="width: 100%;" />
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-xl-3">
+                    <div class="row justify-content-center divGroup">
+                        <div class="@classLabel">
+                            <LabelBox inputLabel="@configData.Get_Label("srg_mcr2_gene")" />
+                        </div>
+                        <div class="@classInput">
+                            <RadzenTextBox Disabled="true" @bind-Value="viewData.srg_mcr2_gene" Style="width: 100%;" />
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-xl-3">
+                    <div class="row justify-content-center divGroup">
+                        <div class="@classLabel">
+                            <LabelBox inputLabel="@configData.Get_Label("srg_mcr3_gene")" />
+                        </div>
+                        <div class="@classInput">
+                            <RadzenTextBox Disabled="true" @bind-Value="viewData.srg_mcr3_gene" Style="width: 100%;" />
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-xl-3">
+                    <div class="row justify-content-center divGroup">
+                        <div class="@classLabel">
+                            <LabelBox inputLabel="@configData.Get_Label("srg_mcr4_gene")" />
+                        </div>
+                        <div class="@classInput">
+                            <RadzenTextBox Disabled="true" @bind-Value="viewData.srg_mcr4_gene" Style="width: 100%;" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12 col-xl-3">
+                    <div class="row justify-content-center divGroup">
+                        <div class="@classLabel">
+                            <LabelBox inputLabel="@configData.Get_Label("srg_mcr5_gene")" />
+                        </div>
+                        <div class="@classInput">
+                            <RadzenTextBox Disabled="true" @bind-Value="viewData.srg_mcr5_gene" Style="width: 100%;" />
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-xl-3">
+                    <div class="row justify-content-center divGroup">
+                        <div class="@classLabel">
+                            <LabelBox inputLabel="@configData.Get_Label("srg_mcr6_gene")" />
+                        </div>
+                        <div class="@classInput">
+                            <RadzenTextBox Disabled="true" @bind-Value="viewData.srg_mcr6_gene" Style="width: 100%;" />
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-xl-3">
+                    <div class="row justify-content-center divGroup">
+                        <div class="@classLabel">
+                            <LabelBox inputLabel="@configData.Get_Label("srg_mcr7_gene")" />
+                        </div>
+                        <div class="@classInput">
+                            <RadzenTextBox Disabled="true" @bind-Value="viewData.srg_mcr7_gene" Style="width: 100%;" />
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-xl-3">
+                    <div class="row justify-content-center divGroup">
+                        <div class="@classLabel">
+                            <LabelBox inputLabel="@configData.Get_Label("srg_mcr8_gene")" />
+                        </div>
+                        <div class="@classInput">
+                            <RadzenTextBox Disabled="true" @bind-Value="viewData.srg_mcr8_gene" Style="width: 100%;" />
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-xl-3">
+                    <div class="row justify-content-center divGroup">
+                        <div class="@classLabel">
+                            <LabelBox inputLabel="@configData.Get_Label("srg_mcr9_gene")" />
+                        </div>
+                        <div class="@classInput">
+                            <RadzenTextBox Disabled="true" @bind-Value="viewData.srg_mcr9_gene" Style="width: 100%;" />
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-xl-3">
+                    <div class="row justify-content-center divGroup">
+                        <div class="@classLabel">
+                            <LabelBox inputLabel="@configData.Get_Label("srg_mcr10_gene")" />
+                        </div>
+                        <div class="@classInput">
+                            <RadzenTextBox Disabled="true" @bind-Value="viewData.srg_mcr10_gene" Style="width: 100%;" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <hr />
+            <div class="row">
+
+                <div class="col-12">
+                    <b>Automate Result</b>
+                </div>
+
+            </div>
+            <div class="row">
+
+                <div class="col-12 col-xl-3">
+                    <div class="row justify-content-center divGroup">
+                        <div class="col-6">
+                        </div>
+                        <div class="col-3 text-center">
+                            <b>MIC</b>
+                        </div>
+                        <div class="col-3 text-center">
+                            <b>RIS</b>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-12 col-xl-3">
+                    <div class="row justify-content-center divGroup">
+                        <div class="col-6">
+                        </div>
+                        <div class="col-3 text-center">
+                            <b>MIC</b>
+                        </div>
+                        <div class="col-3 text-center">
+                            <b>RIS</b>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-12 col-xl-3">
+                    <div class="row justify-content-center divGroup">
+                        <div class="col-6">
+                        </div>
+                        <div class="col-3 text-center">
+                            <b>MIC</b>
+                        </div>
+                        <div class="col-3 text-center">
+                            <b>RIS</b>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-12 col-xl-3">
+                    <div class="row justify-content-center divGroup">
+                        <div class="col-6">
+                        </div>
+                        <div class="col-3 text-center">
+                            <b>MIC</b>
+                        </div>
+                        <div class="col-3 text-center">
+                            <b>RIS</b>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+
+                <div class="col-12 col-xl-3">
+                    <div class="row justify-content-center divGroup">
+                        <div class="col-6">
+                            <LabelBox inputLabel="@configData.Get_Label("AMK_Label")" />
+                        </div>
+                        <div class="col-3 ant-padding">
+                            <RadzenTextBox Disabled="true" @bind-Value="viewData.x_amk_mic" Style="width: 100%;" />
+                        </div>
+                        <div class="col-3 ant-padding">
+                            <RadzenTextBox Disabled="true" @bind-Value="viewData.x_amk_ris" Style="width: 100%;" />
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-12 col-xl-3">
+                    <div class="row justify-content-center divGroup">
+                        <div class="col-6">
+                            <LabelBox inputLabel="@configData.Get_Label("CXM_Label")" />
+                        </div>
+                        <div class="col-3 ant-padding">
+                            <RadzenTextBox Disabled="true" @bind-Value="viewData.x_cxm_mic" Style="width: 100%;" />
+                        </div>
+                        <div class="col-3 ant-padding">
+                            <RadzenTextBox Disabled="true" @bind-Value="viewData.x_cxm_ris" Style="width: 100%;" />
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-12 col-xl-3">
+                    <div class="row justify-content-center divGroup">
+                        <div class="col-6">
+                            <LabelBox inputLabel="@configData.Get_Label("GEH_Label")" />
+                        </div>
+                        <div class="col-3 ant-padding">
+                            <RadzenTextBox Disabled="true" @bind-Value="viewData.x_geh_mic" Style="width: 100%;" />
+                        </div>
+                        <div class="col-3 ant-padding">
+                            <RadzenTextBox Disabled="true" @bind-Value="viewData.x_geh_ris" Style="width: 100%;" />
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-12 col-xl-3">
+                    <div class="row justify-content-center divGroup">
+                        <div class="col-6">
+                            <LabelBox inputLabel="@configData.Get_Label("OXA_Label")" />
+                        </div>
+                        <div class="col-3 ant-padding">
+                            <RadzenTextBox Disabled="true" @bind-Value="viewData.x_oxa_mic" Style="width: 100%;" />
+                        </div>
+                        <div class="col-3 ant-padding">
+                            <RadzenTextBox Disabled="true" @bind-Value="viewData.x_oxa_ris" Style="width: 100%;" />
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <div class="row">
+
+                <div class="col-12 col-xl-3">
+                    <div class="row justify-content-center divGroup">
+                        <div class="col-6">
+                            <LabelBox inputLabel="@configData.Get_Label("AMC_Label")" />
+                        </div>
+                        <div class="col-3 ant-padding">
+                            <RadzenTextBox Disabled="true" @bind-Value="viewData.x_amc_mic" Style="width: 100%;" />
+                        </div>
+                        <div class="col-3 ant-padding">
+                            <RadzenTextBox Disabled="true" @bind-Value="viewData.x_amc_ris" Style="width: 100%;" />
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-12 col-xl-3">
+                    <div class="row justify-content-center divGroup">
+                        <div class="col-6">
+                            <LabelBox inputLabel="@configData.Get_Label("CHL_Label")" />
+                        </div>
+                        <div class="col-3 ant-padding">
+                            <RadzenTextBox Disabled="true" @bind-Value="viewData.x_chl_mic" Style="width: 100%;" />
+                        </div>
+                        <div class="col-3 ant-padding">
+                            <RadzenTextBox Disabled="true" @bind-Value="viewData.x_chl_ris" Style="width: 100%;" />
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-12 col-xl-3">
+                    <div class="row justify-content-center divGroup">
+                        <div class="col-6">
+                            <LabelBox inputLabel="@configData.Get_Label("GEN_Label")" />
+                        </div>
+                        <div class="col-3 ant-padding">
+                            <RadzenTextBox Disabled="true" @bind-Value="viewData.x_gen_mic" Style="width: 100%;" />
+                        </div>
+                        <div class="col-3 ant-padding">
+                            <RadzenTextBox Disabled="true" @bind-Value="viewData.x_gen_ris" Style="width: 100%;" />
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-12 col-xl-3">
+                    <div class="row justify-content-center divGroup">
+                        <div class="col-6">
+                            <LabelBox inputLabel="@configData.Get_Label("PEN_Label")" />
+                        </div>
+                        <div class="col-3 ant-padding">
+                            <RadzenTextBox Disabled="true" @bind-Value="viewData.x_pen_mic" Style="width: 100%;" />
+                        </div>
+                        <div class="col-3 ant-padding">
+                            <RadzenTextBox Disabled="true" @bind-Value="viewData.x_pen_ris" Style="width: 100%;" />
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <div class="row">
+
+                <div class="col-12 col-xl-3">
+                    <div class="row justify-content-center divGroup">
+                        <div class="col-6">
+                            <LabelBox inputLabel="@configData.Get_Label("SAM_Label")" />
+                        </div>
+                        <div class="col-3 ant-padding">
+                            <RadzenTextBox Disabled="true" @bind-Value="viewData.x_sam_mic" Style="width: 100%;" />
+                        </div>
+                        <div class="col-3 ant-padding">
+                            <RadzenTextBox Disabled="true" @bind-Value="viewData.x_sam_ris" Style="width: 100%;" />
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-12 col-xl-3">
+                    <div class="row justify-content-center divGroup">
+                        <div class="col-6">
+                            <LabelBox inputLabel="@configData.Get_Label("CIP_Label")" />
+                        </div>
+                        <div class="col-3 ant-padding">
+                            <RadzenTextBox Disabled="true" @bind-Value="viewData.x_cip_mic" Style="width: 100%;" />
+                        </div>
+                        <div class="col-3 ant-padding">
+                            <RadzenTextBox Disabled="true" @bind-Value="viewData.x_cip_ris" Style="width: 100%;" />
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-12 col-xl-3">
+                    <div class="row justify-content-center divGroup">
+                        <div class="col-6">
+                            <LabelBox inputLabel="@configData.Get_Label("IMP_Label")" />
+                        </div>
+                        <div class="col-3 ant-padding">
+                            <RadzenTextBox Disabled="true" @bind-Value="viewData.x_ipm_mic" Style="width: 100%;" />
+                        </div>
+                        <div class="col-3 ant-padding">
+                            <RadzenTextBox Disabled="true" @bind-Value="viewData.x_ipm_ris" Style="width: 100%;" />
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-12 col-xl-3">
+                    <div class="row justify-content-center divGroup">
+                        <div class="col-6">
+                            <LabelBox inputLabel="@configData.Get_Label("TZP_Label")" />
+                        </div>
+                        <div class="col-3 ant-padding">
+                            <RadzenTextBox Disabled="true" @bind-Value="viewData.x_tzp_mic" Style="width: 100%;" />
+                        </div>
+                        <div class="col-3 ant-padding">
+                            <RadzenTextBox Disabled="true" @bind-Value="viewData.x_tzp_ris" Style="width: 100%;" />
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <div class="row">
+
+                <div class="col-12 col-xl-3">
+                    <div class="row justify-content-center divGroup">
+                        <div class="col-6">
+                            <LabelBox inputLabel="@configData.Get_Label("AZM_Label")" />
+                        </div>
+                        <div class="col-3 ant-padding">
+                            <RadzenTextBox Disabled="true" @bind-Value="viewData.x_azm_mic" Style="width: 100%;" />
+                        </div>
+                        <div class="col-3 ant-padding">
+                            <RadzenTextBox Disabled="true" @bind-Value="viewData.x_azm_ris" Style="width: 100%;" />
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-12 col-xl-3">
+                    <div class="row justify-content-center divGroup">
+                        <div class="col-6">
+                            <LabelBox inputLabel="@configData.Get_Label("CLI_Label")" />
+                        </div>
+                        <div class="col-3 ant-padding">
+                            <RadzenTextBox Disabled="true" @bind-Value="viewData.x_cli_mic" Style="width: 100%;" />
+                        </div>
+                        <div class="col-3 ant-padding">
+                            <RadzenTextBox Disabled="true" @bind-Value="viewData.x_cli_ris" Style="width: 100%;" />
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-12 col-xl-3">
+                    <div class="row justify-content-center divGroup">
+                        <div class="col-6">
+                            <LabelBox inputLabel="@configData.Get_Label("LVX_Label")" />
+                        </div>
+                        <div class="col-3 ant-padding">
+                            <RadzenTextBox Disabled="true" @bind-Value="viewData.x_lvx_mic" Style="width: 100%;" />
+                        </div>
+                        <div class="col-3 ant-padding">
+                            <RadzenTextBox Disabled="true" @bind-Value="viewData.x_lvx_ris" Style="width: 100%;" />
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-12 col-xl-3">
+                    <div class="row justify-content-center divGroup">
+                        <div class="col-6">
+                            <LabelBox inputLabel="@configData.Get_Label("STH_Label")" />
+                        </div>
+                        <div class="col-3 ant-padding">
+                            <RadzenTextBox Disabled="true" @bind-Value="viewData.x_sth_mic" Style="width: 100%;" />
+                        </div>
+                        <div class="col-3 ant-padding">
+                            <RadzenTextBox Disabled="true" @bind-Value="viewData.x_sth_ris" Style="width: 100%;" />
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <div class="row">
+
+                <div class="col-12 col-xl-3">
+                    <div class="row justify-content-center divGroup">
+                        <div class="col-6">
+                            <LabelBox inputLabel="@configData.Get_Label("FEP_Label")" />
+                        </div>
+                        <div class="col-3 ant-padding">
+                            <RadzenTextBox Disabled="true" @bind-Value="viewData.x_fep_mic" Style="width: 100%;" />
+                        </div>
+                        <div class="col-3 ant-padding">
+                            <RadzenTextBox Disabled="true" @bind-Value="viewData.x_fep_ris" Style="width: 100%;" />
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-12 col-xl-3">
+                    <div class="row justify-content-center divGroup">
+                        <div class="col-6">
+                            <LabelBox inputLabel="@configData.Get_Label("COL_Label")" />
+                        </div>
+                        <div class="col-3 ant-padding">
+                            <RadzenTextBox Disabled="true" @bind-Value="viewData.x_col_mic" Style="width: 100%;" />
+                        </div>
+                        <div class="col-3 ant-padding">
+                            <RadzenTextBox Disabled="true" @bind-Value="viewData.x_col_ris" Style="width: 100%;" />
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-12 col-xl-3">
+                    <div class="row justify-content-center divGroup">
+                        <div class="col-6">
+                            <LabelBox inputLabel="@configData.Get_Label("LNZ_Label")" />
+                        </div>
+                        <div class="col-3 ant-padding">
+                            <RadzenTextBox Disabled="true" @bind-Value="viewData.x_lnz_mic" Style="width: 100%;" />
+                        </div>
+                        <div class="col-3 ant-padding">
+                            <RadzenTextBox Disabled="true" @bind-Value="viewData.x_lnz_ris" Style="width: 100%;" />
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-12 col-xl-3">
+                    <div class="row justify-content-center divGroup">
+                        <div class="col-6">
+                            <LabelBox inputLabel="@configData.Get_Label("TEC_Label")" />
+                        </div>
+                        <div class="col-3 ant-padding">
+                            <RadzenTextBox Disabled="true" @bind-Value="viewData.x_tec_mic" Style="width: 100%;" />
+                        </div>
+                        <div class="col-3 ant-padding">
+                            <RadzenTextBox Disabled="true" @bind-Value="viewData.x_tec_ris" Style="width: 100%;" />
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <div class="row">
+
+                <div class="col-12 col-xl-3">
+                    <div class="row justify-content-center divGroup">
+                        <div class="col-6">
+                            <LabelBox inputLabel="@configData.Get_Label("CTX_Label")" />
+                        </div>
+                        <div class="col-3 ant-padding">
+                            <RadzenTextBox Disabled="true" @bind-Value="viewData.x_ctx_mic" Style="width: 100%;" />
+                        </div>
+                        <div class="col-3 ant-padding">
+                            <RadzenTextBox Disabled="true" @bind-Value="viewData.x_ctx_ris" Style="width: 100%;" />
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-12 col-xl-3">
+                    <div class="row justify-content-center divGroup">
+                        <div class="col-6">
+                            <LabelBox inputLabel="@configData.Get_Label("DAP_Label")" />
+                        </div>
+                        <div class="col-3 ant-padding">
+                            <RadzenTextBox Disabled="true" @bind-Value="viewData.x_dap_mic" Style="width: 100%;" />
+                        </div>
+                        <div class="col-3 ant-padding">
+                            <RadzenTextBox Disabled="true" @bind-Value="viewData.x_dap_ris" Style="width: 100%;" />
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-12 col-xl-3">
+                    <div class="row justify-content-center divGroup">
+                        <div class="col-6">
+                            <LabelBox inputLabel="@configData.Get_Label("MEM_Label")" />
+                        </div>
+                        <div class="col-3 ant-padding">
+                            <RadzenTextBox Disabled="true" @bind-Value="viewData.x_mem_mic" Style="width: 100%;" />
+                        </div>
+                        <div class="col-3 ant-padding">
+                            <RadzenTextBox Disabled="true" @bind-Value="viewData.x_mem_ris" Style="width: 100%;" />
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-12 col-xl-3">
+                    <div class="row justify-content-center divGroup">
+                        <div class="col-6">
+                            <LabelBox inputLabel="@configData.Get_Label("TCY_Label")" />
+                        </div>
+                        <div class="col-3 ant-padding">
+                            <RadzenTextBox Disabled="true" @bind-Value="viewData.x_tcy_mic" Style="width: 100%;" />
+                        </div>
+                        <div class="col-3 ant-padding">
+                            <RadzenTextBox Disabled="true" @bind-Value="viewData.x_tcy_ris" Style="width: 100%;" />
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <div class="row">
+
+                <div class="col-12 col-xl-3">
+                    <div class="row justify-content-center divGroup">
+                        <div class="col-6">
+                            <LabelBox inputLabel="@configData.Get_Label("FOX_Label")" />
+                        </div>
+                        <div class="col-3 ant-padding">
+                            <RadzenTextBox Disabled="true" @bind-Value="viewData.x_fox_mic" Style="width: 100%;" />
+                        </div>
+                        <div class="col-3 ant-padding">
+                            <RadzenTextBox Disabled="true" @bind-Value="viewData.x_fox_ris" Style="width: 100%;" />
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-12 col-xl-3">
+                    <div class="row justify-content-center divGroup">
+                        <div class="col-6">
+                            <LabelBox inputLabel="@configData.Get_Label("DOR_Label")" />
+                        </div>
+                        <div class="col-3 ant-padding">
+                            <RadzenTextBox Disabled="true" @bind-Value="viewData.x_dor_mic" Style="width: 100%;" />
+                        </div>
+                        <div class="col-3 ant-padding">
+                            <RadzenTextBox Disabled="true" @bind-Value="viewData.x_dor_ris" Style="width: 100%;" />
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-12 col-xl-3">
+                    <div class="row justify-content-center divGroup">
+                        <div class="col-6">
+                            <LabelBox inputLabel="@configData.Get_Label("MET_Label")" />
+                        </div>
+                        <div class="col-3 ant-padding">
+                            <RadzenTextBox Disabled="true" @bind-Value="viewData.x_met_mic" Style="width: 100%;" />
+                        </div>
+                        <div class="col-3 ant-padding">
+                            <RadzenTextBox Disabled="true" @bind-Value="viewData.x_met_ris" Style="width: 100%;" />
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-12 col-xl-3">
+                    <div class="row justify-content-center divGroup">
+                        <div class="col-6">
+                            <LabelBox inputLabel="@configData.Get_Label("TGC_Label")" />
+                        </div>
+                        <div class="col-3 ant-padding">
+                            <RadzenTextBox Disabled="true" @bind-Value="viewData.x_tgc_mic" Style="width: 100%;" />
+                        </div>
+                        <div class="col-3 ant-padding">
+                            <RadzenTextBox Disabled="true" @bind-Value="viewData.x_tgc_ris" Style="width: 100%;" />
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <div class="row">
+
+                <div class="col-12 col-xl-3">
+                    <div class="row justify-content-center divGroup">
+                        <div class="col-6">
+                            <LabelBox inputLabel="@configData.Get_Label("CAZ_Label")" />
+                        </div>
+                        <div class="col-3 ant-padding">
+                            <RadzenTextBox Disabled="true" @bind-Value="viewData.x_caz_mic" Style="width: 100%;" />
+                        </div>
+                        <div class="col-3 ant-padding">
+                            <RadzenTextBox Disabled="true" @bind-Value="viewData.x_caz_ris" Style="width: 100%;" />
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-12 col-xl-3">
+                    <div class="row justify-content-center divGroup">
+                        <div class="col-6">
+                            <LabelBox inputLabel="@configData.Get_Label("ETP_Label")" />
+                        </div>
+                        <div class="col-3 ant-padding">
+                            <RadzenTextBox Disabled="true" @bind-Value="viewData.x_etp_mic" Style="width: 100%;" />
+                        </div>
+                        <div class="col-3 ant-padding">
+                            <RadzenTextBox Disabled="true" @bind-Value="viewData.x_etp_ris" Style="width: 100%;" />
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-12 col-xl-3">
+                    <div class="row justify-content-center divGroup">
+                        <div class="col-6">
+                            <LabelBox inputLabel="@configData.Get_Label("MFX_Label")" />
+                        </div>
+                        <div class="col-3 ant-padding">
+                            <RadzenTextBox Disabled="true" @bind-Value="viewData.x_mfx_mic" Style="width: 100%;" />
+                        </div>
+                        <div class="col-3 ant-padding">
+                            <RadzenTextBox Disabled="true" @bind-Value="viewData.x_mfx_ris" Style="width: 100%;" />
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-12 col-xl-3">
+                    <div class="row justify-content-center divGroup">
+                        <div class="col-6">
+                            <LabelBox inputLabel="@configData.Get_Label("SXT_Label")" />
+                        </div>
+                        <div class="col-3 ant-padding">
+                            <RadzenTextBox Disabled="true" @bind-Value="viewData.x_sxt_mic" Style="width: 100%;" />
+                        </div>
+                        <div class="col-3 ant-padding">
+                            <RadzenTextBox Disabled="true" @bind-Value="viewData.x_sxt_ris" Style="width: 100%;" />
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <div class="row">
+
+                <div class="col-12 col-xl-3">
+                    <div class="row justify-content-center divGroup">
+                        <div class="col-6">
+                            <LabelBox inputLabel="@configData.Get_Label("CRO_Label")" />
+                        </div>
+                        <div class="col-3 ant-padding">
+                            <RadzenTextBox Disabled="true" @bind-Value="viewData.x_cro_mic" Style="width: 100%;" />
+                        </div>
+                        <div class="col-3 ant-padding">
+                            <RadzenTextBox Disabled="true" @bind-Value="viewData.x_cro_ris" Style="width: 100%;" />
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-12 col-xl-3">
+                    <div class="row justify-content-center divGroup">
+                        <div class="col-6">
+                            <LabelBox inputLabel="@configData.Get_Label("ERY_Label")" />
+                        </div>
+                        <div class="col-3 ant-padding">
+                            <RadzenTextBox Disabled="true" @bind-Value="viewData.x_ery_mic" Style="width: 100%;" />
+                        </div>
+                        <div class="col-3 ant-padding">
+                            <RadzenTextBox Disabled="true" @bind-Value="viewData.x_ery_ris" Style="width: 100%;" />
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-12 col-xl-3">
+                    <div class="row justify-content-center divGroup">
+                        <div class="col-6">
+                            <LabelBox inputLabel="@configData.Get_Label("NET_Label")" />
+                        </div>
+                        <div class="col-3 ant-padding">
+                            <RadzenTextBox Disabled="true" @bind-Value="viewData.x_net_mic" Style="width: 100%;" />
+                        </div>
+                        <div class="col-3 ant-padding">
+                            <RadzenTextBox Disabled="true" @bind-Value="viewData.x_net_ris" Style="width: 100%;" />
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-12 col-xl-3">
+                    <div class="row justify-content-center divGroup">
+                        <div class="col-6">
+                            <LabelBox inputLabel="@configData.Get_Label("VAN_Label")" />
+                        </div>
+                        <div class="col-3 ant-padding">
+                            <RadzenTextBox Disabled="true" @bind-Value="viewData.x_van_mic" Style="width: 100%;" />
+                        </div>
+                        <div class="col-3 ant-padding">
+                            <RadzenTextBox Disabled="true" @bind-Value="viewData.x_van_ris" Style="width: 100%;" />
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <hr />
+        </div>
+        <div class="container inputArea">
+            <div class="row">
+                <div class="col-12 col-xl-3">
+                    <div class="row justify-content-center divGroup">
+                        <div class="@classLabel">
+                            <LabelBox inputLabel="@configData.Get_Label("srg_mcim_gene")" />
+                        </div>
+                        <div class="@classInput">
+                            <RadzenTextBox Disabled="true" @bind-Value="viewData.srg_mcim_gene" Style="width: 100%;" />
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-xl-3">
+                    <div class="row justify-content-center divGroup">
+                        <div class="col-6">
+                            <LabelBox inputLabel="@configData.Get_Label("CBDE_Label")" />
+                        </div>
+                        <div class="col-3 ant-padding">
+                            <RadzenTextBox Disabled="true" @bind-Value="viewData.x_cbde_mic" Style="width: 100%;" />
+                        </div>
+                        <div class="col-3 ant-padding">
+                            <RadzenTextBox Disabled="true" @bind-Value="viewData.x_cbde_ris" Style="width: 100%;" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12 col-xl-3">
+                    <div class="row justify-content-center divGroup">
+                        <div class="@classLabel">
+                            <LabelBox inputLabel="@configData.Get_Label("srr_testuser")" />
+                        </div>
+                        <div class="@classInput">
+                            <RadzenTextBox Disabled="true" @bind-Value="viewData.srr_testuser" Style="width: 100%;" />
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-xl-3">
+                    <div class="row justify-content-center divGroup">
+                        <div class="@classLabel">
+                            <LabelBox inputLabel="@configData.Get_Label("srr_approveuser")" />
+                        </div>
+                        <div class="@classInput">
+                            <RadzenTextBox Disabled="true" @bind-Value="viewData.srr_approveuser" Style="width: 100%;" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
 
 }
 
@@ -245,11 +1280,14 @@ else
     STARSMonitoringSearchDTO searchModel = new STARSMonitoringSearchDTO();
     private string tempRemarks = "";
 
+    private STARSMonitoringDetailDTO viewData = new STARSMonitoringDetailDTO();
+
     private bool showModal = false;
-    DateTime? ReceiveFrom = DateTime.Now.AddDays(-14);
-    DateTime? ReceiveTo = DateTime.Now;
-    DateTime? TATFrom = DateTime.Now.AddDays(-14);
-    DateTime? TATTo = DateTime.Now;
+    private bool showDetail = false;
+    private string repeatdate_str = string.Empty;
+    private string recvdate_str = string.Empty;
+    private string status_str = string.Empty;
+
 
     private class StatusList
     {
@@ -266,36 +1304,36 @@ else
         status_name = "Received"
     },
     new StatusList
-    {
-        status_code = "G",
-        status_name = "Transporting"
-    },
-    new StatusList
-    {
-        status_code = "W",
-        status_name = "Wait-Inspect"
-    },
+        {
+            status_code = "G",
+            status_name = "Transporting"
+        },
         new StatusList
-    {
-        status_code = "A",
-        status_name = "Lab-Processing"
-    },
-        new StatusList
-    {
-        status_code = "R",
-        status_name = "Repeat Automate"
-    },
-        new StatusList
-    {
-        status_code = "C",
-        status_name = "Complete"
-    },
-        new StatusList
-    {
-        status_code = "J",
-        status_name = "Reject Sample"
-    },
-                };
+        {
+            status_code = "W",
+            status_name = "Wait-Inspect"
+        },
+            new StatusList
+        {
+            status_code = "A",
+            status_name = "Lab-Processing"
+        },
+            new StatusList
+        {
+            status_code = "T",
+            status_name = "Repeat Automate"
+        },
+            new StatusList
+        {
+            status_code = "C",
+            status_name = "Complete"
+        },
+            new StatusList
+        {
+            status_code = "J",
+            status_name = "Reject Sample"
+        }
+                    };
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -316,10 +1354,10 @@ else
             var mm = new DropDownListDTO();
             lab_ddl_List = await ddlDataService.GetAllLabListByModelAsync(searchData);
 
-            searchModel.recvdate_start = ReceiveFrom;
-            searchModel.recvdatet_end = ReceiveTo;
-            searchModel.tatdate_start = TATFrom;
-            searchModel.tatdatet_end = TATTo;
+            searchModel.recvdate_start = DateTime.Now.AddDays(-14);
+            searchModel.recvdatet_end = DateTime.Now;
+            searchModel.tatdate_start = DateTime.Now.AddDays(-14);
+            searchModel.tatdatet_end = DateTime.Now;
 
             gridDatas = await StarsMonitoringService.GetRepeatAutomateListByParamAsync(searchModel);
         }
@@ -327,11 +1365,6 @@ else
     private async void SearchData()
     {
         showModal = true;
-
-        searchModel.recvdate_start = ReceiveFrom;
-        searchModel.recvdatet_end = ReceiveTo;
-        searchModel.tatdate_start = TATFrom;
-        searchModel.tatdatet_end = TATTo;
 
         gridDatas = await StarsMonitoringService.GetRepeatAutomateListByParamAsync(searchModel);
         if (inboxGrid.radzenGrid != null) inboxGrid.radzenGrid.GoToPage(0);
@@ -342,14 +1375,13 @@ else
 
     private async void ClearInboxData()
     {
+        searchModel = new STARSMonitoringSearchDTO();
         searchModel.arh_code = mainLayout.loginUser.arh_code;
         searchModel.hos_code = mainLayout.loginUser.hos_code;
         searchModel.recvdate_start = DateTime.Now.AddDays(-14);
         searchModel.recvdatet_end = DateTime.Now;
         searchModel.tatdate_start = DateTime.Now.AddDays(-14);
         searchModel.tatdatet_end = DateTime.Now;
-        searchModel.status = null;
-        searchModel.hos_code = null;
 
         SearchData();
     }
@@ -402,8 +1434,12 @@ else
         {
             if (file != null && file.srr_reportno != "")
             {
-                //string tempPath = ParameterList.FirstOrDefault(x => x.prm_code_minor == "STARS_BARCODE_PATH").prm_value;
-                //RepeatService.ExportBarcode(jsRuntime, gridDatas.Where(x => selectedRow.Any(s => s.Contains(x.srr_starsno_ref))).ToList(), tempPath);
+
+                var exportData = await starsReportservice.GetStarsPersonalExportDataAsync(file.srp_id.ToString());
+                var starsAutomateResult = await starsReportservice.GetStarsAutomateResultDataAsync(file.srr_starsno);
+                exportData.stars_automate_result = starsAutomateResult.stars_automate_result;
+                string tempPath = ParameterList.FirstOrDefault(x => x.prm_code_minor == "STARS_REPORT_PATH").prm_value;
+                starsReportservice.PreviewReport(jsRuntime, exportData, tempPath);
             }
             else
             {
@@ -464,5 +1500,15 @@ else
         //dbContext.Update(order);
 
         //dbContext.SaveChanges();
+    }
+
+    private async Task OnViewDetail(string starsno)
+    {
+        showDetail = true;
+
+        viewData = await StarsMonitoringService.GetRepeatAutomateDetailByParamAsync(starsno);
+        repeatdate_str = viewData.afu_repeatdate_str;
+        recvdate_str = viewData.srr_recvdate_str;
+        status_str = viewData.srr_status_str;
     }
 }

@@ -314,7 +314,7 @@ namespace ALISS.STARS.Library
 
                 try
                 {
-                    objList = _db.STARSAntibioticListDTOs.FromSqlRaw<STARSAntibioticListDTO>("sp_GET_STARSAntibioticSelectList").ToList();
+                    objList = _db.STARSAntibioticListDTOs.FromSqlRaw<STARSAntibioticListDTO>("sp_GET_STARSAntibioticSelectList {0}", searchModel.srr_starsno).ToList();
                     trans.Commit();
                 }
                 catch (Exception ex)
@@ -397,7 +397,8 @@ namespace ALISS.STARS.Library
                 {
                     foreach (var item in antibioticList)
                     {
-                        data.GetType().GetProperty(string.Format("X_{0}_flag", item)).SetValue(data, true);
+                        data.GetType().GetProperty(string.Format("X_{0}_MIC_flag", item)).SetValue(data, true);
+                        data.GetType().GetProperty(string.Format("X_{0}_RIS_flag", item)).SetValue(data, true);
                     }
                 }
             }
