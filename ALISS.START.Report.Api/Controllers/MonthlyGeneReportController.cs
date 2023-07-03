@@ -33,6 +33,7 @@ namespace ALISS.START.Report.Api.Controllers
             rpt.Load(Targetpath);
             rpt.SetDataSource(models.reportListDTOs);
             rpt.SetParameterValue("report_title", models.reportTitle);
+            rpt.SetParameterValue("year_name", models.year_code);
 
             // --------------- Export to PDF -------------------------------
 

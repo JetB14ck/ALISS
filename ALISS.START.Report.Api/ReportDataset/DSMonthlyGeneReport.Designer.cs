@@ -283,61 +283,9 @@ namespace ALISS.START.Report.Api.ReportDataset {
             
             private global::System.Data.DataColumn columnmonth_name;
             
-            private global::System.Data.DataColumn columnvana;
+            private global::System.Data.DataColumn columngene_name;
             
-            private global::System.Data.DataColumn columnvanb;
-            
-            private global::System.Data.DataColumn columnvanc1;
-            
-            private global::System.Data.DataColumn columnvanc2c3;
-            
-            private global::System.Data.DataColumn columnvand;
-            
-            private global::System.Data.DataColumn columnmeca;
-            
-            private global::System.Data.DataColumn columnmecb;
-            
-            private global::System.Data.DataColumn columnmecc;
-            
-            private global::System.Data.DataColumn columnmcr1;
-            
-            private global::System.Data.DataColumn columnmcr2;
-            
-            private global::System.Data.DataColumn columnmcr3;
-            
-            private global::System.Data.DataColumn columnmcr4;
-            
-            private global::System.Data.DataColumn columnmcr5;
-            
-            private global::System.Data.DataColumn columnmcr6;
-            
-            private global::System.Data.DataColumn columnmcr7;
-            
-            private global::System.Data.DataColumn columnmcr8;
-            
-            private global::System.Data.DataColumn columnmcr9;
-            
-            private global::System.Data.DataColumn columnmcr10;
-            
-            private global::System.Data.DataColumn columnimp;
-            
-            private global::System.Data.DataColumn columnvim;
-            
-            private global::System.Data.DataColumn columnoxa;
-            
-            private global::System.Data.DataColumn columnndm;
-            
-            private global::System.Data.DataColumn columnkpc;
-            
-            private global::System.Data.DataColumn columnctxm;
-            
-            private global::System.Data.DataColumn columntem;
-            
-            private global::System.Data.DataColumn columnshv;
-            
-            private global::System.Data.DataColumn columnserotype;
-            
-            private global::System.Data.DataColumn columnserogroup;
+            private global::System.Data.DataColumn columnvalue;
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
@@ -390,225 +338,17 @@ namespace ALISS.START.Report.Api.ReportDataset {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
-            public global::System.Data.DataColumn vanaColumn {
+            public global::System.Data.DataColumn gene_nameColumn {
                 get {
-                    return this.columnvana;
+                    return this.columngene_name;
                 }
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
-            public global::System.Data.DataColumn vanbColumn {
+            public global::System.Data.DataColumn valueColumn {
                 get {
-                    return this.columnvanb;
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
-            public global::System.Data.DataColumn vanc1Column {
-                get {
-                    return this.columnvanc1;
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
-            public global::System.Data.DataColumn vanc2c3Column {
-                get {
-                    return this.columnvanc2c3;
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
-            public global::System.Data.DataColumn vandColumn {
-                get {
-                    return this.columnvand;
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
-            public global::System.Data.DataColumn mecaColumn {
-                get {
-                    return this.columnmeca;
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
-            public global::System.Data.DataColumn mecbColumn {
-                get {
-                    return this.columnmecb;
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
-            public global::System.Data.DataColumn meccColumn {
-                get {
-                    return this.columnmecc;
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
-            public global::System.Data.DataColumn mcr1Column {
-                get {
-                    return this.columnmcr1;
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
-            public global::System.Data.DataColumn mcr2Column {
-                get {
-                    return this.columnmcr2;
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
-            public global::System.Data.DataColumn mcr3Column {
-                get {
-                    return this.columnmcr3;
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
-            public global::System.Data.DataColumn mcr4Column {
-                get {
-                    return this.columnmcr4;
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
-            public global::System.Data.DataColumn mcr5Column {
-                get {
-                    return this.columnmcr5;
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
-            public global::System.Data.DataColumn mcr6Column {
-                get {
-                    return this.columnmcr6;
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
-            public global::System.Data.DataColumn mcr7Column {
-                get {
-                    return this.columnmcr7;
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
-            public global::System.Data.DataColumn mcr8Column {
-                get {
-                    return this.columnmcr8;
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
-            public global::System.Data.DataColumn mcr9Column {
-                get {
-                    return this.columnmcr9;
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
-            public global::System.Data.DataColumn mcr10Column {
-                get {
-                    return this.columnmcr10;
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
-            public global::System.Data.DataColumn impColumn {
-                get {
-                    return this.columnimp;
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
-            public global::System.Data.DataColumn vimColumn {
-                get {
-                    return this.columnvim;
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
-            public global::System.Data.DataColumn oxaColumn {
-                get {
-                    return this.columnoxa;
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
-            public global::System.Data.DataColumn ndmColumn {
-                get {
-                    return this.columnndm;
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
-            public global::System.Data.DataColumn kpcColumn {
-                get {
-                    return this.columnkpc;
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
-            public global::System.Data.DataColumn ctxmColumn {
-                get {
-                    return this.columnctxm;
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
-            public global::System.Data.DataColumn temColumn {
-                get {
-                    return this.columntem;
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
-            public global::System.Data.DataColumn shvColumn {
-                get {
-                    return this.columnshv;
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
-            public global::System.Data.DataColumn serotypeColumn {
-                get {
-                    return this.columnserotype;
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
-            public global::System.Data.DataColumn serogroupColumn {
-                get {
-                    return this.columnserogroup;
+                    return this.columnvalue;
                 }
             }
             
@@ -649,69 +389,13 @@ namespace ALISS.START.Report.Api.ReportDataset {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
-            public DTPercentGeneRow AddDTPercentGeneRow(
-                        string month_code, 
-                        string month_name, 
-                        double vana, 
-                        double vanb, 
-                        double vanc1, 
-                        double vanc2c3, 
-                        double vand, 
-                        double meca, 
-                        double mecb, 
-                        double mecc, 
-                        double mcr1, 
-                        double mcr2, 
-                        double mcr3, 
-                        double mcr4, 
-                        double mcr5, 
-                        double mcr6, 
-                        double mcr7, 
-                        double mcr8, 
-                        double mcr9, 
-                        double mcr10, 
-                        double imp, 
-                        double vim, 
-                        double oxa, 
-                        double ndm, 
-                        double kpc, 
-                        double ctxm, 
-                        double tem, 
-                        double shv, 
-                        double serotype, 
-                        double serogroup) {
+            public DTPercentGeneRow AddDTPercentGeneRow(int month_code, string month_name, string gene_name, double value) {
                 DTPercentGeneRow rowDTPercentGeneRow = ((DTPercentGeneRow)(this.NewRow()));
                 object[] columnValuesArray = new object[] {
                         month_code,
                         month_name,
-                        vana,
-                        vanb,
-                        vanc1,
-                        vanc2c3,
-                        vand,
-                        meca,
-                        mecb,
-                        mecc,
-                        mcr1,
-                        mcr2,
-                        mcr3,
-                        mcr4,
-                        mcr5,
-                        mcr6,
-                        mcr7,
-                        mcr8,
-                        mcr9,
-                        mcr10,
-                        imp,
-                        vim,
-                        oxa,
-                        ndm,
-                        kpc,
-                        ctxm,
-                        tem,
-                        shv,
-                        serotype,
-                        serogroup};
+                        gene_name,
+                        value};
                 rowDTPercentGeneRow.ItemArray = columnValuesArray;
                 this.Rows.Add(rowDTPercentGeneRow);
                 return rowDTPercentGeneRow;
@@ -736,126 +420,21 @@ namespace ALISS.START.Report.Api.ReportDataset {
             internal void InitVars() {
                 this.columnmonth_code = base.Columns["month_code"];
                 this.columnmonth_name = base.Columns["month_name"];
-                this.columnvana = base.Columns["vana"];
-                this.columnvanb = base.Columns["vanb"];
-                this.columnvanc1 = base.Columns["vanc1"];
-                this.columnvanc2c3 = base.Columns["vanc2c3"];
-                this.columnvand = base.Columns["vand"];
-                this.columnmeca = base.Columns["meca"];
-                this.columnmecb = base.Columns["mecb"];
-                this.columnmecc = base.Columns["mecc"];
-                this.columnmcr1 = base.Columns["mcr1"];
-                this.columnmcr2 = base.Columns["mcr2"];
-                this.columnmcr3 = base.Columns["mcr3"];
-                this.columnmcr4 = base.Columns["mcr4"];
-                this.columnmcr5 = base.Columns["mcr5"];
-                this.columnmcr6 = base.Columns["mcr6"];
-                this.columnmcr7 = base.Columns["mcr7"];
-                this.columnmcr8 = base.Columns["mcr8"];
-                this.columnmcr9 = base.Columns["mcr9"];
-                this.columnmcr10 = base.Columns["mcr10"];
-                this.columnimp = base.Columns["imp"];
-                this.columnvim = base.Columns["vim"];
-                this.columnoxa = base.Columns["oxa"];
-                this.columnndm = base.Columns["ndm"];
-                this.columnkpc = base.Columns["kpc"];
-                this.columnctxm = base.Columns["ctxm"];
-                this.columntem = base.Columns["tem"];
-                this.columnshv = base.Columns["shv"];
-                this.columnserotype = base.Columns["serotype"];
-                this.columnserogroup = base.Columns["serogroup"];
+                this.columngene_name = base.Columns["gene_name"];
+                this.columnvalue = base.Columns["value"];
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
             private void InitClass() {
-                this.columnmonth_code = new global::System.Data.DataColumn("month_code", typeof(string), null, global::System.Data.MappingType.Element);
+                this.columnmonth_code = new global::System.Data.DataColumn("month_code", typeof(int), null, global::System.Data.MappingType.Element);
                 base.Columns.Add(this.columnmonth_code);
                 this.columnmonth_name = new global::System.Data.DataColumn("month_name", typeof(string), null, global::System.Data.MappingType.Element);
                 base.Columns.Add(this.columnmonth_name);
-                this.columnvana = new global::System.Data.DataColumn("vana", typeof(double), null, global::System.Data.MappingType.Element);
-                base.Columns.Add(this.columnvana);
-                this.columnvanb = new global::System.Data.DataColumn("vanb", typeof(double), null, global::System.Data.MappingType.Element);
-                base.Columns.Add(this.columnvanb);
-                this.columnvanc1 = new global::System.Data.DataColumn("vanc1", typeof(double), null, global::System.Data.MappingType.Element);
-                base.Columns.Add(this.columnvanc1);
-                this.columnvanc2c3 = new global::System.Data.DataColumn("vanc2c3", typeof(double), null, global::System.Data.MappingType.Element);
-                base.Columns.Add(this.columnvanc2c3);
-                this.columnvand = new global::System.Data.DataColumn("vand", typeof(double), null, global::System.Data.MappingType.Element);
-                base.Columns.Add(this.columnvand);
-                this.columnmeca = new global::System.Data.DataColumn("meca", typeof(double), null, global::System.Data.MappingType.Element);
-                base.Columns.Add(this.columnmeca);
-                this.columnmecb = new global::System.Data.DataColumn("mecb", typeof(double), null, global::System.Data.MappingType.Element);
-                base.Columns.Add(this.columnmecb);
-                this.columnmecc = new global::System.Data.DataColumn("mecc", typeof(double), null, global::System.Data.MappingType.Element);
-                base.Columns.Add(this.columnmecc);
-                this.columnmcr1 = new global::System.Data.DataColumn("mcr1", typeof(double), null, global::System.Data.MappingType.Element);
-                base.Columns.Add(this.columnmcr1);
-                this.columnmcr2 = new global::System.Data.DataColumn("mcr2", typeof(double), null, global::System.Data.MappingType.Element);
-                base.Columns.Add(this.columnmcr2);
-                this.columnmcr3 = new global::System.Data.DataColumn("mcr3", typeof(double), null, global::System.Data.MappingType.Element);
-                base.Columns.Add(this.columnmcr3);
-                this.columnmcr4 = new global::System.Data.DataColumn("mcr4", typeof(double), null, global::System.Data.MappingType.Element);
-                base.Columns.Add(this.columnmcr4);
-                this.columnmcr5 = new global::System.Data.DataColumn("mcr5", typeof(double), null, global::System.Data.MappingType.Element);
-                base.Columns.Add(this.columnmcr5);
-                this.columnmcr6 = new global::System.Data.DataColumn("mcr6", typeof(double), null, global::System.Data.MappingType.Element);
-                base.Columns.Add(this.columnmcr6);
-                this.columnmcr7 = new global::System.Data.DataColumn("mcr7", typeof(double), null, global::System.Data.MappingType.Element);
-                base.Columns.Add(this.columnmcr7);
-                this.columnmcr8 = new global::System.Data.DataColumn("mcr8", typeof(double), null, global::System.Data.MappingType.Element);
-                base.Columns.Add(this.columnmcr8);
-                this.columnmcr9 = new global::System.Data.DataColumn("mcr9", typeof(double), null, global::System.Data.MappingType.Element);
-                base.Columns.Add(this.columnmcr9);
-                this.columnmcr10 = new global::System.Data.DataColumn("mcr10", typeof(double), null, global::System.Data.MappingType.Element);
-                base.Columns.Add(this.columnmcr10);
-                this.columnimp = new global::System.Data.DataColumn("imp", typeof(double), null, global::System.Data.MappingType.Element);
-                base.Columns.Add(this.columnimp);
-                this.columnvim = new global::System.Data.DataColumn("vim", typeof(double), null, global::System.Data.MappingType.Element);
-                base.Columns.Add(this.columnvim);
-                this.columnoxa = new global::System.Data.DataColumn("oxa", typeof(double), null, global::System.Data.MappingType.Element);
-                base.Columns.Add(this.columnoxa);
-                this.columnndm = new global::System.Data.DataColumn("ndm", typeof(double), null, global::System.Data.MappingType.Element);
-                base.Columns.Add(this.columnndm);
-                this.columnkpc = new global::System.Data.DataColumn("kpc", typeof(double), null, global::System.Data.MappingType.Element);
-                base.Columns.Add(this.columnkpc);
-                this.columnctxm = new global::System.Data.DataColumn("ctxm", typeof(double), null, global::System.Data.MappingType.Element);
-                base.Columns.Add(this.columnctxm);
-                this.columntem = new global::System.Data.DataColumn("tem", typeof(double), null, global::System.Data.MappingType.Element);
-                base.Columns.Add(this.columntem);
-                this.columnshv = new global::System.Data.DataColumn("shv", typeof(double), null, global::System.Data.MappingType.Element);
-                base.Columns.Add(this.columnshv);
-                this.columnserotype = new global::System.Data.DataColumn("serotype", typeof(double), null, global::System.Data.MappingType.Element);
-                base.Columns.Add(this.columnserotype);
-                this.columnserogroup = new global::System.Data.DataColumn("serogroup", typeof(double), null, global::System.Data.MappingType.Element);
-                base.Columns.Add(this.columnserogroup);
-                this.columnvanb.Caption = "vana";
-                this.columnvanc1.Caption = "vana";
-                this.columnvanc2c3.Caption = "vana";
-                this.columnvand.Caption = "vana";
-                this.columnmeca.Caption = "vana";
-                this.columnmecb.Caption = "vana";
-                this.columnmecc.Caption = "vana";
-                this.columnmcr1.Caption = "vana";
-                this.columnmcr2.Caption = "vana";
-                this.columnmcr3.Caption = "vana";
-                this.columnmcr4.Caption = "vana";
-                this.columnmcr5.Caption = "vana";
-                this.columnmcr6.Caption = "vana";
-                this.columnmcr7.Caption = "vana";
-                this.columnmcr8.Caption = "vana";
-                this.columnmcr9.Caption = "vana";
-                this.columnmcr10.Caption = "vana";
-                this.columnimp.Caption = "vana";
-                this.columnvim.Caption = "vana";
-                this.columnoxa.Caption = "vana";
-                this.columnndm.Caption = "vana";
-                this.columnkpc.Caption = "vana";
-                this.columnctxm.Caption = "ss";
-                this.columntem.Caption = "ss";
-                this.columnshv.Caption = "ss";
-                this.columnserotype.Caption = "ss";
-                this.columnserogroup.Caption = "ss";
+                this.columngene_name = new global::System.Data.DataColumn("gene_name", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columngene_name);
+                this.columnvalue = new global::System.Data.DataColumn("value", typeof(double), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnvalue);
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -998,10 +577,10 @@ namespace ALISS.START.Report.Api.ReportDataset {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
-            public string month_code {
+            public int month_code {
                 get {
                     try {
-                        return ((string)(this[this.tableDTPercentGene.month_codeColumn]));
+                        return ((int)(this[this.tableDTPercentGene.month_codeColumn]));
                     }
                     catch (global::System.InvalidCastException e) {
                         throw new global::System.Data.StrongTypingException("The value for column \'month_code\' in table \'DTPercentGene\' is DBNull.", e);
@@ -1030,449 +609,33 @@ namespace ALISS.START.Report.Api.ReportDataset {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
-            public double vana {
+            public string gene_name {
                 get {
                     try {
-                        return ((double)(this[this.tableDTPercentGene.vanaColumn]));
+                        return ((string)(this[this.tableDTPercentGene.gene_nameColumn]));
                     }
                     catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'vana\' in table \'DTPercentGene\' is DBNull.", e);
+                        throw new global::System.Data.StrongTypingException("The value for column \'gene_name\' in table \'DTPercentGene\' is DBNull.", e);
                     }
                 }
                 set {
-                    this[this.tableDTPercentGene.vanaColumn] = value;
+                    this[this.tableDTPercentGene.gene_nameColumn] = value;
                 }
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
-            public double vanb {
+            public double value {
                 get {
                     try {
-                        return ((double)(this[this.tableDTPercentGene.vanbColumn]));
+                        return ((double)(this[this.tableDTPercentGene.valueColumn]));
                     }
                     catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'vanb\' in table \'DTPercentGene\' is DBNull.", e);
+                        throw new global::System.Data.StrongTypingException("The value for column \'value\' in table \'DTPercentGene\' is DBNull.", e);
                     }
                 }
                 set {
-                    this[this.tableDTPercentGene.vanbColumn] = value;
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
-            public double vanc1 {
-                get {
-                    try {
-                        return ((double)(this[this.tableDTPercentGene.vanc1Column]));
-                    }
-                    catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'vanc1\' in table \'DTPercentGene\' is DBNull.", e);
-                    }
-                }
-                set {
-                    this[this.tableDTPercentGene.vanc1Column] = value;
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
-            public double vanc2c3 {
-                get {
-                    try {
-                        return ((double)(this[this.tableDTPercentGene.vanc2c3Column]));
-                    }
-                    catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'vanc2c3\' in table \'DTPercentGene\' is DBNull.", e);
-                    }
-                }
-                set {
-                    this[this.tableDTPercentGene.vanc2c3Column] = value;
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
-            public double vand {
-                get {
-                    try {
-                        return ((double)(this[this.tableDTPercentGene.vandColumn]));
-                    }
-                    catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'vand\' in table \'DTPercentGene\' is DBNull.", e);
-                    }
-                }
-                set {
-                    this[this.tableDTPercentGene.vandColumn] = value;
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
-            public double meca {
-                get {
-                    try {
-                        return ((double)(this[this.tableDTPercentGene.mecaColumn]));
-                    }
-                    catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'meca\' in table \'DTPercentGene\' is DBNull.", e);
-                    }
-                }
-                set {
-                    this[this.tableDTPercentGene.mecaColumn] = value;
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
-            public double mecb {
-                get {
-                    try {
-                        return ((double)(this[this.tableDTPercentGene.mecbColumn]));
-                    }
-                    catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'mecb\' in table \'DTPercentGene\' is DBNull.", e);
-                    }
-                }
-                set {
-                    this[this.tableDTPercentGene.mecbColumn] = value;
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
-            public double mecc {
-                get {
-                    try {
-                        return ((double)(this[this.tableDTPercentGene.meccColumn]));
-                    }
-                    catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'mecc\' in table \'DTPercentGene\' is DBNull.", e);
-                    }
-                }
-                set {
-                    this[this.tableDTPercentGene.meccColumn] = value;
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
-            public double mcr1 {
-                get {
-                    try {
-                        return ((double)(this[this.tableDTPercentGene.mcr1Column]));
-                    }
-                    catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'mcr1\' in table \'DTPercentGene\' is DBNull.", e);
-                    }
-                }
-                set {
-                    this[this.tableDTPercentGene.mcr1Column] = value;
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
-            public double mcr2 {
-                get {
-                    try {
-                        return ((double)(this[this.tableDTPercentGene.mcr2Column]));
-                    }
-                    catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'mcr2\' in table \'DTPercentGene\' is DBNull.", e);
-                    }
-                }
-                set {
-                    this[this.tableDTPercentGene.mcr2Column] = value;
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
-            public double mcr3 {
-                get {
-                    try {
-                        return ((double)(this[this.tableDTPercentGene.mcr3Column]));
-                    }
-                    catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'mcr3\' in table \'DTPercentGene\' is DBNull.", e);
-                    }
-                }
-                set {
-                    this[this.tableDTPercentGene.mcr3Column] = value;
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
-            public double mcr4 {
-                get {
-                    try {
-                        return ((double)(this[this.tableDTPercentGene.mcr4Column]));
-                    }
-                    catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'mcr4\' in table \'DTPercentGene\' is DBNull.", e);
-                    }
-                }
-                set {
-                    this[this.tableDTPercentGene.mcr4Column] = value;
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
-            public double mcr5 {
-                get {
-                    try {
-                        return ((double)(this[this.tableDTPercentGene.mcr5Column]));
-                    }
-                    catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'mcr5\' in table \'DTPercentGene\' is DBNull.", e);
-                    }
-                }
-                set {
-                    this[this.tableDTPercentGene.mcr5Column] = value;
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
-            public double mcr6 {
-                get {
-                    try {
-                        return ((double)(this[this.tableDTPercentGene.mcr6Column]));
-                    }
-                    catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'mcr6\' in table \'DTPercentGene\' is DBNull.", e);
-                    }
-                }
-                set {
-                    this[this.tableDTPercentGene.mcr6Column] = value;
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
-            public double mcr7 {
-                get {
-                    try {
-                        return ((double)(this[this.tableDTPercentGene.mcr7Column]));
-                    }
-                    catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'mcr7\' in table \'DTPercentGene\' is DBNull.", e);
-                    }
-                }
-                set {
-                    this[this.tableDTPercentGene.mcr7Column] = value;
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
-            public double mcr8 {
-                get {
-                    try {
-                        return ((double)(this[this.tableDTPercentGene.mcr8Column]));
-                    }
-                    catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'mcr8\' in table \'DTPercentGene\' is DBNull.", e);
-                    }
-                }
-                set {
-                    this[this.tableDTPercentGene.mcr8Column] = value;
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
-            public double mcr9 {
-                get {
-                    try {
-                        return ((double)(this[this.tableDTPercentGene.mcr9Column]));
-                    }
-                    catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'mcr9\' in table \'DTPercentGene\' is DBNull.", e);
-                    }
-                }
-                set {
-                    this[this.tableDTPercentGene.mcr9Column] = value;
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
-            public double mcr10 {
-                get {
-                    try {
-                        return ((double)(this[this.tableDTPercentGene.mcr10Column]));
-                    }
-                    catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'mcr10\' in table \'DTPercentGene\' is DBNull.", e);
-                    }
-                }
-                set {
-                    this[this.tableDTPercentGene.mcr10Column] = value;
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
-            public double imp {
-                get {
-                    try {
-                        return ((double)(this[this.tableDTPercentGene.impColumn]));
-                    }
-                    catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'imp\' in table \'DTPercentGene\' is DBNull.", e);
-                    }
-                }
-                set {
-                    this[this.tableDTPercentGene.impColumn] = value;
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
-            public double vim {
-                get {
-                    try {
-                        return ((double)(this[this.tableDTPercentGene.vimColumn]));
-                    }
-                    catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'vim\' in table \'DTPercentGene\' is DBNull.", e);
-                    }
-                }
-                set {
-                    this[this.tableDTPercentGene.vimColumn] = value;
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
-            public double oxa {
-                get {
-                    try {
-                        return ((double)(this[this.tableDTPercentGene.oxaColumn]));
-                    }
-                    catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'oxa\' in table \'DTPercentGene\' is DBNull.", e);
-                    }
-                }
-                set {
-                    this[this.tableDTPercentGene.oxaColumn] = value;
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
-            public double ndm {
-                get {
-                    try {
-                        return ((double)(this[this.tableDTPercentGene.ndmColumn]));
-                    }
-                    catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'ndm\' in table \'DTPercentGene\' is DBNull.", e);
-                    }
-                }
-                set {
-                    this[this.tableDTPercentGene.ndmColumn] = value;
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
-            public double kpc {
-                get {
-                    try {
-                        return ((double)(this[this.tableDTPercentGene.kpcColumn]));
-                    }
-                    catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'kpc\' in table \'DTPercentGene\' is DBNull.", e);
-                    }
-                }
-                set {
-                    this[this.tableDTPercentGene.kpcColumn] = value;
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
-            public double ctxm {
-                get {
-                    try {
-                        return ((double)(this[this.tableDTPercentGene.ctxmColumn]));
-                    }
-                    catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'ctxm\' in table \'DTPercentGene\' is DBNull.", e);
-                    }
-                }
-                set {
-                    this[this.tableDTPercentGene.ctxmColumn] = value;
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
-            public double tem {
-                get {
-                    try {
-                        return ((double)(this[this.tableDTPercentGene.temColumn]));
-                    }
-                    catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'tem\' in table \'DTPercentGene\' is DBNull.", e);
-                    }
-                }
-                set {
-                    this[this.tableDTPercentGene.temColumn] = value;
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
-            public double shv {
-                get {
-                    try {
-                        return ((double)(this[this.tableDTPercentGene.shvColumn]));
-                    }
-                    catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'shv\' in table \'DTPercentGene\' is DBNull.", e);
-                    }
-                }
-                set {
-                    this[this.tableDTPercentGene.shvColumn] = value;
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
-            public double serotype {
-                get {
-                    try {
-                        return ((double)(this[this.tableDTPercentGene.serotypeColumn]));
-                    }
-                    catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'serotype\' in table \'DTPercentGene\' is DBNull.", e);
-                    }
-                }
-                set {
-                    this[this.tableDTPercentGene.serotypeColumn] = value;
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
-            public double serogroup {
-                get {
-                    try {
-                        return ((double)(this[this.tableDTPercentGene.serogroupColumn]));
-                    }
-                    catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'serogroup\' in table \'DTPercentGene\' is DBNull.", e);
-                    }
-                }
-                set {
-                    this[this.tableDTPercentGene.serogroupColumn] = value;
+                    this[this.tableDTPercentGene.valueColumn] = value;
                 }
             }
             
@@ -1502,338 +665,26 @@ namespace ALISS.START.Report.Api.ReportDataset {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
-            public bool IsvanaNull() {
-                return this.IsNull(this.tableDTPercentGene.vanaColumn);
+            public bool Isgene_nameNull() {
+                return this.IsNull(this.tableDTPercentGene.gene_nameColumn);
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
-            public void SetvanaNull() {
-                this[this.tableDTPercentGene.vanaColumn] = global::System.Convert.DBNull;
+            public void Setgene_nameNull() {
+                this[this.tableDTPercentGene.gene_nameColumn] = global::System.Convert.DBNull;
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
-            public bool IsvanbNull() {
-                return this.IsNull(this.tableDTPercentGene.vanbColumn);
+            public bool IsvalueNull() {
+                return this.IsNull(this.tableDTPercentGene.valueColumn);
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
-            public void SetvanbNull() {
-                this[this.tableDTPercentGene.vanbColumn] = global::System.Convert.DBNull;
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
-            public bool Isvanc1Null() {
-                return this.IsNull(this.tableDTPercentGene.vanc1Column);
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
-            public void Setvanc1Null() {
-                this[this.tableDTPercentGene.vanc1Column] = global::System.Convert.DBNull;
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
-            public bool Isvanc2c3Null() {
-                return this.IsNull(this.tableDTPercentGene.vanc2c3Column);
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
-            public void Setvanc2c3Null() {
-                this[this.tableDTPercentGene.vanc2c3Column] = global::System.Convert.DBNull;
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
-            public bool IsvandNull() {
-                return this.IsNull(this.tableDTPercentGene.vandColumn);
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
-            public void SetvandNull() {
-                this[this.tableDTPercentGene.vandColumn] = global::System.Convert.DBNull;
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
-            public bool IsmecaNull() {
-                return this.IsNull(this.tableDTPercentGene.mecaColumn);
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
-            public void SetmecaNull() {
-                this[this.tableDTPercentGene.mecaColumn] = global::System.Convert.DBNull;
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
-            public bool IsmecbNull() {
-                return this.IsNull(this.tableDTPercentGene.mecbColumn);
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
-            public void SetmecbNull() {
-                this[this.tableDTPercentGene.mecbColumn] = global::System.Convert.DBNull;
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
-            public bool IsmeccNull() {
-                return this.IsNull(this.tableDTPercentGene.meccColumn);
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
-            public void SetmeccNull() {
-                this[this.tableDTPercentGene.meccColumn] = global::System.Convert.DBNull;
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
-            public bool Ismcr1Null() {
-                return this.IsNull(this.tableDTPercentGene.mcr1Column);
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
-            public void Setmcr1Null() {
-                this[this.tableDTPercentGene.mcr1Column] = global::System.Convert.DBNull;
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
-            public bool Ismcr2Null() {
-                return this.IsNull(this.tableDTPercentGene.mcr2Column);
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
-            public void Setmcr2Null() {
-                this[this.tableDTPercentGene.mcr2Column] = global::System.Convert.DBNull;
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
-            public bool Ismcr3Null() {
-                return this.IsNull(this.tableDTPercentGene.mcr3Column);
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
-            public void Setmcr3Null() {
-                this[this.tableDTPercentGene.mcr3Column] = global::System.Convert.DBNull;
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
-            public bool Ismcr4Null() {
-                return this.IsNull(this.tableDTPercentGene.mcr4Column);
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
-            public void Setmcr4Null() {
-                this[this.tableDTPercentGene.mcr4Column] = global::System.Convert.DBNull;
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
-            public bool Ismcr5Null() {
-                return this.IsNull(this.tableDTPercentGene.mcr5Column);
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
-            public void Setmcr5Null() {
-                this[this.tableDTPercentGene.mcr5Column] = global::System.Convert.DBNull;
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
-            public bool Ismcr6Null() {
-                return this.IsNull(this.tableDTPercentGene.mcr6Column);
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
-            public void Setmcr6Null() {
-                this[this.tableDTPercentGene.mcr6Column] = global::System.Convert.DBNull;
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
-            public bool Ismcr7Null() {
-                return this.IsNull(this.tableDTPercentGene.mcr7Column);
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
-            public void Setmcr7Null() {
-                this[this.tableDTPercentGene.mcr7Column] = global::System.Convert.DBNull;
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
-            public bool Ismcr8Null() {
-                return this.IsNull(this.tableDTPercentGene.mcr8Column);
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
-            public void Setmcr8Null() {
-                this[this.tableDTPercentGene.mcr8Column] = global::System.Convert.DBNull;
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
-            public bool Ismcr9Null() {
-                return this.IsNull(this.tableDTPercentGene.mcr9Column);
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
-            public void Setmcr9Null() {
-                this[this.tableDTPercentGene.mcr9Column] = global::System.Convert.DBNull;
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
-            public bool Ismcr10Null() {
-                return this.IsNull(this.tableDTPercentGene.mcr10Column);
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
-            public void Setmcr10Null() {
-                this[this.tableDTPercentGene.mcr10Column] = global::System.Convert.DBNull;
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
-            public bool IsimpNull() {
-                return this.IsNull(this.tableDTPercentGene.impColumn);
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
-            public void SetimpNull() {
-                this[this.tableDTPercentGene.impColumn] = global::System.Convert.DBNull;
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
-            public bool IsvimNull() {
-                return this.IsNull(this.tableDTPercentGene.vimColumn);
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
-            public void SetvimNull() {
-                this[this.tableDTPercentGene.vimColumn] = global::System.Convert.DBNull;
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
-            public bool IsoxaNull() {
-                return this.IsNull(this.tableDTPercentGene.oxaColumn);
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
-            public void SetoxaNull() {
-                this[this.tableDTPercentGene.oxaColumn] = global::System.Convert.DBNull;
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
-            public bool IsndmNull() {
-                return this.IsNull(this.tableDTPercentGene.ndmColumn);
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
-            public void SetndmNull() {
-                this[this.tableDTPercentGene.ndmColumn] = global::System.Convert.DBNull;
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
-            public bool IskpcNull() {
-                return this.IsNull(this.tableDTPercentGene.kpcColumn);
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
-            public void SetkpcNull() {
-                this[this.tableDTPercentGene.kpcColumn] = global::System.Convert.DBNull;
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
-            public bool IsctxmNull() {
-                return this.IsNull(this.tableDTPercentGene.ctxmColumn);
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
-            public void SetctxmNull() {
-                this[this.tableDTPercentGene.ctxmColumn] = global::System.Convert.DBNull;
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
-            public bool IstemNull() {
-                return this.IsNull(this.tableDTPercentGene.temColumn);
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
-            public void SettemNull() {
-                this[this.tableDTPercentGene.temColumn] = global::System.Convert.DBNull;
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
-            public bool IsshvNull() {
-                return this.IsNull(this.tableDTPercentGene.shvColumn);
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
-            public void SetshvNull() {
-                this[this.tableDTPercentGene.shvColumn] = global::System.Convert.DBNull;
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
-            public bool IsserotypeNull() {
-                return this.IsNull(this.tableDTPercentGene.serotypeColumn);
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
-            public void SetserotypeNull() {
-                this[this.tableDTPercentGene.serotypeColumn] = global::System.Convert.DBNull;
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
-            public bool IsserogroupNull() {
-                return this.IsNull(this.tableDTPercentGene.serogroupColumn);
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
-            public void SetserogroupNull() {
-                this[this.tableDTPercentGene.serogroupColumn] = global::System.Convert.DBNull;
+            public void SetvalueNull() {
+                this[this.tableDTPercentGene.valueColumn] = global::System.Convert.DBNull;
             }
         }
         

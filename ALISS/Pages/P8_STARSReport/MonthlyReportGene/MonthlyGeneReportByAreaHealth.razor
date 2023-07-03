@@ -1,4 +1,4 @@
-﻿@page "/MonthlyGeneReportByHosp"
+﻿@page "/MonthlyGeneReportByAreaHealth"
 
 @using ALISS.STARS.DTO
 @using Radzen
@@ -23,7 +23,7 @@
 
 <div style="width: 100%;">
     <div class="divHead">
-        Monthly STARS Percentage Positive Result By Hospital
+        Monthly STARS Percentage Positive Result By AreaHealth
     </div>
 </div>
 
@@ -37,35 +37,6 @@ else
     <br />
         <RadzenFieldset Text=" Select Hoapital ">
             <div class="row">
-
-                @*<div class="col-12 col-xl-4">
-                    <div class="row justify-content-start divGroup">
-                        <div class="@classLabel">
-                            <LabelBox inputLabel="@configData.Get_Label("rpt_monthly_prevcode")" />
-                        </div>
-                        <div class="@classInput">
-                            <RadzenDropDown @bind-Value="searchMonthly.prv_code" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
-                                            AllowClear="true" TValue="string" AllowFiltering="true" Placeholder="Select..."
-                                            Data="lab_ddl_List.Select(x => new { x.arh_code, x.arh_name, x.prv_code, x.prv_name }).Where(x => (searchMonthly.arh_code == null || x.arh_code == searchMonthly.arh_code)).Distinct()" ValueProperty="prv_code" TextProperty="prv_name" Change="@(args => DDL_Change("Prv", args))"
-                                            Disabled="(!string.IsNullOrEmpty(mainLayout.loginUser.prv_code))" Style="width:100%" />
-                        </div>
-                    </div>
-                </div>*@
-
-                <div class="col-12 col-xl-4">
-                    <div class="row justify-content-start divGroup">
-                        <div class="@classLabel">
-                            <LabelBox inputLabel="@configData.Get_Label("rpt_monthly_hospcode")" requireField="true" />
-                        </div>
-                        <div class="@classInput">
-                            <RadzenDropDown @bind-Value="searchMonthly.hos_code" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
-                                            AllowClear="true" TValue="string" AllowFiltering="true" Placeholder="Select..."
-                                            Data="lab_ddl_List.Select(x => new { x.hos_code, x.hos_name, x.arh_code }).Where(x => (searchMonthly.arh_code == null || x.arh_code == searchMonthly.arh_code))" Change="@(args => DDL_Change("hos", args))"
-                                            ValueProperty="hos_code" TextProperty="hos_name"
-                                            Disabled="(!string.IsNullOrEmpty(mainLayout.loginUser.hos_code))" Style="width:100%" />
-                        </div>
-                    </div>
-                </div>
                 <div class="col-12 col-xl-4">
                     <div class="row justify-content-start divGroup">
                         <div class="@classLabel">
@@ -74,7 +45,7 @@ else
                         <div class="@classInput">
                             <RadzenDropDown @bind-Value="searchMonthly.arh_code" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
                                             AllowClear="true" TValue="string" AllowFiltering="true" Placeholder="Select..."
-                                            Data="lab_ddl_List.Select(x => new { x.arh_code, x.arh_name }).Distinct().OrderBy(o => o.arh_code)" ValueProperty="arh_code" TextProperty="arh_name"
+                                            Data="lab_ddl_List.Select(x => new { x.arh_code, x.arh_name }).Distinct().OrderBy(o => o.arh_code)" ValueProperty="arh_code" TextProperty="arh_name" Change="@(args => DDL_Change("Arh", args))"
                                             Disabled="(!string.IsNullOrEmpty(mainLayout.loginUser.arh_code))" Style="width:100%" />
                         </div>
                     </div>
@@ -219,7 +190,7 @@ else
 
 
     [CascadingParameter] MainLayout mainLayout { get; set; }
-    private string MENU_CODE = "MNU_0904";
+    private string MENU_CODE = "MNU_0903";
     private ConfigData configData = new ConfigData();
     private string classLabel = "col-md-4";
     private string classInput = "col-8";
@@ -363,13 +334,6 @@ else
         reportData = new MonthlyReportDataDTO();
         reportListData = new List<MonthlyGeneReportListDTO>();
         #endregion
-
-        if (string.IsNullOrEmpty(searchMonthly.hos_code))
-        {
-            await JSRuntime.InvokeAsync<object>("ShowAlert", "กรุณาระบุโรงพยาบาล");
-            isLoading = false;
-            return;
-        }
         if (string.IsNullOrEmpty(searchMonthly.arh_code))
         {
             await JSRuntime.InvokeAsync<object>("ShowAlert", "กรุณาระบุเขตสุขภาพ");
@@ -468,7 +432,7 @@ else
 
     private void DDL_Change(string ddl_name, object value)
     {
-        if (ddl_name == "hos" && value != null)
+        if (ddl_name == "Hos" && value != null)
         {
             searchMonthly.arh_code = lab_ddl_List.FirstOrDefault(x => x.hos_code == searchMonthly.hos_code).arh_code;
         }

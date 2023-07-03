@@ -21,7 +21,7 @@ namespace ALISS.UploadAutomate.Api.Controllers
         }
 
         [HttpPost]
-        [Route("api/MonthlyGeneReport/Get_UploadAutomateListByModel")]
+        [Route("api/MonthlyGeneReport/Get_MonthlyGeneReportListWithModel")]
         public IEnumerable<MonthlyGeneReportDataDTO> Get_MonthlyGeneReportListWithModel([FromBody] MonthlyGeneReportSearchDTO searchModel)
         {
             var objReturn = _service.GetMonthlyGeneReportListWithModel(searchModel);

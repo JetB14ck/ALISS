@@ -29,7 +29,7 @@ namespace ALISS.Data.D8_StarsReport
         public async Task<List<MonthlyGeneReportDataDTO>> getMonthlyGeneReportData(MonthlyGeneReportSearchDTO model)
         {
             List<MonthlyGeneReportDataDTO> objList = new List<MonthlyGeneReportDataDTO>();
-            objList = await _apiHelper.GetDataListByModelAsync<MonthlyGeneReportDataDTO, MonthlyGeneReportSearchDTO>("gene_report_api/Get_UploadAutomateListByModel", model);
+            objList = await _apiHelper.GetDataListByModelAsync<MonthlyGeneReportDataDTO, MonthlyGeneReportSearchDTO>("gene_report_api/Get_MonthlyGeneReportListWithModel", model);
             return objList;
         }
 
