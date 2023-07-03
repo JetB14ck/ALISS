@@ -1,0 +1,54 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xs:schema id="DSMonthlyGeneReport" targetNamespace="http://tempuri.org/DSMonthlyGeneReport.xsd" xmlns:mstns="http://tempuri.org/DSMonthlyGeneReport.xsd" xmlns="http://tempuri.org/DSMonthlyGeneReport.xsd" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" xmlns:msprop="urn:schemas-microsoft-com:xml-msprop" attributeFormDefault="qualified" elementFormDefault="qualified">
+  <xs:annotation>
+    <xs:appinfo source="urn:schemas-microsoft-com:xml-msdatasource">
+      <DataSource DefaultConnectionIndex="0" FunctionsComponentName="QueriesTableAdapter" Modifier="AutoLayout, AnsiClass, Class, Public" SchemaSerializationMode="IncludeSchema" xmlns="urn:schemas-microsoft-com:xml-msdatasource">
+        <Connections />
+        <Tables />
+        <Sources />
+      </DataSource>
+    </xs:appinfo>
+  </xs:annotation>
+  <xs:element name="DSMonthlyGeneReport" msdata:IsDataSet="true" msdata:UseCurrentLocale="true" msprop:EnableTableAdapterManager="true" msprop:Generator_DataSetName="DSMonthlyGeneReport" msprop:Generator_UserDSName="DSMonthlyGeneReport">
+    <xs:complexType>
+      <xs:choice minOccurs="0" maxOccurs="unbounded">
+        <xs:element name="DTPercentGene" msprop:Generator_TableClassName="DTPercentGeneDataTable" msprop:Generator_TableVarName="tableDTPercentGene" msprop:Generator_RowChangedName="DTPercentGeneRowChanged" msprop:Generator_TablePropName="DTPercentGene" msprop:Generator_RowDeletingName="DTPercentGeneRowDeleting" msprop:Generator_RowChangingName="DTPercentGeneRowChanging" msprop:Generator_RowEvHandlerName="DTPercentGeneRowChangeEventHandler" msprop:Generator_RowDeletedName="DTPercentGeneRowDeleted" msprop:Generator_RowClassName="DTPercentGeneRow" msprop:Generator_UserTableName="DTPercentGene" msprop:Generator_RowEvArgName="DTPercentGeneRowChangeEvent">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="month_code" msprop:Generator_ColumnVarNameInTable="columnmonth_code" msprop:Generator_ColumnPropNameInRow="month_code" msprop:Generator_ColumnPropNameInTable="month_codeColumn" msprop:Generator_UserColumnName="month_code" type="xs:string" minOccurs="0" />
+              <xs:element name="month_name" msprop:Generator_ColumnVarNameInTable="columnmonth_name" msprop:Generator_ColumnPropNameInRow="month_name" msprop:Generator_ColumnPropNameInTable="month_nameColumn" msprop:Generator_UserColumnName="month_name" type="xs:string" minOccurs="0" />
+              <xs:element name="vana" msprop:Generator_ColumnVarNameInTable="columnvana" msprop:Generator_ColumnPropNameInRow="vana" msprop:Generator_ColumnPropNameInTable="vanaColumn" msprop:Generator_UserColumnName="vana" type="xs:double" minOccurs="0" />
+              <xs:element name="vanb" msdata:Caption="vana" msprop:Generator_ColumnVarNameInTable="columnvanb" msprop:Generator_ColumnPropNameInRow="vanb" msprop:Generator_ColumnPropNameInTable="vanbColumn" msprop:Generator_UserColumnName="vanb" type="xs:double" minOccurs="0" />
+              <xs:element name="vanc1" msdata:Caption="vana" msprop:Generator_ColumnVarNameInTable="columnvanc1" msprop:Generator_ColumnPropNameInRow="vanc1" msprop:Generator_ColumnPropNameInTable="vanc1Column" msprop:Generator_UserColumnName="vanc1" type="xs:double" minOccurs="0" />
+              <xs:element name="vanc2c3" msdata:Caption="vana" msprop:Generator_ColumnVarNameInTable="columnvanc2c3" msprop:Generator_ColumnPropNameInRow="vanc2c3" msprop:Generator_ColumnPropNameInTable="vanc2c3Column" msprop:Generator_UserColumnName="vanc2c3" type="xs:double" minOccurs="0" />
+              <xs:element name="vand" msdata:Caption="vana" msprop:Generator_ColumnVarNameInTable="columnvand" msprop:Generator_ColumnPropNameInRow="vand" msprop:Generator_ColumnPropNameInTable="vandColumn" msprop:Generator_UserColumnName="vand" type="xs:double" minOccurs="0" />
+              <xs:element name="meca" msdata:Caption="vana" msprop:Generator_ColumnVarNameInTable="columnmeca" msprop:Generator_ColumnPropNameInRow="meca" msprop:Generator_ColumnPropNameInTable="mecaColumn" msprop:Generator_UserColumnName="meca" type="xs:double" minOccurs="0" />
+              <xs:element name="mecb" msdata:Caption="vana" msprop:Generator_ColumnVarNameInTable="columnmecb" msprop:Generator_ColumnPropNameInRow="mecb" msprop:Generator_ColumnPropNameInTable="mecbColumn" msprop:Generator_UserColumnName="mecb" type="xs:double" minOccurs="0" />
+              <xs:element name="mecc" msdata:Caption="vana" msprop:Generator_ColumnVarNameInTable="columnmecc" msprop:Generator_ColumnPropNameInRow="mecc" msprop:Generator_ColumnPropNameInTable="meccColumn" msprop:Generator_UserColumnName="mecc" type="xs:double" minOccurs="0" />
+              <xs:element name="mcr1" msdata:Caption="vana" msprop:Generator_ColumnVarNameInTable="columnmcr1" msprop:Generator_ColumnPropNameInRow="mcr1" msprop:Generator_ColumnPropNameInTable="mcr1Column" msprop:Generator_UserColumnName="mcr1" type="xs:double" minOccurs="0" />
+              <xs:element name="mcr2" msdata:Caption="vana" msprop:Generator_ColumnVarNameInTable="columnmcr2" msprop:Generator_ColumnPropNameInRow="mcr2" msprop:Generator_ColumnPropNameInTable="mcr2Column" msprop:Generator_UserColumnName="mcr2" type="xs:double" minOccurs="0" />
+              <xs:element name="mcr3" msdata:Caption="vana" msprop:Generator_ColumnVarNameInTable="columnmcr3" msprop:Generator_ColumnPropNameInRow="mcr3" msprop:Generator_ColumnPropNameInTable="mcr3Column" msprop:Generator_UserColumnName="mcr3" type="xs:double" minOccurs="0" />
+              <xs:element name="mcr4" msdata:Caption="vana" msprop:Generator_ColumnVarNameInTable="columnmcr4" msprop:Generator_ColumnPropNameInRow="mcr4" msprop:Generator_ColumnPropNameInTable="mcr4Column" msprop:Generator_UserColumnName="mcr4" type="xs:double" minOccurs="0" />
+              <xs:element name="mcr5" msdata:Caption="vana" msprop:Generator_ColumnVarNameInTable="columnmcr5" msprop:Generator_ColumnPropNameInRow="mcr5" msprop:Generator_ColumnPropNameInTable="mcr5Column" msprop:Generator_UserColumnName="mcr5" type="xs:double" minOccurs="0" />
+              <xs:element name="mcr6" msdata:Caption="vana" msprop:Generator_ColumnVarNameInTable="columnmcr6" msprop:Generator_ColumnPropNameInRow="mcr6" msprop:Generator_ColumnPropNameInTable="mcr6Column" msprop:Generator_UserColumnName="mcr6" type="xs:double" minOccurs="0" />
+              <xs:element name="mcr7" msdata:Caption="vana" msprop:Generator_ColumnVarNameInTable="columnmcr7" msprop:Generator_ColumnPropNameInRow="mcr7" msprop:Generator_ColumnPropNameInTable="mcr7Column" msprop:Generator_UserColumnName="mcr7" type="xs:double" minOccurs="0" />
+              <xs:element name="mcr8" msdata:Caption="vana" msprop:Generator_ColumnVarNameInTable="columnmcr8" msprop:Generator_ColumnPropNameInRow="mcr8" msprop:Generator_ColumnPropNameInTable="mcr8Column" msprop:Generator_UserColumnName="mcr8" type="xs:double" minOccurs="0" />
+              <xs:element name="mcr9" msdata:Caption="vana" msprop:Generator_ColumnVarNameInTable="columnmcr9" msprop:Generator_ColumnPropNameInRow="mcr9" msprop:Generator_ColumnPropNameInTable="mcr9Column" msprop:Generator_UserColumnName="mcr9" type="xs:double" minOccurs="0" />
+              <xs:element name="mcr10" msdata:Caption="vana" msprop:Generator_ColumnVarNameInTable="columnmcr10" msprop:Generator_ColumnPropNameInRow="mcr10" msprop:Generator_ColumnPropNameInTable="mcr10Column" msprop:Generator_UserColumnName="mcr10" type="xs:double" minOccurs="0" />
+              <xs:element name="imp" msdata:Caption="vana" msprop:Generator_ColumnVarNameInTable="columnimp" msprop:Generator_ColumnPropNameInRow="imp" msprop:Generator_ColumnPropNameInTable="impColumn" msprop:Generator_UserColumnName="imp" type="xs:double" minOccurs="0" />
+              <xs:element name="vim" msdata:Caption="vana" msprop:Generator_ColumnVarNameInTable="columnvim" msprop:Generator_ColumnPropNameInRow="vim" msprop:Generator_ColumnPropNameInTable="vimColumn" msprop:Generator_UserColumnName="vim" type="xs:double" minOccurs="0" />
+              <xs:element name="oxa" msdata:Caption="vana" msprop:Generator_ColumnVarNameInTable="columnoxa" msprop:Generator_ColumnPropNameInRow="oxa" msprop:Generator_ColumnPropNameInTable="oxaColumn" msprop:Generator_UserColumnName="oxa" type="xs:double" minOccurs="0" />
+              <xs:element name="ndm" msdata:Caption="vana" msprop:Generator_ColumnVarNameInTable="columnndm" msprop:Generator_ColumnPropNameInRow="ndm" msprop:Generator_ColumnPropNameInTable="ndmColumn" msprop:Generator_UserColumnName="ndm" type="xs:double" minOccurs="0" />
+              <xs:element name="kpc" msdata:Caption="vana" msprop:Generator_ColumnVarNameInTable="columnkpc" msprop:Generator_ColumnPropNameInRow="kpc" msprop:Generator_ColumnPropNameInTable="kpcColumn" msprop:Generator_UserColumnName="kpc" type="xs:double" minOccurs="0" />
+              <xs:element name="ctxm" msdata:Caption="ss" msprop:Generator_ColumnVarNameInTable="columnctxm" msprop:Generator_ColumnPropNameInRow="ctxm" msprop:Generator_ColumnPropNameInTable="ctxmColumn" msprop:Generator_UserColumnName="ctxm" type="xs:double" minOccurs="0" />
+              <xs:element name="tem" msdata:Caption="ss" msprop:Generator_ColumnVarNameInTable="columntem" msprop:Generator_ColumnPropNameInRow="tem" msprop:Generator_ColumnPropNameInTable="temColumn" msprop:Generator_UserColumnName="tem" type="xs:double" minOccurs="0" />
+              <xs:element name="shv" msdata:Caption="ss" msprop:Generator_ColumnVarNameInTable="columnshv" msprop:Generator_ColumnPropNameInRow="shv" msprop:Generator_ColumnPropNameInTable="shvColumn" msprop:Generator_UserColumnName="shv" type="xs:double" minOccurs="0" />
+              <xs:element name="serotype" msdata:Caption="ss" msprop:Generator_ColumnVarNameInTable="columnserotype" msprop:Generator_ColumnPropNameInRow="serotype" msprop:Generator_ColumnPropNameInTable="serotypeColumn" msprop:Generator_UserColumnName="serotype" type="xs:double" minOccurs="0" />
+              <xs:element name="serogroup" msdata:Caption="ss" msprop:Generator_ColumnVarNameInTable="columnserogroup" msprop:Generator_ColumnPropNameInRow="serogroup" msprop:Generator_ColumnPropNameInTable="serogroupColumn" msprop:Generator_UserColumnName="serogroup" type="xs:double" minOccurs="0" />
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+      </xs:choice>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>

@@ -66,6 +66,22 @@ namespace ALISS.Data.D7_StarsMapping.MasterManagement
 
             return objList;
         }
+        public async Task<List<TCSTARSOrganismDTO>> GetListTCSTARS_Organism_Async(TCSTARSOrganismDTO searchData)
+        {
+            List<TCSTARSOrganismDTO> objList = new List<TCSTARSOrganismDTO>();
+
+            objList = await _apiHelper.GetDataListByModelAsync<TCSTARSOrganismDTO, TCSTARSOrganismDTO>("starcolumn_api/Get_OrganismList_Active_WithModel", searchData);
+
+            return objList;
+        }
+        public async Task<List<TCSTARSGeneDTO>> GetListTCSTARS_Gene_Async(TCSTARSGeneDTO searchData)
+        {
+            List<TCSTARSGeneDTO> objList = new List<TCSTARSGeneDTO>();
+
+            objList = await _apiHelper.GetDataListByModelAsync<TCSTARSGeneDTO, TCSTARSGeneDTO>("starcolumn_api/Get_GeneList_Active_WithModel", searchData);
+
+            return objList;
+        }
 
         //public async Task<WHONETColumnDTO> GetDataAsync(string mst_code)
         //{

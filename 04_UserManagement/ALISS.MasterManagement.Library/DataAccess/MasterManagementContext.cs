@@ -41,6 +41,8 @@ namespace ALISS.MasterManagement.Library.DataAccess
         public DbSet<TCProcessExcelColumnDTO> TCProcessExcelColumnDTOs { get; set; }
         public DbSet<TCProcessExcelRowDTO> TCProcessExcelRowDTOs { get; set; }
         public DbSet<TCProcessExcelTemplateDTO> TCProcessExcelTemplateDTOs { get; set; }
+        public DbSet<TCSTARSOrganismDTO> TCSTARSOrganismDTOs { get; set; }
+        public DbSet<TCSTARSGeneDTO> TCStarsGeneDTOs { get; set; }
 
         public MasterManagementContext(DbContextOptions<MasterManagementContext> options) : base(options)
         {
@@ -86,6 +88,12 @@ namespace ALISS.MasterManagement.Library.DataAccess
 
             builder.Entity<TCWardType>().HasKey(x => x.wrd_id);
             builder.Entity<TCWardType>().ToTable("TCWardType");
+
+            builder.Entity<TCSTARSOrganismDTO>().HasKey(x => x.sto_id);
+            builder.Entity<TCSTARSOrganismDTO>().ToTable("TCStarsOrganism");
+
+            builder.Entity<TCSTARSGeneDTO>().HasKey(x => x.sgt_id);
+            builder.Entity<TCSTARSGeneDTO>().ToTable("TCStarsGeneDTO");
 
             builder.Entity<TCWHONETColumn>().HasKey(x => x.wnc_id);
             builder.Entity<TCWHONETColumn>().ToTable("TCWHONETColumn");

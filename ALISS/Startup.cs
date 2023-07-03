@@ -44,6 +44,7 @@ using System.Net.WebSockets;
 using ALISS.Data.D7_StarsMapping.MasterManagement;
 using ALISS.Data.D7_StarsRepeat;
 using ALISS.Data.D7_StarsMonitoring;
+using ALISS.Data.D8_StarsReport;
 
 namespace ALISS
 {
@@ -171,6 +172,7 @@ namespace ALISS
             services.AddScoped<UploadAutomateService>();
             services.AddScoped<STARSPersonalReportService>();
             services.AddScoped<STARSMonitoringService>();
+            services.AddScoped<MonthlyGeneReportService>();
 
             services.AddSignalR();
         }

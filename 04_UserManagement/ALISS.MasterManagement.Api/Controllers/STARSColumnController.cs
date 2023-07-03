@@ -44,5 +44,23 @@ namespace ALISS.MasterManagement.Api.Controllers
 
             return objReturn;
         }
+
+        [HttpPost]
+        [Route("api/STARSColumn/Get_OrganismList_Active_WithModel")]
+        public IEnumerable<TCSTARSOrganismDTO> GetOrganismList_Active_WithModel([FromBody] TCSTARSOrganismDTO searchModel)
+        {
+            var objReturn = _service.GetOrganismList_Active_WithModel(searchModel);
+
+            return objReturn;
+        }
+
+        [HttpPost]
+        [Route("api/STARSColumn/Get_GeneList_Active_WithModel")]
+        public IEnumerable<TCSTARSGeneDTO> GetGeneList_Active_WithModel([FromBody] TCSTARSGeneDTO searchModel)
+        {
+            var objReturn = _service.GetGeneList_Active_WithModel(searchModel);
+
+            return objReturn;
+        }
     }
 }

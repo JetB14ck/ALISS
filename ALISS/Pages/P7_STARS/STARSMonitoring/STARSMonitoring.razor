@@ -1300,7 +1300,7 @@ else
     {
     new StatusList
     {
-        status_code = "V",
+        status_code = "R",
         status_name = "Received"
     },
     new StatusList
@@ -1504,6 +1504,11 @@ else
 
     private async Task OnViewDetail(string starsno)
     {
+        if (string.IsNullOrEmpty(starsno))
+        {
+            return;
+        }
+
         showDetail = true;
 
         viewData = await StarsMonitoringService.GetRepeatAutomateDetailByParamAsync(starsno);

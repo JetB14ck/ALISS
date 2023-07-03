@@ -461,6 +461,17 @@
         }
       ],
       "UpstreamPathTemplate": "/stars_monitoring/{everything}"
+    },
+    {
+      "DownstreamPathTemplate": "/api/MonthlyGeneReport/{everything}",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": "44329"
+        }
+      ],
+      "UpstreamPathTemplate": "/gene_report_api/{everything}"
     }
   ],
   "GlobalConfiguration": {

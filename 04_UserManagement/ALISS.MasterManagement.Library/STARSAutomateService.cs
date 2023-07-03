@@ -122,5 +122,69 @@ namespace ALISS.MasterManagement.Library
 
             return objList;
         }
+
+        public List<TCSTARSOrganismDTO> GetOrganismList_Active_WithModel(TCSTARSOrganismDTO searchModel)
+        {
+            log.MethodStart();
+
+            List<TCSTARSOrganismDTO> objList = new List<TCSTARSOrganismDTO>();
+
+            //var searchModel = JsonSerializer.Deserialize<MenuSearchDTO>(param);
+
+            using (var trans = _db.Database.BeginTransaction())
+            {
+                try
+                {
+                    objList = _db.TCSTARSOrganismDTOs.FromSqlRaw<TCSTARSOrganismDTO>("sp_GET_TCSTARS_Organism_Active").ToList();
+
+                    trans.Commit();
+                }
+                catch (Exception ex)
+                {
+                    // TODO: Handle failure
+                    trans.Rollback();
+                }
+                finally
+                {
+                    trans.Dispose();
+                }
+            }
+
+            log.MethodFinish();
+
+            return objList;
+        }
+
+        public List<TCSTARSGeneDTO> GetGeneList_Active_WithModel(TCSTARSGeneDTO searchModel)
+        {
+            log.MethodStart();
+
+            List<TCSTARSGeneDTO> objList = new List<TCSTARSGeneDTO>();
+
+            //var searchModel = JsonSerializer.Deserialize<MenuSearchDTO>(param);
+
+            using (var trans = _db.Database.BeginTransaction())
+            {
+                try
+                {
+                    objList = _db.TCStarsGeneDTOs.FromSqlRaw<TCSTARSGeneDTO>("sp_GET_TCSTARS_Gene_Active").ToList();
+
+                    trans.Commit();
+                }
+                catch (Exception ex)
+                {
+                    // TODO: Handle failure
+                    trans.Rollback();
+                }
+                finally
+                {
+                    trans.Dispose();
+                }
+            }
+
+            log.MethodFinish();
+
+            return objList;
+        }
     }
 }

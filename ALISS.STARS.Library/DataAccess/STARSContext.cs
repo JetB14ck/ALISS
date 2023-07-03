@@ -67,10 +67,20 @@ namespace ALISS.STARS.Library.DataAccess
         #endregion
 
         #region  Upload Automate & Repeat
-        public DbSet<RepeatAutomateDataDTO> RepeatAutomateDTOs { get; set; }     
+        public DbSet<RepeatAutomateDataDTO> RepeatAutomateDTOs { get; set; }
         #endregion
+
+        #region Stars Monitoring
+
         public DbSet<STARSMonitoringListsDTO> STARSMonitoringListsDTOs { get; set; }
         public DbSet<STARSMonitoringDetailDTO> STARSMonitoringDetailDTOs { get; set; }
+
+        #endregion
+
+        #region Monthly Gene Report
+
+        public DbSet<MonthlyGeneReportDataDTO> MonthlyGeneReportDataDTOs { get; set; }
+        #endregion
         public STARSContext(DbContextOptions<STARSContext> options) : base(options)
         {
 
@@ -160,6 +170,11 @@ namespace ALISS.STARS.Library.DataAccess
             builder.Entity<TRAutomateUploadFile>().ToTable("TRAutomateUploadFile");
 
             builder.Entity<RepeatAutomateDataDTO>().HasNoKey();
+            #endregion
+
+            #region Monthly Gene Report
+
+            builder.Entity<MonthlyGeneReportDataDTO>().HasNoKey();
             #endregion
 
             builder.Entity<LogProcess>().HasKey(x => x.log_id);

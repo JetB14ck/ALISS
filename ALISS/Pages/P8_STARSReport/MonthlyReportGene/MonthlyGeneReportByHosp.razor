@@ -1,0 +1,487 @@
+﻿@page "/MonthlyGeneReportByHosp"
+
+@using ALISS.STARS.DTO
+@using Radzen
+@using Radzen.Blazor
+@using System.Globalization
+@using System.Data.SqlClient
+@using ALISS.Data.D7_StarsMapping.MasterManagement
+@using System.Configuration
+@using ALISS.Data.D8_StarsReport
+@using ALISS.STARS.Report
+
+@inject IJSRuntime JSRuntime
+@inject ConfigDataService configDataService
+@inject NavigationManager navigationManager
+@inject MasterTemplateService masterTemplateService
+@inject DropDownListDataService ddlDataService
+@inject SpecimenService specimenService
+@inject StarsWHONETColumnService starsMasterService
+@inject MonthlyGeneReportService reportService
+@inject WardTypeService wardTypeService
+
+
+<div style="width: 100%;">
+    <div class="divHead">
+        Monthly STARS Percentage Positive Result
+    </div>
+</div>
+
+@if (isPageLoading)
+{
+    <Loading ShowModel="true" />
+
+}
+else
+{
+    <br />
+    <RadzenFieldset Text=" Select Hoapital ">
+        <div class="row">
+
+            @*<div class="col-12 col-xl-4">
+            <div class="row justify-content-start divGroup">
+                <div class="@classLabel">
+                    <LabelBox inputLabel="@configData.Get_Label("rpt_monthly_prevcode")" />
+                </div>
+                <div class="@classInput">
+                    <RadzenDropDown @bind-Value="searchMonthly.prv_code" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+                                    AllowClear="true" TValue="string" AllowFiltering="true" Placeholder="Select..."
+                                    Data="lab_ddl_List.Select(x => new { x.arh_code, x.arh_name, x.prv_code, x.prv_name }).Where(x => (searchMonthly.arh_code == null || x.arh_code == searchMonthly.arh_code)).Distinct()" ValueProperty="prv_code" TextProperty="prv_name" Change="@(args => DDL_Change("Prv", args))"
+                                    Disabled="(!string.IsNullOrEmpty(mainLayout.loginUser.prv_code))" Style="width:100%" />
+                </div>
+            </div>
+        </div>*@
+
+            <div class="col-12 col-xl-4">
+                <div class="row justify-content-start divGroup">
+                    <div class="@classLabel">
+                        <LabelBox inputLabel="@configData.Get_Label("rpt_monthly_hospcode")" requireField="true" />
+                    </div>
+                    <div class="@classInput">
+                        <RadzenDropDown @bind-Value="searchMonthly.hos_code" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+                                        AllowClear="true" TValue="string" AllowFiltering="true" Placeholder="Select..."
+                                        Data="lab_ddl_List.Select(x => new { x.hos_code, x.hos_name, x.arh_code }).Where(x => (searchMonthly.arh_code == null || x.arh_code == searchMonthly.arh_code))"
+                                        ValueProperty="hos_code" TextProperty="hos_name"
+                                        Disabled="(!string.IsNullOrEmpty(mainLayout.loginUser.hos_code))" Style="width:100%" />
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 col-xl-4">
+                <div class="row justify-content-start divGroup">
+                    <div class="@classLabel">
+                        <LabelBox inputLabel="@configData.Get_Label("rpt_monthly_arhcode")" requireField="true" />
+                    </div>
+                    <div class="@classInput">
+                        <RadzenDropDown @bind-Value="searchMonthly.arh_code" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+                                        AllowClear="true" TValue="string" AllowFiltering="true" Placeholder="Select..."
+                                        Data="lab_ddl_List.Select(x => new { x.arh_code, x.arh_name }).Distinct().OrderBy(o => o.arh_code)" ValueProperty="arh_code" TextProperty="arh_name" Change="@(args => DDL_Change("Arh", args))"
+                                        Disabled="(!string.IsNullOrEmpty(mainLayout.loginUser.arh_code))" Style="width:100%" />
+                    </div>
+                </div>
+            </div>
+        </div>
+    </RadzenFieldset>
+
+    <RadzenFieldset Text="Filter">
+
+        <div class="row">
+            <div class="col-12 col-xl-4">
+                <div class="row justify-content-start divGroup">
+                    <div class="@classLabel">
+                        <LabelBox inputLabel="@configData.Get_Label("rpt_from_month")" requireField="true" />
+                    </div>
+                    <div class="@classInput">
+                        <RadzenDropDown @bind-Value="searchMonthly.from_month" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+                                        AllowClear="true" TValue="int" AllowFiltering="true" Placeholder="Select..."
+                                        Data="months.Select(x => new { x.month_code, x.month_name }).Distinct().OrderBy(o => o.month_code)" ValueProperty="month_code" TextProperty="month_name"
+                                        Disabled="(!string.IsNullOrEmpty(mainLayout.loginUser.arh_code))" Style="width:100%" Change="@(args => DDL_Change("month", args))" />
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 col-xl-4">
+                <div class="row justify-content-start divGroup">
+                    <div class="@classLabel">
+                        <LabelBox inputLabel="@configData.Get_Label("rpt_to_month")" requireField="true" />
+                    </div>
+                    <div class="@classInput">
+                        <RadzenDropDown @bind-Value="searchMonthly.to_month" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+                                        AllowClear="true" TValue="int" AllowFiltering="true" Placeholder="Select..."
+                                        Data="months.Select(x => new { x.month_code, x.month_name }).Distinct().OrderBy(o => o.month_code)" ValueProperty="month_code" TextProperty="month_name"
+                                        Disabled="(!string.IsNullOrEmpty(mainLayout.loginUser.arh_code))" Style="width:100%" Change="@(args => DDL_Change("month", args))" />
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 col-xl-3">
+                <div class="@classLabel">
+                    <RadzenNumeric @bind-Value="searchMonthly.year_code" Min="@(DateTime.Now.Year - 10)" Max="DateTime.Now.Year"></RadzenNumeric>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-12 col-xl-4">
+                <div class="row justify-content-start divGroup">
+                    <div class="@classLabel">
+                        <LabelBox inputLabel="@configData.Get_Label("rpt_org_code")" requireField="true" />
+                    </div>
+                    <div class="@classInput">
+                        <RadzenDropDown @bind-Value="searchMonthly.stars_org_code" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+                                        AllowClear="true" TValue="string" AllowFiltering="true" Placeholder="All"
+                                        Data="OrganismMaster.Select(x => new { x.sto_org_code, x.sto_org_name }).Distinct().OrderBy(o => o.sto_org_code)" ValueProperty="sto_org_code" TextProperty="sto_org_name"
+                                        Style="width:100%" />
+                    </div>
+                </div>
+                <div class="row justify-content-start divGroup">
+                    <div class="@classLabel">
+                        <LabelBox inputLabel="@configData.Get_Label("rpt_spec_code")" />
+                    </div>
+                    <div class="@classInput">
+                        <RadzenDropDown @bind-Value="searchMonthly.spec_code" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+                                        AllowClear="true" TValue="string" AllowFiltering="true" Placeholder="All"
+                                        Data="SpecimenMaster.Select(x => new { x.spc_code, x.spc_name }).Distinct().OrderBy(o => o.spc_code)" ValueProperty="spc_code" TextProperty="spc_name"
+                                        Style="width:100%" />
+                    </div>
+                </div>
+                <div class="row justify-content-start divGroup">
+                    <div class="@classLabel">
+                        <LabelBox inputLabel="@configData.Get_Label("rpt_ward_type")" />
+                    </div>
+                    <div class="@classInput">
+                        <RadzenDropDown @bind-Value="searchMonthly.ward_type" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+                                        AllowClear="true" TValue="string" AllowFiltering="true" Placeholder="All"
+                                        Data="WardTypeMaster.Select(x => new { x.wrd_code, x.wrd_name }).Distinct().OrderBy(o => o.wrd_code)" ValueProperty="wrd_code" TextProperty="wrd_name"
+                                        Style="width:100%" />
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 col-xl-4">
+                <div class="row justify-content-start divGroup">
+                    <div class="@classLabel">
+                        <LabelBox inputLabel="@configData.Get_Label("rpt_gene_code")" />
+                    </div>
+                    <div class="@classInput">
+                        <RadzenListBox AllowFiltering="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" @bind-Value="multipleSelectedGene" Multiple="true" Data="@GeneMaster" TextProperty="sgt_gene_code" ValueProperty="sgt_gene_name"
+                                       Style="margin-bottom: 20px; height:350px; width:350px" />
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row justify-content-between buttonArea">
+            <div class="col-6">
+                <div class="row justify-content-start divGroup buttonArea">
+                    <div class="col-auto"> <RadzenButton class="btnDownload" Disabled="@(graphData.Count() == 0)" Text="Export" Click="@ExportFile" /></div>
+                </div>
+            </div>
+            <div class="col-6">
+                <div class="row justify-content-end divGroup buttonArea">
+                    <div class="col-auto"> <RadzenButton class="btnSearch" Text="Graph Result" Click="@GraphResult" /></div>
+                    <div class="col-auto"> <RadzenButton class="btnClear" Text="Clear" Click="@ClearData" /></div>
+                </div>
+            </div>
+        </div>
+
+        @if (isLoading)
+        {
+            <Loading ShowModel="true" />
+        }
+
+    </RadzenFieldset>
+
+    @if (showGraph)
+    {
+        <h1>@titleChart</h1>
+
+        <div class="row">
+            <div class="col-12 col-xl-8">
+                <RadzenChart Style="width:100%; min-height: 450px">
+                    @foreach (var series in graphData)
+                    {
+                        <RadzenLineSeries Data="@series.Value" CategoryProperty="month" Title="@series.Key" LineType="Radzen.Blazor.LineType.Dashed" ValueProperty="value">
+                            <RadzenCategoryAxis Step="1" />
+                            <RadzenMarkers MarkerType="MarkerType.Square" />
+                        </RadzenLineSeries>
+                    }
+                    <RadzenValueAxis Formatter="@FormatValue" Min="0" Max="100" Step="10">
+                        <RadzenGridLines Visible="true" />
+                        <RadzenAxisTitle Text="% Positive" />
+                    </RadzenValueAxis>
+                </RadzenChart>
+                <div style="width: 100%; font-size: 14px; color: #a8a9aa;" class="text-center" >
+                    @searchMonthly.year_code
+                </div>
+            </div>
+        </div>
+    }
+}
+
+
+@code {
+
+    [CascadingParameter] MainLayout mainLayout { get; set; }
+    private const string MENU_CODE = "MNU_0904";
+    private ConfigData configData = new ConfigData();
+    private string classLabel = "col-md-4";
+    private string classInput = "col-8";
+
+    string _Message;
+    private string SIRText;
+    private Boolean isPageLoading = true;
+    private Boolean isLoading = false;
+    private Boolean showGraph = false;
+
+    MonthlyGeneReportSearchDTO searchMonthly = new MonthlyGeneReportSearchDTO();
+
+    private string titleChart;
+    IEnumerable<string> multipleSelectedGene = new string[] { };
+
+    private List<HospitalLabDataDTO> lab_ddl_List;
+    private MasterTemplateDTO ActiveMasterTemplate = new MasterTemplateDTO();
+    private List<SpecimenDTO> SpecimenMaster = new List<SpecimenDTO>();
+    private List<TCSTARSOrganismDTO> OrganismMaster = new List<TCSTARSOrganismDTO>();
+    private List<TCSTARSGeneDTO> GeneMaster = new List<TCSTARSGeneDTO>();
+    private List<WardTypeDTO> WardTypeMaster = new List<WardTypeDTO>();
+    private List<MonthlyGeneReportListDTO> reportListData = new List<MonthlyGeneReportListDTO>();
+    private MonthlyReportDataDTO reportData = new MonthlyReportDataDTO();
+    private List<ParameterDTO> ParameterList;
+
+    private Dictionary<string, IEnumerable<DataReport>> graphData = new Dictionary<string, IEnumerable<DataReport>>();
+
+    class clsMonth
+    {
+        public int month_code { get; set; }
+        public string month_name { get; set; }
+    }
+
+    class DataReport
+    {
+        public string month { get; set; }
+        public double value { get; set; }
+    }
+
+    private List<clsMonth> months = new List<clsMonth>() {
+        new clsMonth() {month_code = 1, month_name = "มกราคม" },
+        new clsMonth() {month_code = 2, month_name = "กุมภาพันธ์" },
+        new clsMonth() {month_code = 3, month_name = "มีนาคม" },
+        new clsMonth() {month_code = 4, month_name = "เมษายน" },
+        new clsMonth() {month_code = 5, month_name = "พฤษภาคม" },
+        new clsMonth() {month_code = 6, month_name = "มิถุนายน" },
+        new clsMonth() {month_code = 7, month_name = "กรกฎาคม" },
+        new clsMonth() {month_code = 8, month_name = "สิงหาคม" },
+        new clsMonth() {month_code = 9, month_name = "กันยายน" },
+        new clsMonth() {month_code = 10, month_name = "ตุลาคม" },
+        new clsMonth() {month_code = 11, month_name = "พฤศจิกายน" },
+        new clsMonth() {month_code = 12, month_name = "ธันวาคม" },
+    };
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await mainLayout.GetLoginUser();
+
+            if (mainLayout.loginUser.CheckPagePermission(MENU_CODE) == false) navigationManager.NavigateTo("/NoPermissionPage");
+
+            configData.ConfigDTOList = await configDataService.Get_TBConfig_DataList_Async(new TBConfigDTO() { tbc_mnu_code = MENU_CODE });
+
+            var searchData = new HospitalLabDataDTO()
+            {
+                arh_code = searchMonthly.arh_code = mainLayout.loginUser.arh_code,
+                hos_code = searchMonthly.hos_code = mainLayout.loginUser.hos_code,
+                prv_code = searchMonthly.prv_code = mainLayout.loginUser.prv_code,
+            };
+            lab_ddl_List = await ddlDataService.GetAllLabListByModelAsync(searchData);
+
+            ActiveMasterTemplate = await masterTemplateService.GetListByModelActiveAsync(new MasterTemplateSearchDTO());
+
+            ParameterList = await ddlDataService.GetParameterListByModelAsync(new ParameterDTO() { prm_code_major = "MONTHLY_GENE_REPORT" });
+
+            SpecimenMaster = await specimenService.GetListByModelActiveAsync(new SpecimenDTO() { spc_mst_code = ActiveMasterTemplate.mst_code });
+            OrganismMaster = await starsMasterService.GetListTCSTARS_Organism_Async(new TCSTARSOrganismDTO());
+            GeneMaster = await starsMasterService.GetListTCSTARS_Gene_Async(new TCSTARSGeneDTO());
+            WardTypeMaster = await wardTypeService.GetListByModelAsync(new WardTypeDTO() { wrd_mst_code = ActiveMasterTemplate.mst_code });
+
+            searchMonthly = new MonthlyGeneReportSearchDTO();
+            searchMonthly.year_code = DateTime.Now.Year;
+            searchMonthly.from_month = 1;
+            searchMonthly.to_month = DateTime.Now.Month;
+            searchMonthly.hos_code = mainLayout.loginUser.hos_code;
+            searchMonthly.arh_code = mainLayout.loginUser.arh_code;
+
+            isPageLoading = false;
+        }
+    }
+
+    private async Task ClearGraph()
+    {
+        graphData.Clear();
+
+        showGraph = false;
+        StateHasChanged();
+    }
+
+    private async Task ClearData()
+    {
+        searchMonthly = new MonthlyGeneReportSearchDTO();
+        searchMonthly.year_code = DateTime.Now.Year;
+        searchMonthly.from_month = 1;
+        searchMonthly.to_month = DateTime.Now.Month;
+        searchMonthly.hos_code = mainLayout.loginUser.hos_code;
+        searchMonthly.arh_code = mainLayout.loginUser.arh_code;
+
+        await ClearGraph();
+    }
+
+    async void ExportFile()
+    {
+        isLoading = true;
+
+        reportData = new MonthlyReportDataDTO();
+        reportListData = new List<MonthlyGeneReportListDTO>();
+        try
+        {
+            for (int i = searchMonthly.from_month; i <= searchMonthly.to_month; i++)
+            {
+                reportListData.Add(new MonthlyGeneReportListDTO() { month_code = i.ToString(), month_name = months.FirstOrDefault(x => x.month_code == i).month_name });
+            }
+            foreach (var cat in graphData)
+            {
+                foreach (var item in cat.Value)
+                {
+                    var row = reportListData.FirstOrDefault(x => x.month_name == item.month);
+                    row.GetType().GetProperty(cat.Key.Replace("-","").ToLower()).SetValue(row, item.value/100);
+                }
+            }
+            reportData.reportTitle = titleChart;
+            reportData.hos_code = searchMonthly.hos_code;
+            reportData.reportListDTOs = reportListData;
+            string tempPath = ParameterList.FirstOrDefault(x => x.prm_code_minor == "MONTHLY_GENE_REPORT_PATH").prm_value;
+            reportService.ExportGraph(JSRuntime, reportData, tempPath, searchMonthly.hos_code);
+            isLoading = false;
+        }
+        catch (Exception ex)
+        {
+            await JSRuntime.InvokeAsync<object>("ShowAlert", ex.Message);
+            isLoading = false;
+        }
+
+    }
+
+    private async Task GraphResult()
+    {
+        isLoading = true;
+        graphData.Clear();
+        //if (string.IsNullOrEmpty(searchMonthly.arh_code))
+        //{
+        //    await JSRuntime.InvokeAsync<object>("ShowAlert", "กรุณาระบุเขตสุขภาพ");
+        //    isLoading = false;
+        //    return;
+        //}
+        //if (string.IsNullOrEmpty(searchMonthly.hos_code))
+        //{
+        //    await JSRuntime.InvokeAsync<object>("ShowAlert", "กรุณาระบุโรงพยาบาล");
+        //    isLoading = false;
+        //    return;
+        //}
+        //if (searchMonthly.from_month == 0)
+        //{
+        //    await JSRuntime.InvokeAsync<object>("ShowAlert", "กรุณาระบุเดือนเริ่มต้น");
+        //    isLoading = false;
+        //    return;
+        //}
+        //if (searchMonthly.to_month == 0)
+        //{
+        //    await JSRuntime.InvokeAsync<object>("ShowAlert", "กรุณาระบุเดือนสิ้นสุด");
+        //    isLoading = false;
+        //    return;
+        //}
+        //if (string.IsNullOrEmpty(searchMonthly.stars_org_code))
+        //{
+        //    await JSRuntime.InvokeAsync<object>("ShowAlert", "กรุณาระบุ Organism");
+        //    isLoading = false;
+        //    return;
+        //}
+        //if (multipleSelectedGene.Count() == 0)
+        //{
+        //    await JSRuntime.InvokeAsync<object>("ShowAlert", "กรุณาเลือก Gene อย่างน้อย 1 รายการ");
+        //    isLoading = false;
+        //    return;
+        //}
+        //string org_name = OrganismMaster.FirstOrDefault(x => x.sto_org_code == searchMonthly.stars_org_code).sto_org_name;
+        //titleChart = string.Format("%Positive of {0} spp. to Gene ", org_name);
+        string gene_name = string.Empty;
+        List<MonthlyGeneReportDataDTO> rawData = await reportService.getMonthlyGeneReportData(searchMonthly);
+        foreach (var item in multipleSelectedGene)
+        {
+            if (!string.IsNullOrEmpty(gene_name))
+                gene_name += ", ";
+
+            string key = GeneMaster.FirstOrDefault(x => x.sgt_gene_code == item).sgt_gene_name;
+
+            gene_name += key;
+
+            List<DataReport> value = new List<DataReport>();
+            var seriesData = (from x in rawData
+                              select new
+                              {
+                                  date = x.sap_stars_specimendate,
+                                  value = x.GetType().GetProperty(string.Format("sga_{0}_gene", item.Replace("-","").ToLower())).GetValue(x)
+                              }).ToList();
+            for (int i = searchMonthly.from_month; i <= searchMonthly.to_month; i++)
+            {
+                var monthlyData = seriesData.Where(w => w.date >= DateTime.Parse(string.Format("{0}-{1}-{2}", searchMonthly.year_code, i.ToString(), "1"))
+                            && w.date <= DateTime.Parse(string.Format("{0}-{1}-{2}", searchMonthly.year_code, (i + 1).ToString(), "1")).AddDays(-1)).ToList();
+                value.Add(new DataReport()
+                {
+                    month = months.FirstOrDefault(x => x.month_code == i).month_name,
+                    value = monthlyData.Count() == 0 ? 0 : (monthlyData.Count(x => x.value.ToString() == "p") * 1.00) / monthlyData.Count() * 100
+                });
+            }
+            graphData.Add(key, value);
+        }
+        titleChart += gene_name;
+        if (!string.IsNullOrEmpty(searchMonthly.spec_code))
+        {
+            titleChart += " By Specimen " + SpecimenMaster.FirstOrDefault(x => x.spc_code == searchMonthly.spec_code).spc_name;
+            if (!string.IsNullOrEmpty(searchMonthly.ward_type))
+            {
+                titleChart += " and Ward Type " + WardTypeMaster.FirstOrDefault(x => x.wrd_code == searchMonthly.ward_type).wrd_name;
+            }
+        }
+        else if (!string.IsNullOrEmpty(searchMonthly.ward_type))
+        {
+            titleChart += " By Ward Type " + WardTypeMaster.FirstOrDefault(x => x.wrd_code == searchMonthly.ward_type).wrd_name;
+        }
+        showGraph = true;
+        isLoading = false;
+
+    } // end GraphResult
+
+    string FormatValue(object value)
+    {
+        return String.Format("{0:0.00}%", (double)value);
+    }
+
+    private void DDL_Change(string ddl_name, object value)
+    {
+        if (ddl_name == "Hos" && value != null)
+        {
+            searchMonthly.arh_code = lab_ddl_List.FirstOrDefault(x => x.hos_code == searchMonthly.hos_code).arh_code;
+        }
+        //else if (ddl_name == "Prv" && value != null)
+        //{
+        //    var prv_select = lab_ddl_List.FirstOrDefault(x => x.prv_code == value.ToString());
+
+        //    searchMonthly.arh_code = prv_select.arh_code;
+        //}
+        else if (ddl_name == "month")
+        {
+            if (searchMonthly.from_month > searchMonthly.to_month)
+            {
+                searchMonthly.to_month = searchMonthly.from_month;
+            }
+        }
+
+        StateHasChanged();
+    }
+}
