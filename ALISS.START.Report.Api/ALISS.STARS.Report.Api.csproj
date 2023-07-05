@@ -45,6 +45,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="AutoMapper, Version=10.0.0.0, Culture=neutral, PublicKeyToken=be96cd2c38ef1005, processorArchitecture=MSIL">
+      <HintPath>..\packages\AutoMapper.10.0.0\lib\net461\AutoMapper.dll</HintPath>
+    </Reference>
     <Reference Include="CrystalDecisions.CrystalReports.Engine, Version=10.5.3700.0, Culture=neutral, PublicKeyToken=692fbea5521e1304, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>C:\Program Files (x86)\Business Objects\Common\2.8\managed\CrystalDecisions.CrystalReports.Engine.dll</HintPath>
@@ -206,6 +209,7 @@
     <Compile Include="Areas\HelpPage\SampleGeneration\TextSample.cs" />
     <Compile Include="Areas\HelpPage\XmlDocumentationProvider.cs" />
     <Compile Include="Controllers\MonthlyGeneReportController.cs" />
+    <Compile Include="Controllers\StarsAMRMapGeneController.cs" />
     <Compile Include="Controllers\STARSPersonalReportController.cs" />
     <Compile Include="Controllers\ReceiveSampleController.cs" />
     <Compile Include="Controllers\BoxNoBarcodeController.cs" />
@@ -237,40 +241,47 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>DSStarsPersonalReport.xsd</DependentUpon>
     </Compile>
+    <Compile Include="Report\rptStarsAMRMapGeneReport.cs">
+      <DependentUpon>rptStarsAMRMapGeneReport.rpt</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <SubType>Component</SubType>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <DesignTime>True</DesignTime>
+    </Compile>
     <Compile Include="Report\rptMonthlyGeneReport.cs">
       <DependentUpon>rptMonthlyGeneReport.rpt</DependentUpon>
       <AutoGen>True</AutoGen>
-      <SubType>Component</SubType>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <DesignTime>True</DesignTime>
+      <SubType>Component</SubType>
     </Compile>
     <Compile Include="Report\rptSTARSPersonalReport.cs">
       <DependentUpon>rptSTARSPersonalReport.rpt</DependentUpon>
       <AutoGen>True</AutoGen>
-      <SubType>Component</SubType>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <DesignTime>True</DesignTime>
+      <SubType>Component</SubType>
     </Compile>
     <Compile Include="Report\rptReceiveBarcode.cs">
       <DependentUpon>rptReceiveBarcode.rpt</DependentUpon>
       <AutoGen>True</AutoGen>
-      <SubType>Component</SubType>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <DesignTime>True</DesignTime>
+      <SubType>Component</SubType>
     </Compile>
     <Compile Include="Report\rptReceiveLogbook.cs">
       <DependentUpon>rptReceiveLogbook.rpt</DependentUpon>
       <AutoGen>True</AutoGen>
-      <SubType>Component</SubType>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <DesignTime>True</DesignTime>
+      <SubType>Component</SubType>
     </Compile>
     <Compile Include="Report\rptBoxNoBarcode.cs">
       <DependentUpon>rptBoxNoBarcode.rpt</DependentUpon>
       <AutoGen>True</AutoGen>
-      <SubType>Component</SubType>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <DesignTime>True</DesignTime>
+      <SubType>Component</SubType>
     </Compile>
   </ItemGroup>
   <ItemGroup>
@@ -371,6 +382,7 @@
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="Views\MonthlyGeneReport\" />
+    <Folder Include="Views\StarsAMRMapGene\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff2" />
@@ -402,6 +414,10 @@
     <Content Include="Scripts\jquery-3.4.1.min.map" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\06_Report\ALISS.EXPORT.Library\ALISS.EXPORT.Library.csproj">
+      <Project>{BB4FED70-68F6-473B-BB95-E9EB04B7E6A4}</Project>
+      <Name>ALISS.EXPORT.Library</Name>
+    </ProjectReference>
     <ProjectReference Include="..\ALISS.STARS.DTO\ALISS.STARS.DTO.csproj">
       <Project>{C25D5735-602B-4DE1-B091-1726A9EF0641}</Project>
       <Name>ALISS.STARS.DTO</Name>
@@ -447,6 +463,13 @@
       <Generator>CrystalDecisions.VSDesigner.CodeGen.ReportCodeGenerator</Generator>
       <LastGenOutput>rptMonthlyGeneReport.cs</LastGenOutput>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Report\rptStarsAMRMapGeneReport.rpt">
+      <Generator>CrystalDecisions.VSDesigner.CodeGen.ReportCodeGenerator</Generator>
+      <LastGenOutput>rptStarsAMRMapGeneReport.cs</LastGenOutput>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
   <PropertyGroup>

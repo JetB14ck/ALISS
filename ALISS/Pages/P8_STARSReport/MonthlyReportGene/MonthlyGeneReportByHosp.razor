@@ -5,8 +5,8 @@
 @using Radzen.Blazor
 @using System.Globalization
 @using System.Data.SqlClient
-@using ALISS.Data.D7_StarsMapping.MasterManagement
 @using System.Configuration
+@using ALISS.Data.D7_StarsMapping.MasterManagement
 @using ALISS.Data.D8_StarsReport
 @using ALISS.STARS.Report
 
@@ -35,10 +35,10 @@
 else
 {
     <br />
-        <RadzenFieldset Text=" Select Hoapital ">
-            <div class="row">
+    <RadzenFieldset Text=" Select Hoapital ">
+        <div class="row">
 
-                @*<div class="col-12 col-xl-4">
+            @*<div class="col-12 col-xl-4">
                     <div class="row justify-content-start divGroup">
                         <div class="@classLabel">
                             <LabelBox inputLabel="@configData.Get_Label("rpt_monthly_prevcode")" />
@@ -52,35 +52,35 @@ else
                     </div>
                 </div>*@
 
-                <div class="col-12 col-xl-4">
-                    <div class="row justify-content-start divGroup">
-                        <div class="@classLabel">
-                            <LabelBox inputLabel="@configData.Get_Label("rpt_monthly_hospcode")" requireField="true" />
-                        </div>
-                        <div class="@classInput">
-                            <RadzenDropDown @bind-Value="searchMonthly.hos_code" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
-                                            AllowClear="true" TValue="string" AllowFiltering="true" Placeholder="Select..."
-                                            Data="lab_ddl_List.Select(x => new { x.hos_code, x.hos_name, x.arh_code }).Where(x => (searchMonthly.arh_code == null || x.arh_code == searchMonthly.arh_code))" Change="@(args => DDL_Change("hos", args))"
-                                            ValueProperty="hos_code" TextProperty="hos_name"
-                                            Disabled="(!string.IsNullOrEmpty(mainLayout.loginUser.hos_code))" Style="width:100%" />
-                        </div>
+            <div class="col-12 col-xl-4">
+                <div class="row justify-content-start divGroup">
+                    <div class="@classLabel">
+                        <LabelBox inputLabel="@configData.Get_Label("rpt_monthly_hospcode")" requireField="true" />
                     </div>
-                </div>
-                <div class="col-12 col-xl-4">
-                    <div class="row justify-content-start divGroup">
-                        <div class="@classLabel">
-                            <LabelBox inputLabel="@configData.Get_Label("rpt_monthly_arhcode")" requireField="true" />
-                        </div>
-                        <div class="@classInput">
-                            <RadzenDropDown @bind-Value="searchMonthly.arh_code" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
-                                            AllowClear="true" TValue="string" AllowFiltering="true" Placeholder="Select..."
-                                            Data="lab_ddl_List.Select(x => new { x.arh_code, x.arh_name }).Distinct().OrderBy(o => o.arh_code)" ValueProperty="arh_code" TextProperty="arh_name"
-                                            Disabled="(!string.IsNullOrEmpty(mainLayout.loginUser.arh_code))" Style="width:100%" />
-                        </div>
+                    <div class="@classInput">
+                        <RadzenDropDown @bind-Value="searchMonthly.hos_code" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+                                        AllowClear="true" TValue="string" AllowFiltering="true" Placeholder="Select..."
+                                        Data="lab_ddl_List.Select(x => new { x.hos_code, x.hos_name, x.arh_code }).Where(x => (searchMonthly.arh_code == null || x.arh_code == searchMonthly.arh_code))" Change="@(args => DDL_Change("hos", args))"
+                                        ValueProperty="hos_code" TextProperty="hos_name"
+                                        Disabled="(!string.IsNullOrEmpty(mainLayout.loginUser.hos_code))" Style="width:100%" />
                     </div>
                 </div>
             </div>
-        </RadzenFieldset>
+            <div class="col-12 col-xl-4">
+                <div class="row justify-content-start divGroup">
+                    <div class="@classLabel">
+                        <LabelBox inputLabel="@configData.Get_Label("rpt_monthly_arhcode")" requireField="true" />
+                    </div>
+                    <div class="@classInput">
+                        <RadzenDropDown @bind-Value="searchMonthly.arh_code" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+                                        AllowClear="true" TValue="string" AllowFiltering="true" Placeholder="Select..."
+                                        Data="lab_ddl_List.Select(x => new { x.arh_code, x.arh_name }).Distinct().OrderBy(o => o.arh_code)" ValueProperty="arh_code" TextProperty="arh_name"
+                                        Disabled="(!string.IsNullOrEmpty(mainLayout.loginUser.arh_code))" Style="width:100%" />
+                    </div>
+                </div>
+            </div>
+        </div>
+    </RadzenFieldset>
     <RadzenFieldset Text="Filter">
 
         <div class="row">
@@ -206,7 +206,7 @@ else
                         <RadzenAxisTitle Text="% Positive" />
                     </RadzenValueAxis>
                 </RadzenChart>
-                <div style="width: 100%; font-size: 14px; color: #a8a9aa;" class="text-center" >
+                <div style="width: 100%; font-size: 14px; color: #a8a9aa;" class="text-center">
                     @searchMonthly.year_code
                 </div>
             </div>
@@ -418,7 +418,7 @@ else
                               select new
                               {
                                   date = x.sap_stars_specimendate,
-                                  value = x.GetType().GetProperty(string.Format("sga_{0}_gene", item.Replace("-","").ToLower())).GetValue(x)
+                                  value = x.GetType().GetProperty(string.Format("sga_{0}_gene", item.Replace("-", "").ToLower())).GetValue(x)
                               }).ToList();
             for (int i = searchMonthly.from_month; i <= searchMonthly.to_month; i++)
             {

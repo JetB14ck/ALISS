@@ -472,6 +472,28 @@
         }
       ],
       "UpstreamPathTemplate": "/gene_report_api/{everything}"
+    },
+    {
+      "DownstreamPathTemplate": "/api/StarsMapAMR/{everything}",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": "44329"
+        }
+      ],
+      "UpstreamPathTemplate": "/stars_map_amr_api/{everything}"
+    },
+    {
+      "DownstreamPathTemplate": "/api/ExportStarsAMRMapGene/{everything}",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": "44391"
+        }
+      ],
+      "UpstreamPathTemplate": "/export_starsmap_api/{everything}"
     }
   ],
   "GlobalConfiguration": {
