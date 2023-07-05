@@ -53,7 +53,8 @@ namespace ALISS.Data.D7_Stars.StarsAMRMap
                         fs.Read(fileBytes, 0, fileBytes.Length);
 
                         iJSRuntime.InvokeAsync<StarsAMRMapGeneService>(
-                            "previewPDF",
+                            "saveAsFile",
+                            filename,
                             Convert.ToBase64String(fileBytes)
                             );
                     }
