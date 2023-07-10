@@ -1,0 +1,1088 @@
+﻿@page "/StarsAMRMapGene"
+
+@using ALISS.ANTIBIOTREND.DTO
+@using ALISS.EXPORT.Library.DTO;
+@using Radzen
+@using Radzen.Blazor
+@using System.Globalization
+@using ALISS.Data.D7_StarsMapping.MasterManagement
+@using ALISS.MasterManagement.DTO
+@using ALISS.STARS.DTO.STARSMapGene
+@using ALISS.Data.D7_Stars.StarsAMRMap
+
+@inject DialogService dialogService
+@inject NotificationService notificationService
+@inject IJSRuntime JSRuntime
+@inject StarsAMRMapGeneService ReportService
+@inject NavigationManager navigationManager
+@inject ConfigDataService configDataService
+@inject IFileSave OIFileSave
+@inject StarsWHONETColumnService starsMasterService
+@inject DropDownListDataService ddlDataService
+
+<div style="width: 100%;">
+    <div class="divHead">
+        Map AMR ยีนดื้อยา
+    </div>
+</div>
+
+@if (pageLoading)
+{
+    <p><em>Loading...</em></p>
+    <Loading ShowModel="true" />
+}
+else
+{
+
+    <div class="row">
+        <div class="col-md-4">
+            <RadzenFieldset Text="Filter">
+                <div class="row justify-content-start divGroup">
+                    <div class="@classLabel">
+                        <LabelBox inputLabel="@configData.Get_Label("rpt_map_monthfrom")" />
+                    </div>
+                    <div class="@classMonth">
+                        <RadzenDropDown AllowClear="false" TValue="string" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+                                        Placeholder="Select..."
+                                        AllowFiltering="false" @bind-Value="searchAMR.from_month"
+                                        Data="@MonthData" TextProperty="MonthName" ValueProperty="MonthValue" />
+                    </div>
+                    @*<div style="width:80px; vertical-align: middle;display: inline-block">
+                            <RadzenNumeric TValue="int" Min="2000" Max="9999" @bind-Value=@iYearFrom />
+                        </div>*@
+                </div>
+
+                <div class="row justify-content-start divGroup">
+                    <div class="@classLabel">
+                        <LabelBox inputLabel="@configData.Get_Label("rpt_map_monthto")" />
+                    </div>
+                    <div class="@classMonth">
+                        <RadzenDropDown AllowClear="false" TValue="string" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+                                        Placeholder="Select..."
+                                        AllowFiltering="false" @bind-Value="searchAMR.to_month"
+                                        Data="@MonthData" TextProperty="MonthName" ValueProperty="MonthValue" />
+                    </div>
+                    <div style="width:80px; vertical-align: middle;display: inline-block">
+                        <RadzenNumeric TValue="string" Min="DateTime.Now.Year - 20" Max="DateTime.Now.Year" @bind-Value="searchAMR.year_code" />
+                    </div>
+                </div>
+
+                <div class="row justify-content-start divGroup">
+                    <div class="@classLabel">
+                        <LabelBox inputLabel="@configData.Get_Label("rpt_org_code")" requireField="true" />
+                    </div>
+                    <div class="@classInput">
+                        <RadzenDropDown @bind-Value="searchAMR.stars_org_code" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+                                        AllowClear="true" TValue="string" AllowFiltering="true" Placeholder="All"
+                                        Data="OrganismMaster.Select(x => new { x.sto_org_code, x.sto_org_name }).Distinct().OrderBy(o => o.sto_org_code)" ValueProperty="sto_org_code" TextProperty="sto_org_name"
+                                        Style="width:100%" />
+                    </div>
+                </div>
+
+                <div class="row justify-content-start divGroup">
+                    <div class="@classLabel">
+                        <LabelBox inputLabel="@configData.Get_Label("rpt_gene_code")" requireField="true" />
+                    </div>
+                    <div class="@classInput">
+                        <RadzenDropDown @bind-Value="searchAMR.stars_gene_code" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+                                        AllowClear="true" TValue="string" AllowFiltering="true" Placeholder="All"
+                                        Data="GeneMaster.Select(x => new { x.sgt_gene_code, x.sgt_gene_name }).Distinct().OrderBy(o => o.sgt_gene_code)" ValueProperty="sgt_gene_code" TextProperty="sgt_gene_name"
+                                        Style="width:100%" />
+                    </div>
+                </div>
+
+                <div class="row justify-content-center divGroup">
+                    <div>
+                        <RadzenButton class="btnSearch" Text="Search" Click="SearchData" />
+                    </div>
+                    <div>
+                        <RadzenButton Click="Export" Disabled="string.IsNullOrEmpty(strGeneName)" Text="Export" Style="background: #0A6839 0% 0% no-repeat padding-box; color: #FFFFFF;border: 1px solid #6DC6A9;border-radius: 3px; font: Regular 16px/22px Arial;" />
+                    </div>
+
+                </div>
+
+                <br />
+            </RadzenFieldset>
+        </div>
+
+        <div class="col-md-8">
+            <RadzenFieldset Text="Map">
+
+                <div class="row">
+
+                    <div class="col-md-6">
+                        <img id="thai" src="/Images/ThaiMap.png">
+                        <br /><br />
+                        <canvas id="cvsMax" style="left:717px; top:188px;" width="@CVS_MAX_WIDTH" height="@CVS_MAX_HEIGHT"></canvas> @*border: 1px solid #6DC6A9*@
+                        <canvas id="cvsMin" style="left:717px; top:188px;" width="@CVS_MIN_WIDTH" height="@CVS_MIN_HEIGHT"></canvas> @*border: 1px solid #FF6633*@
+
+                        <canvas id="cvs01" width="@W01" height="@H01"></canvas>@*style="border: 1px solid #6DC6A9"*@
+                        <canvas id="cvs02" width="@W02" height="@H02"></canvas>
+                        <canvas id="cvs03" width="@W03" height="@H03"></canvas>
+                        <canvas id="cvs04" width="@W04" height="@H04"></canvas>
+                        <canvas id="cvs05" width="@W05" height="@H05"></canvas>@*style="border: 1px solid #FF6633"*@
+                        <canvas id="cvs06" width="@W06" height="@H06"></canvas>
+                        <canvas id="cvs07" width="@W07" height="@H07"></canvas><canvas id="cvs08" width="@W08" height="@H08"></canvas>
+                        <canvas id="cvs09" width="@W09" height="@H09"></canvas><canvas id="cvs10" width="@W10" height="@H10"></canvas>
+                        <canvas id="cvs11" width="@W11" height="@H11"></canvas><canvas id="cvs12" width="@W12" height="@H12"></canvas>
+                        <canvas id="cvs13" width="@W13" height="@H13"></canvas>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="row justify-content-center">
+                            @*<RadzenButton Text=@antiPercentLabel Style="margin-bottom: 20px; width: 210px ; height:38px; background: #E7F4EF 0% 0% no-repeat padding-box; color: #0A6839;border: 1px solid #6DC6A9;border-radius: 4px; font: Regular 18px/22px Arial;" />*@
+                            <RadzenButton Text=@(string.Format("(%Positive) {0}", strGeneName)) Style="margin-bottom: 20px; width: 100% ; height:38px; background: #E7F4EF 0% 0% no-repeat padding-box; color: #0A6839;border: 1px solid #6DC6A9;border-radius: 4px; font: Regular 18px/22px Arial;" />
+                            <RadzenButton Text=@(strOrgName) Style="margin-bottom: 20px; width: 100% ; height:38px; background: #E7F4EF 0% 0% no-repeat padding-box; color: #0A6839;border: 1px solid #6DC6A9;border-radius: 4px; font: Regular 18px/22px Arial;" />
+                            <RadzenFieldset Text=" Sort By ">
+                                <RadzenRadioButtonList @bind-Value=@selectedSortBy TValue="eSortby" Change="@((args) => ChangeOrderBy(args, "RadioButtonList with horizontal orientation"))">
+                                    <Items>
+                                        <RadzenRadioButtonListItem Text="มากไปน้อย" Value="eSortby.desc" />
+                                        <RadzenRadioButtonListItem Text="น้อยไปมาก" Value="eSortby.asc" />
+                                        <RadzenRadioButtonListItem Text="เขตสุขภาพ" Value="eSortby.regH" />
+                                    </Items>
+                                </RadzenRadioButtonList>
+                            </RadzenFieldset>
+                        </div>
+                        <br />
+                        <div class="row justify-content-center">
+                            <RadzenFieldset Text=" เขตสุขภาพ " Style="width: 90%;">
+                                <table class="table" style="text-align:center">
+                                    <tbody>
+                                        @foreach (var dict in dictValue)
+                                        {
+                                            <tr>
+                                                <td width="20%"></td>
+                                                <td>
+                                                    @if (dict.Key == 1)
+                                                    {<span class="dot" style="background-color:@colorArea01">@dict.Key</span>}
+                                                else if (dict.Key == 2)
+                                                {<span class="dot" style="background-color:@colorArea02">@dict.Key</span>}
+                                            else if (dict.Key == 3)
+                                            {<span class="dot" style="background-color:@colorArea03">@dict.Key</span> }
+                                        else if (dict.Key == 4)
+                                        {<span class="dot" style="background-color:@colorArea04">@dict.Key</span> }
+                                    else if (dict.Key == 5)
+                                    {<span class="dot" style="background-color:@colorArea05">@dict.Key</span> }
+                                else if (dict.Key == 6)
+                                {<span class="dot" style="background-color:@colorArea06">@dict.Key</span> }
+                            else if (dict.Key == 7)
+                            {<span class="dot" style="background-color:@colorArea07">@dict.Key</span> }
+                        else if (dict.Key == 8)
+                        {<span class="dot" style="background-color:@colorArea08">@dict.Key</span> }
+                    else if (dict.Key == 9)
+                    {<span class="dot" style="background-color:@colorArea09">@dict.Key</span> }
+                else if (dict.Key == 10)
+                {<span class="dot" style="background-color:@colorArea10">@dict.Key</span> }
+            else if (dict.Key == 11)
+            {<span class="dot" style="background-color:@colorArea11">@dict.Key</span> }
+        else if (dict.Key == 12)
+        {<span class="dot" style="background-color:@colorArea12">@dict.Key</span> }
+    else if (dict.Key == 13)
+    {<span class="dot" style="background-color:@colorArea13">@dict.Key</span>}
+                                                </td>
+                                                <td><div id="perc_@dict.Key">@dict.Value.ToString("n1")</div></td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </RadzenFieldset>
+                        </div>
+                    </div>
+                </div>
+
+                @if (!blnLoadingComplete)
+                {
+                    <Loading ShowModel="true" />
+                }
+
+            </RadzenFieldset>
+        </div>
+
+    </div>
+
+    <div class="row">
+
+        <img id="@nameof(eAreaHealth.Arh_01)" width="@W01" height="@H01" src="/Images/Arh_01.png" style="visibility:hidden">
+        <img id="@nameof(eAreaHealth.Arh_02)" width="@W02" height="@H02" src="/Images/Arh_02.png" style="visibility:hidden">
+        <img id="@nameof(eAreaHealth.Arh_03)" width="@W03" height="@H03" src="/Images/Arh_03.png" style="visibility:hidden">
+        <img id="@nameof(eAreaHealth.Arh_04)" width="@W04" height="@H04" src="/Images/Arh_04.png" style="visibility:hidden">
+        <img id="@nameof(eAreaHealth.Arh_05)" width="@W05" height="@H05" src="/Images/Arh_05.png" style="visibility:hidden">
+        <img id="@nameof(eAreaHealth.Arh_06)" width="@W06" height="@H06" src="/Images/Arh_06.png" style="visibility:hidden">
+        <img id="@nameof(eAreaHealth.Arh_07)" width="@W07" height="@H07" src="/Images/Arh_07.png" style="visibility:hidden">
+        <img id="@nameof(eAreaHealth.Arh_08)" width="@W08" height="@H08" src="/Images/Arh_08.png" style="visibility:hidden">
+        <img id="@nameof(eAreaHealth.Arh_09)" width="@W09" height="@H09" src="/Images/Arh_09.png" style="visibility:hidden">
+        <img id="@nameof(eAreaHealth.Arh_10)" width="@W10" height="@H10" src="/Images/Arh_10.png" style="visibility:hidden">
+        <img id="@nameof(eAreaHealth.Arh_11)" width="@W11" height="@H11" src="/Images/Arh_11.png" style="visibility:hidden">
+        <img id="@nameof(eAreaHealth.Arh_12)" width="@W12" height="@H12" src="/Images/Arh_12.png" style="visibility:hidden">
+        <img id="@nameof(eAreaHealth.Arh_13)" width="@W13" height="@H13" src="/Images/Arh_13.png" style="visibility:hidden">
+        @*</RadzenFieldset>*@
+        <canvas id="myCanvas" width="@CVS_MAX_WIDTH" height="@CVS_MAX_HEIGHT"></canvas>
+    </div>
+
+}
+
+@code {
+
+    [CascadingParameter] MainLayout mainLayout { get; set; }
+    private const string MENU_CODE = "MNU_0911";
+    private ConfigData configData = new ConfigData();
+    private string classLabel = "col-4";
+    private string classInput = "col-8";
+    private string classMonth = "col-4";
+
+    private List<string> lstOrganism = new List<string> { "A. baumannii", "P. aeruginosa", "E. coli", "K. pneumonia", "Salmonella", "Enterococcus supp", "A. aureus", "S. pneumoniae" };
+    private List<StarsAMRMapGeneDataDTO> lstAMRData = new List<StarsAMRMapGeneDataDTO>();
+    private StarsAMRMapGeneDataDTO selectedAMR = new StarsAMRMapGeneDataDTO();
+    private StarsAMRMapGeneSearchDTO searchAMR = new StarsAMRMapGeneSearchDTO();
+    private StarsAMRMapGeneSearchDTO modelExport = new StarsAMRMapGeneSearchDTO();
+    private eAreaHealth selectedAreaHealth;
+    private eAreaHealth selectedMaxAreaHealth;
+    private eAreaHealth selectedMinAreaHealth;
+    private bool pageLoading = true;
+    private Boolean blnLoadingComplete = true;
+    private Boolean blnFirstDrawMax = true;
+    private Boolean blnFirstDrawMin = true;
+    private Dictionary<int, decimal> dictValue = new Dictionary<int, decimal>();
+    private Dictionary<int, string> dictColor = new Dictionary<int, string>();
+    private Dictionary<int, Dictionary<string, decimal>> dict = new Dictionary<int, Dictionary<string, decimal>>();
+    private List<TCSTARSOrganismDTO> OrganismMaster = new List<TCSTARSOrganismDTO>();
+    private List<TCSTARSGeneDTO> GeneMaster = new List<TCSTARSGeneDTO>();
+    private List<ParameterDTO> ParameterList;
+    private string strOrgName = string.Empty;
+    private string strGeneName = string.Empty;
+
+    private eSortby selectedSortBy = eSortby.regH;
+    private class MonthItem
+    {
+        public string MonthValue { get; set; }
+        public string MonthName { get; set; }
+    }
+    MonthItem[] MonthData = new MonthItem[] {
+        new MonthItem
+        {
+            MonthValue = "1",
+            MonthName = "มกราคม"
+        },
+        new MonthItem
+        {
+           MonthValue = "2",
+           MonthName = "กุมภาพันธ์"
+        },
+        new MonthItem
+        {
+          MonthValue = "3",
+          MonthName = "มีนาคม"
+        },
+        new MonthItem
+        {
+           MonthValue = "4",
+           MonthName = "เมษายน"
+        },
+        new MonthItem
+        {
+           MonthValue = "5",
+           MonthName = "พฤษภาคม"
+        },
+        new MonthItem
+        {
+            MonthValue = "6",
+            MonthName = "มิถุนายน"
+        },
+        new MonthItem
+        {
+           MonthValue = "7",
+            MonthName = "กรกฎาคม"
+        },
+        new MonthItem
+        {
+           MonthValue = "8",
+            MonthName = "สิงหาคม"
+        },
+        new MonthItem
+        {
+            MonthValue = "9",
+            MonthName = "กันยายน"
+        },
+        new MonthItem
+        {
+           MonthValue = "10",
+            MonthName = "ตุลาคม"
+        },
+        new MonthItem
+        {
+            MonthValue = "11",
+            MonthName = "พฤศจิกายน"
+        },
+        new MonthItem
+        {
+           MonthValue = "12",
+           MonthName = "ธันวาคม"
+        }
+    };
+
+    private string CVS_MAX_WIDTH = 128 + "px";
+    private string CVS_MAX_HEIGHT = 110 + "px";
+    private string CVS_MIN_WIDTH = 128 + "px";
+    private string CVS_MIN_HEIGHT = 110 + "px";
+
+    private enum eAreaHealth
+    {
+        Arh_01 = 1,
+        Arh_02 = 2,
+        Arh_03 = 3,
+        Arh_04 = 4,
+        Arh_05 = 5,
+        Arh_06 = 6,
+        Arh_07 = 7,
+        Arh_08 = 8,
+        Arh_09 = 9,
+        Arh_10 = 10,
+        Arh_11 = 11,
+        Arh_12 = 12,
+        Arh_13 = 13
+    }
+
+    private enum eSortby
+    {
+        desc = 1,
+        asc = 2,
+        regH = 3,
+        none = 4
+    }
+
+    private class clsCoordinateXY
+    {
+        public int rgn_x { get; set; }
+        public int rgn_y { get; set; }
+        public int idx_x { get; set; }
+        public int idx_y { get; set; }
+        public string Width { get; set; }
+        public string Height { get; set; }
+        public string arhpicid { get; set; }
+    }
+
+    private string W01 = 128 + "px";
+    private string W02 = 126 + "px";
+    private string W03 = 60 + "px";
+    private string W04 = 45 + "px";
+    private string W05 = 74 + "px";
+    private string W06 = 81 + "px";
+    private string W07 = 85 + "px";
+    private string W08 = 128 + "px";
+    private string W09 = 94 + "px";
+    private string W10 = 57 + "px";
+    private string W11 = 85 + "px";
+    private string W12 = 98 + "px";
+    private string W13 = 22 + "px";
+
+    private string H01 = 110 + "px";
+    private string H02 = 108 + "px";
+    private string H03 = 68 + "px";
+    private string H04 = 60 + "px";
+    private string H05 = 158 + "px";
+    private string H06 = 98 + "px";
+    private string H07 = 58 + "px";
+    private string H08 = 60 + "px";
+    private string H09 = 88 + "px";
+    private string H10 = 92 + "px";
+    private string H11 = 125 + "px";
+    private string H12 = 78 + "px";
+    private string H13 = 16 + "px";
+
+    private string colorArea01 = "#ff5500";
+    private string colorArea02 = "#ffbee8";
+    private string colorArea03 = "#267300";
+    private string colorArea04 = "#ffd380";
+    private string colorArea05 = "#00ffc5";
+    private string colorArea06 = "#005be7";
+    private string colorArea07 = "#ffff00";
+    private string colorArea08 = "#00a8e6";
+    private string colorArea09 = "#cd6667";
+    private string colorArea10 = "#b2b2b2";
+    private string colorArea11 = "#ff01c4";
+    private string colorArea12 = "#737400";
+    private string colorArea13 = "#d20001";
+
+    private clsCoordinateXY Coordinate
+    {
+        get
+        {
+            var obj = new clsCoordinateXY();
+            if (selectedAreaHealth == eAreaHealth.Arh_01)
+            {
+                obj.rgn_x = 3;
+                obj.rgn_y = 10;
+
+                obj.idx_x = 45;
+                obj.idx_y = 3;
+
+                obj.Width = 128 + "px";
+                obj.Height = 110 + "px";
+                obj.arhpicid = nameof(eAreaHealth.Arh_01);
+            }
+            else if (selectedAreaHealth == eAreaHealth.Arh_02)
+            {
+                obj.rgn_x = 20;
+                obj.rgn_y = 80;
+
+                obj.idx_x = 45;
+                obj.idx_y = 48;
+
+                obj.Width = 126 + "px";
+                obj.Height = 108 + "px";
+                obj.arhpicid = nameof(eAreaHealth.Arh_02);
+            }
+            else if (selectedAreaHealth == eAreaHealth.Arh_03)
+            {
+                obj.rgn_x = 55;
+                obj.rgn_y = 130;
+
+                obj.idx_x = 45;
+                obj.idx_y = 93;
+
+                obj.Width = 60 + "px";
+                obj.Height = 68 + "px";
+                obj.arhpicid = nameof(eAreaHealth.Arh_03);
+            }
+            else if (selectedAreaHealth == eAreaHealth.Arh_04)
+            {
+                obj.rgn_x = 92;
+                obj.rgn_y = 176;
+
+                obj.idx_x = 45;
+                obj.idx_y = 140;
+
+                obj.Width = 44 + "px";
+                obj.Height = 58 + "px";
+                obj.arhpicid = nameof(eAreaHealth.Arh_04);
+            }
+            else if (selectedAreaHealth == eAreaHealth.Arh_05)
+            {
+                obj.rgn_x = 27;
+                obj.rgn_y = 171;
+
+                obj.idx_x = 45;
+                obj.idx_y = 189;
+
+                obj.Width = 74 + "px";
+                obj.Height = 158 + "px";
+                obj.arhpicid = nameof(eAreaHealth.Arh_05);
+            }
+            else if (selectedAreaHealth == eAreaHealth.Arh_06)
+            {
+                obj.rgn_x = 101;
+                obj.rgn_y = 211;
+
+                obj.idx_x = 45;
+                obj.idx_y = 232;
+
+                obj.Width = 81 + "px";
+                obj.Height = 98 + "px";
+                obj.arhpicid = nameof(eAreaHealth.Arh_06);
+            }
+            else if (selectedAreaHealth == eAreaHealth.Arh_07)
+            {
+                obj.rgn_x = 142;
+                obj.rgn_y = 123;
+
+                obj.idx_x = 45;
+                obj.idx_y = 283;
+
+                obj.Width = 85 + "px";
+                obj.Height = 58 + "px";
+                obj.arhpicid = nameof(eAreaHealth.Arh_07);
+            }
+            else if (selectedAreaHealth == eAreaHealth.Arh_08)
+            {
+                obj.rgn_x = 115;
+                obj.rgn_y = 77;
+
+                obj.idx_x = 165;
+                obj.idx_y = 3;
+
+                obj.Width = 128 + "px";
+                obj.Height = 60 + "px";
+                obj.arhpicid = nameof(eAreaHealth.Arh_08);
+            }
+            else if (selectedAreaHealth == eAreaHealth.Arh_09)
+            {
+                obj.rgn_x = 126;
+                obj.rgn_y = 137;
+
+                obj.idx_x = 165;
+                obj.idx_y = 48;
+
+                obj.Width = 94 + "px";
+                obj.Height = 88 + "px";
+                obj.arhpicid = nameof(eAreaHealth.Arh_09);
+            }
+            else if (selectedAreaHealth == eAreaHealth.Arh_10)
+            {
+                obj.rgn_x = 212;
+                obj.rgn_y = 130;
+
+                obj.idx_x = 165;
+                obj.idx_y = 93;
+
+                obj.Width = 57 + "px";
+                obj.Height = 92 + "px";
+                obj.arhpicid = nameof(eAreaHealth.Arh_10);
+            }
+            else if (selectedAreaHealth == eAreaHealth.Arh_11)
+            {
+                obj.rgn_x = 17;
+                obj.rgn_y = 322;
+
+                obj.idx_x = 165;
+                obj.idx_y = 138;
+
+                obj.Width = 85 + "px";
+                obj.Height = 121 + "px";
+                obj.arhpicid = nameof(eAreaHealth.Arh_11);
+            }
+            else if (selectedAreaHealth == eAreaHealth.Arh_12)
+            {
+                obj.rgn_x = 59;//58
+                obj.rgn_y = 422;
+
+                obj.idx_x = 165;
+                obj.idx_y = 190;
+
+                obj.Width = 98 + "px";
+                obj.Height = 78 + "px";
+                obj.arhpicid = nameof(eAreaHealth.Arh_12);
+            }
+            else if (selectedAreaHealth == eAreaHealth.Arh_13)
+            {
+                obj.rgn_x = 96;
+                obj.rgn_y = 229;
+
+                obj.idx_x = 165;
+                obj.idx_y = 236;
+
+                obj.Width = 22 + "px";
+                obj.Height = 16 + "px";
+                obj.arhpicid = nameof(eAreaHealth.Arh_13);
+            }
+            else
+            {
+                obj.rgn_x = 0;
+                obj.rgn_y = 0;
+
+                obj.idx_x = 0;
+                obj.idx_y = 0;
+
+                obj.Width = 0 + "px";
+                obj.Height = 0 + "px";
+                obj.arhpicid = "";
+            }
+            return obj;
+        }
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await mainLayout.GetLoginUser();
+
+            if (mainLayout.loginUser.CheckPagePermission(MENU_CODE) == false) navigationManager.NavigateTo("/NoPermissionPage");
+
+            configData.ConfigDTOList = await configDataService.Get_TBConfig_DataList_Async(new TBConfigDTO() { tbc_mnu_code = MENU_CODE });
+
+            searchAMR = new StarsAMRMapGeneSearchDTO();
+            searchAMR.from_month = "1";
+            searchAMR.to_month = DateTime.Now.Month.ToString();
+            searchAMR.year_code = DateTime.Now.Year.ToString();
+
+            OrganismMaster = await starsMasterService.GetListTCSTARS_Organism_Async(new TCSTARSOrganismDTO());
+            GeneMaster = await starsMasterService.GetListTCSTARS_Gene_Async(new TCSTARSGeneDTO());
+            ParameterList = await ddlDataService.GetParameterListByModelAsync(new ParameterDTO() { prm_code_major = "STARS_MAP_GENE" });
+
+            lstAMRData = new List<StarsAMRMapGeneDataDTO>();
+
+            await CalRank();
+
+            dictValue.Clear();
+            dictColor.Clear();
+            for (var i = 0; i < 13; i++)
+            {
+                dictValue.Add(i + 1, 0);
+                if ((i + 1) == 1) { dictColor.Add(i + 1, colorArea01); }
+                else if ((i + 1) == 2) { dictColor.Add(i + 1, colorArea02); }
+                else if ((i + 1) == 3) { dictColor.Add(i + 1, colorArea03); }
+                else if ((i + 1) == 4) { dictColor.Add(i + 1, colorArea04); }
+                else if ((i + 1) == 5) { dictColor.Add(i + 1, colorArea05); }
+                else if ((i + 1) == 6) { dictColor.Add(i + 1, colorArea06); }
+                else if ((i + 1) == 7) { dictColor.Add(i + 1, colorArea07); }
+                else if ((i + 1) == 8) { dictColor.Add(i + 1, colorArea08); }
+                else if ((i + 1) == 9) { dictColor.Add(i + 1, colorArea09); }
+                else if ((i + 1) == 10) { dictColor.Add(i + 1, colorArea10); }
+                else if ((i + 1) == 11) { dictColor.Add(i + 1, colorArea11); }
+                else if ((i + 1) == 12) { dictColor.Add(i + 1, colorArea12); }
+                else if ((i + 1) == 13) { dictColor.Add(i + 1, colorArea13); }
+
+            }
+
+
+            pageLoading = false;
+            StateHasChanged();
+        }
+    }
+
+    private async Task CalRank()
+    {
+
+        foreach (StarsAMRMapGeneDataDTO lst in lstAMRData)
+        {
+            var dictValue = new Dictionary<int, decimal>();
+
+            dictValue.Add(1, lst.arh_01);
+            dictValue.Add(2, lst.arh_02);
+            dictValue.Add(3, lst.arh_03);
+            dictValue.Add(4, lst.arh_04);
+            dictValue.Add(5, lst.arh_05);
+            dictValue.Add(6, lst.arh_06);
+            dictValue.Add(7, lst.arh_07);
+            dictValue.Add(8, lst.arh_08);
+            dictValue.Add(9, lst.arh_09);
+            dictValue.Add(10, lst.arh_10);
+            dictValue.Add(11, lst.arh_11);
+            dictValue.Add(12, lst.arh_12);
+            dictValue.Add(13, lst.arh_13);
+
+            if (lst.arh_01 == 0 && lst.arh_02 == 0 && lst.arh_03 == 0 && lst.arh_04 == 0 && lst.arh_05 == 0 && lst.arh_06 == 0
+                && lst.arh_07 == 0 && lst.arh_08 == 0 && lst.arh_09 == 0 && lst.arh_10 == 0 && lst.arh_11 == 0 && lst.arh_12 == 0 && lst.arh_13 == 0)
+            {
+                lst.rank_arh_01 = 0;
+                lst.rank_arh_02 = 0;
+                lst.rank_arh_03 = 0;
+                lst.rank_arh_04 = 0;
+                lst.rank_arh_05 = 0;
+                lst.rank_arh_06 = 0;
+                lst.rank_arh_07 = 0;
+                lst.rank_arh_08 = 0;
+                lst.rank_arh_09 = 0;
+                lst.rank_arh_10 = 0;
+                lst.rank_arh_11 = 0;
+                lst.rank_arh_12 = 0;
+                lst.rank_arh_13 = 0;
+
+                return;
+            }
+
+            var sortedDict = from dk in dictValue orderby dk.Value descending select dk;
+            for (int i = 0; i < 13; i++)
+            {
+                if (sortedDict.ElementAt(i).Value == 0)
+                    continue;
+
+                if (lst.arh_01 == sortedDict.ElementAt(i).Value)
+                {
+                    lst.rank_arh_01 = i + 1;
+                    continue;
+                }
+                else if (lst.arh_02 == sortedDict.ElementAt(i).Value)
+                {
+                    lst.rank_arh_02 = i + 1;
+                    continue;
+                }
+                else if (lst.arh_03 == sortedDict.ElementAt(i).Value)
+                {
+                    lst.rank_arh_03 = i + 1;
+                    continue;
+                }
+                else if (lst.arh_04 == sortedDict.ElementAt(i).Value)
+                {
+                    lst.rank_arh_04 = i + 1;
+                    continue;
+                }
+                else if (lst.arh_05 == sortedDict.ElementAt(i).Value)
+                {
+                    lst.rank_arh_05 = i + 1;
+                    continue;
+                }
+                else if (lst.arh_06 == sortedDict.ElementAt(i).Value)
+                {
+                    lst.rank_arh_06 = i + 1;
+                    continue;
+                }
+                else if (lst.arh_07 == sortedDict.ElementAt(i).Value)
+                {
+                    lst.rank_arh_07 = i + 1;
+                    continue;
+                }
+                else if (lst.arh_08 == sortedDict.ElementAt(i).Value)
+                {
+                    lst.rank_arh_08 = i + 1;
+                    continue;
+                }
+                else if (lst.arh_09 == sortedDict.ElementAt(i).Value)
+                {
+                    lst.rank_arh_09 = i + 1;
+                    continue;
+                }
+                else if (lst.arh_10 == sortedDict.ElementAt(i).Value)
+                {
+                    lst.rank_arh_10 = i + 1;
+                    continue;
+                }
+                else if (lst.arh_11 == sortedDict.ElementAt(i).Value)
+                {
+                    lst.rank_arh_11 = i + 1;
+                    continue;
+                }
+                else if (lst.arh_12 == sortedDict.ElementAt(i).Value)
+                {
+                    lst.rank_arh_12 = i + 1;
+                    continue;
+                }
+                else if (lst.arh_13 == sortedDict.ElementAt(i).Value)
+                {
+                    lst.rank_arh_13 = i + 1;
+                    continue;
+                }
+            }
+        }
+
+    }
+
+    private async Task SearchData()
+    {
+        blnLoadingComplete = false;
+
+        if (string.IsNullOrEmpty(searchAMR.stars_org_code))
+        {
+            await JSRuntime.InvokeAsync<object>("ShowAlert", "กรุณาระบุ Organism");
+            blnLoadingComplete = true;
+            return;
+        }
+
+        if (string.IsNullOrEmpty(searchAMR.stars_gene_code))
+        {
+            await JSRuntime.InvokeAsync<object>("ShowAlert", "กรุณาระบุ Resistant Gene");
+            blnLoadingComplete = true;
+            return;
+        }
+
+        lstAMRData = await ReportService.GetSTARSAMRStrategyModelAsync(searchAMR);
+
+        if (lstAMRData.Count() == 0)
+        {
+            await JSRuntime.InvokeAsync<object>("ShowAlert", "ไม่พบข้อมูล");
+            blnLoadingComplete = true;
+            return;
+        }
+
+        await CalRank();
+        StateHasChanged();
+
+        dictValue.Clear();
+        for (var i = 0; i < 13; i++)
+        {
+            dictValue.Add(i + 1, 0);
+        }
+
+        await ClickOrganism(null, lstAMRData.FirstOrDefault());
+
+        blnLoadingComplete = true;
+    }
+
+    private async Task ClickOrganism(MouseEventArgs args, StarsAMRMapGeneDataDTO selectedItem)
+    {
+        selectedAMR = selectedItem;
+
+        strGeneName = !string.IsNullOrEmpty(searchAMR.stars_gene_code) ? GeneMaster.FirstOrDefault(x => x.sgt_gene_code == searchAMR.stars_gene_code).sgt_gene_name : "";
+        strOrgName = !string.IsNullOrEmpty(searchAMR.stars_org_code) ? OrganismMaster.FirstOrDefault(x => x.sto_org_code == searchAMR.stars_org_code).sto_org_name : "";
+
+        selectedAMR.org_name = strGeneName;
+        selectedAMR.org_label_name = strOrgName;
+
+        await DrawRegion();
+        await DrawRegion();
+
+        await DrawCircle(selectedItem);
+
+        await DrawPercentValue();
+    }
+
+    private async Task DrawCircle(StarsAMRMapGeneDataDTO selectedItem)
+    {
+        // Draw circle each region
+        selectedAreaHealth = eAreaHealth.Arh_01;
+        var radius01 = CalCanvasRadius(selectedItem.rank_arh_01);
+        await JSRuntime.InvokeVoidAsync("ClearCircle", "cvs01");
+        await JSRuntime.InvokeVoidAsync("DrawCircle", "cvs01", "thai", Coordinate.rgn_x, Coordinate.rgn_y, Coordinate.arhpicid, radius01, 1);
+        StateHasChanged();
+
+        selectedAreaHealth = eAreaHealth.Arh_02;
+        var radius02 = CalCanvasRadius(selectedItem.rank_arh_02);
+        await JSRuntime.InvokeVoidAsync("ClearCircle", "cvs02");
+        await JSRuntime.InvokeVoidAsync("DrawCircle", "cvs02", "thai", Coordinate.rgn_x + 20, Coordinate.rgn_y - 5, Coordinate.arhpicid, radius02, 2);
+        StateHasChanged();
+
+        selectedAreaHealth = eAreaHealth.Arh_03;
+        var radius03 = CalCanvasRadius(selectedItem.rank_arh_03);
+        await JSRuntime.InvokeVoidAsync("ClearCircle", "cvs03");
+        await JSRuntime.InvokeVoidAsync("DrawCircle", "cvs03", "thai", Coordinate.rgn_x, Coordinate.rgn_y, Coordinate.arhpicid, radius03, 3);
+        StateHasChanged();
+
+        selectedAreaHealth = eAreaHealth.Arh_04;
+        var radius04 = CalCanvasRadius(selectedItem.rank_arh_04);
+        await JSRuntime.InvokeVoidAsync("ClearCircle", "cvs04");
+        await JSRuntime.InvokeVoidAsync("DrawCircle", "cvs04", "thai", Coordinate.rgn_x, Coordinate.rgn_y, Coordinate.arhpicid, radius04, 4);
+        StateHasChanged();
+
+        selectedAreaHealth = eAreaHealth.Arh_05;
+        var radius05 = CalCanvasRadius(selectedItem.rank_arh_05);
+        await JSRuntime.InvokeVoidAsync("ClearCircle", "cvs05");
+        await JSRuntime.InvokeVoidAsync("DrawCircle", "cvs05", "thai", Coordinate.rgn_x + 15, Coordinate.rgn_y, Coordinate.arhpicid, radius05, 5);
+        StateHasChanged();
+
+        selectedAreaHealth = eAreaHealth.Arh_06;
+        var radius06 = CalCanvasRadius(selectedItem.rank_arh_06);
+        await JSRuntime.InvokeVoidAsync("ClearCircle", "cvs06");
+        await JSRuntime.InvokeVoidAsync("DrawCircle", "cvs06", "thai", Coordinate.rgn_x, Coordinate.rgn_y - 20, Coordinate.arhpicid, radius06, 6);
+        StateHasChanged();
+
+        selectedAreaHealth = eAreaHealth.Arh_07;
+        var radius07 = CalCanvasRadius(selectedItem.rank_arh_07);
+        await JSRuntime.InvokeVoidAsync("ClearCircle", "cvs07");
+        await JSRuntime.InvokeVoidAsync("DrawCircle", "cvs07", "thai", Coordinate.rgn_x, Coordinate.rgn_y, Coordinate.arhpicid, radius07, 7);
+        StateHasChanged();
+
+        selectedAreaHealth = eAreaHealth.Arh_08;
+        var radius08 = CalCanvasRadius(selectedItem.rank_arh_08);
+        await JSRuntime.InvokeVoidAsync("ClearCircle", "cvs08");
+        await JSRuntime.InvokeVoidAsync("DrawCircle", "cvs08", "thai", Coordinate.rgn_x, Coordinate.rgn_y, Coordinate.arhpicid, radius08, 8);
+        StateHasChanged();
+
+        selectedAreaHealth = eAreaHealth.Arh_09;
+        var radius09 = CalCanvasRadius(selectedItem.rank_arh_09);
+        await JSRuntime.InvokeVoidAsync("ClearCircle", "cvs09");
+        await JSRuntime.InvokeVoidAsync("DrawCircle", "cvs09", "thai", Coordinate.rgn_x, Coordinate.rgn_y + 15, Coordinate.arhpicid, radius09, 9);
+        StateHasChanged();
+
+        selectedAreaHealth = eAreaHealth.Arh_10;
+        var radius10 = CalCanvasRadius(selectedItem.rank_arh_10);
+        await JSRuntime.InvokeVoidAsync("ClearCircle", "cvs10");
+        await JSRuntime.InvokeVoidAsync("DrawCircle", "cvs10", "thai", Coordinate.rgn_x, Coordinate.rgn_y, Coordinate.arhpicid, radius10, 10);
+        StateHasChanged();
+
+        selectedAreaHealth = eAreaHealth.Arh_11;
+        var radius11 = CalCanvasRadius(selectedItem.rank_arh_11);
+        await JSRuntime.InvokeVoidAsync("ClearCircle", "cvs11");
+        await JSRuntime.InvokeVoidAsync("DrawCircle", "cvs11", "thai", Coordinate.rgn_x, Coordinate.rgn_y, Coordinate.arhpicid, radius11, 11);
+        StateHasChanged();
+
+        selectedAreaHealth = eAreaHealth.Arh_12;
+        var radius12 = CalCanvasRadius(selectedItem.rank_arh_12);
+        await JSRuntime.InvokeVoidAsync("ClearCircle", "cvs12");
+        await JSRuntime.InvokeVoidAsync("DrawCircle", "cvs12", "thai", Coordinate.rgn_x, Coordinate.rgn_y, Coordinate.arhpicid, radius12, 12);
+        StateHasChanged();
+
+        selectedAreaHealth = eAreaHealth.Arh_13;
+        var radius13 = CalCanvasRadius(selectedItem.rank_arh_13);
+        await JSRuntime.InvokeVoidAsync("ClearCircle", "cvs13");
+        await JSRuntime.InvokeVoidAsync("DrawCircle", "cvs13", "thai", Coordinate.rgn_x, Coordinate.rgn_y, Coordinate.arhpicid, radius13, 13);
+        StateHasChanged();
+
+    }
+
+    private async Task DrawRegion()
+    {
+
+        List<decimal> lstValue = new List<decimal>  { selectedAMR.arh_01, selectedAMR.arh_02
+                                                       , selectedAMR.arh_03, selectedAMR.arh_04
+                                                       , selectedAMR.arh_05, selectedAMR.arh_06
+                                                       , selectedAMR.arh_07, selectedAMR.arh_08
+                                                       , selectedAMR.arh_09, selectedAMR.arh_10
+                                                       , selectedAMR.arh_11, selectedAMR.arh_12
+                                                       , selectedAMR.arh_13 };
+
+        var maxValue = lstValue.Max();
+        var minValue = lstValue.Min();
+        int maxIndex = 0;
+        int minIndex = 0;
+        var cnt = lstValue.Count();
+
+        maxValue = 0;
+        for (var i = 0; i < cnt; i++)
+        {
+            if (lstValue[i] > maxValue)
+            {
+                maxValue = lstValue[i];
+                maxIndex = i + 1;
+            }
+        }
+        minValue = 100;
+        for (var i = 0; i < cnt; i++)
+        {
+            if (lstValue[i] < minValue && lstValue[i] > 0)
+            {
+                minValue = lstValue[i];
+                minIndex = i + 1;
+            }
+        }
+
+        // Max Area
+        if (maxIndex > 0)
+        {
+            selectedAreaHealth = (eAreaHealth)maxIndex;
+            CVS_MAX_WIDTH = Coordinate.Width;
+            CVS_MAX_HEIGHT = Coordinate.Height;
+            await JSRuntime.InvokeVoidAsync("ClearCircle", "cvsMax");
+            await JSRuntime.InvokeVoidAsync("MoveCanvas", "cvsMax", "thai", Coordinate.rgn_x, Coordinate.rgn_y, Coordinate.arhpicid, 20);
+            blnFirstDrawMax = false;
+            StateHasChanged();
+        }
+        else
+        {
+            if (!blnFirstDrawMax)
+            {
+                await JSRuntime.InvokeVoidAsync("ClearCircle", "cvsMax");
+            }
+        }
+
+        // Min Area
+        if (minIndex > 0)
+        {
+            selectedAreaHealth = (eAreaHealth)minIndex;
+            CVS_MIN_WIDTH = Coordinate.Width;
+            CVS_MIN_HEIGHT = Coordinate.Height;
+            await JSRuntime.InvokeVoidAsync("ClearCircle", "cvsMin");
+            await JSRuntime.InvokeVoidAsync("MoveCanvas", "cvsMin", "thai", Coordinate.rgn_x, Coordinate.rgn_y, Coordinate.arhpicid, 3);
+            blnFirstDrawMin = false;
+            StateHasChanged();
+        }
+        else
+        {
+            if (!blnFirstDrawMin)
+            {
+                await JSRuntime.InvokeVoidAsync("ClearCircle", "cvsMin");
+            }
+        }
+    }
+
+    private async Task ChangeOrderBy(eSortby SelectedValue, string name)
+    {
+        await DrawPercentValue();
+    }
+
+    private async Task DrawPercentValue()
+    {
+        // ------------------------ % Value ---------------------- //
+
+        dictValue[1] = selectedAMR.arh_01;
+        dictValue[2] = selectedAMR.arh_02;
+        dictValue[3] = selectedAMR.arh_03;
+        dictValue[4] = selectedAMR.arh_04;
+        dictValue[5] = selectedAMR.arh_05;
+        dictValue[6] = selectedAMR.arh_06;
+        dictValue[7] = selectedAMR.arh_07;
+        dictValue[8] = selectedAMR.arh_08;
+        dictValue[9] = selectedAMR.arh_09;
+        dictValue[10] = selectedAMR.arh_10;
+        dictValue[11] = selectedAMR.arh_11;
+        dictValue[12] = selectedAMR.arh_12;
+        dictValue[13] = selectedAMR.arh_13;
+
+        if (selectedSortBy == eSortby.asc)
+        {
+            dictValue = dictValue.OrderBy(x => x.Value).ToDictionary(x => x.Key, x => x.Value);
+        }
+        else if (selectedSortBy == eSortby.desc)
+        {
+            dictValue = dictValue.OrderByDescending(x => x.Value).ToDictionary(x => x.Key, x => x.Value);
+        }
+        else if (selectedSortBy == eSortby.regH)
+        {
+            dictValue = dictValue.OrderBy(x => x.Key).ToDictionary(x => x.Key, x => x.Value);
+        }
+    }
+
+    private async Task ClearSelectedAMR()
+    {
+        selectedAMR.arh_01 = 0;
+        selectedAMR.arh_02 = 0;
+        selectedAMR.arh_03 = 0;
+        selectedAMR.arh_04 = 0;
+        selectedAMR.arh_05 = 0;
+        selectedAMR.arh_06 = 0;
+        selectedAMR.arh_07 = 0;
+        selectedAMR.arh_08 = 0;
+        selectedAMR.arh_09 = 0;
+        selectedAMR.arh_10 = 0;
+        selectedAMR.arh_11 = 0;
+        selectedAMR.arh_12 = 0;
+        selectedAMR.arh_13 = 0;
+
+        selectedAMR.rank_arh_01 = 0;
+        selectedAMR.rank_arh_02 = 0;
+        selectedAMR.rank_arh_03 = 0;
+        selectedAMR.rank_arh_04 = 0;
+        selectedAMR.rank_arh_05 = 0;
+        selectedAMR.rank_arh_06 = 0;
+        selectedAMR.rank_arh_07 = 0;
+        selectedAMR.rank_arh_08 = 0;
+        selectedAMR.rank_arh_09 = 0;
+        selectedAMR.rank_arh_10 = 0;
+        selectedAMR.rank_arh_11 = 0;
+        selectedAMR.rank_arh_12 = 0;
+        selectedAMR.rank_arh_13 = 0;
+
+        selectedAMR.org_code = "";
+
+        await ClickOrganism(null, selectedAMR);
+    }
+
+    private int CalCanvasRadius(int rank)
+    {
+        int radius = 0;
+        if (rank == 1) { radius = 18; }
+        else if (rank == 2) { radius = 16; }
+        else if (rank == 3) { radius = 15; }
+        else if (rank == 4) { radius = 14; }
+        else if (rank == 5) { radius = 13; }
+        else if (rank == 6) { radius = 12; }
+        else if (rank == 7) { radius = 11; }
+        else if (rank == 8) { radius = 10; }
+        else if (rank == 9) { radius = 9; }
+        else if (rank == 10) { radius = 8; }
+        else if (rank == 11) { radius = 7; }
+        else if (rank == 12) { radius = 6; }
+        else if (rank == 13) { radius = 5; }
+        return radius;
+    }
+
+    private async Task MoveCanvas(MouseEventArgs args, eAreaHealth selectedItem)
+    {
+
+        selectedAreaHealth = selectedItem;
+        CVS_MAX_WIDTH = Coordinate.Width;
+        CVS_MAX_HEIGHT = Coordinate.Height;
+        await JSRuntime.InvokeVoidAsync("MoveCanvas", "cvsMax", "thai", Coordinate.rgn_x, Coordinate.rgn_y, Coordinate.arhpicid, selectedItem);
+
+        StateHasChanged();
+
+    }
+
+    private async void Export()
+    {
+        blnLoadingComplete = false;
+
+        try
+        {
+            string tempPath = ParameterList.FirstOrDefault(x => x.prm_code_minor == "REPORT_PATH").prm_value;
+            await ReportService.ExportMapDataAsync(JSRuntime, selectedAMR, tempPath);
+            blnLoadingComplete = true;
+        }
+        catch (Exception ex)
+        {
+            await JSRuntime.InvokeAsync<object>("ShowAlert", ex.Message);
+            blnLoadingComplete = true;
+        }
+        blnLoadingComplete = true;
+    }
+
+}

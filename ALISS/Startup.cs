@@ -45,6 +45,7 @@ using ALISS.Data.D7_StarsMapping.MasterManagement;
 using ALISS.Data.D7_StarsRepeat;
 using ALISS.Data.D7_StarsMonitoring;
 using ALISS.Data.D8_StarsReport;
+using ALISS.Data.D7_Stars.StarsAMRMap;
 
 namespace ALISS
 {
@@ -173,6 +174,7 @@ namespace ALISS
             services.AddScoped<STARSPersonalReportService>();
             services.AddScoped<STARSMonitoringService>();
             services.AddScoped<MonthlyGeneReportService>();
+            services.AddScoped<StarsAMRMapGeneService>();
 
             services.AddSignalR();
         }

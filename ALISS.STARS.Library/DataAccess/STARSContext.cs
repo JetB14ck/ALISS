@@ -7,6 +7,7 @@ using ALISS.STARS.Library.Models;
 using ALISS.MasterManagement.Library.Models;
 using ALISS.LabFileUpload.DTO;
 using ALISS.STARS.DTO.RepeatAutomate;
+using ALISS.STARS.DTO.STARSMapGene;
 
 namespace ALISS.STARS.Library.DataAccess
 {
@@ -81,6 +82,13 @@ namespace ALISS.STARS.Library.DataAccess
 
         public DbSet<MonthlyGeneReportDataDTO> MonthlyGeneReportDataDTOs { get; set; }
         #endregion
+
+        #region Stars AMR Map
+
+        public DbSet<StarsAMRMapGeneDataDTO> STARSMapGeneDataDTOs { get; set; }
+        #endregion
+
+
         public STARSContext(DbContextOptions<STARSContext> options) : base(options)
         {
 
@@ -175,6 +183,11 @@ namespace ALISS.STARS.Library.DataAccess
             #region Monthly Gene Report
 
             builder.Entity<MonthlyGeneReportDataDTO>().HasNoKey();
+            #endregion
+
+            #region Stars AMR Map
+
+            builder.Entity<StarsAMRMapGeneDataDTO>().HasNoKey();
             #endregion
 
             builder.Entity<LogProcess>().HasKey(x => x.log_id);
