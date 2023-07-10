@@ -201,6 +201,8 @@ namespace ALISS.STARS.Library.DataAccess
             builder.Entity<STARSMonitoringListsDTO>().HasKey(x => x.srr_id);
             builder.Entity<STARSMonitoringDetailDTO>().HasKey(x => x.srr_id);
 
+            builder.Entity<NarstServiceDTO>().HasNoKey();
+
             base.OnModelCreating(builder);
         }
 
