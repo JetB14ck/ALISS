@@ -8,6 +8,7 @@ using ALISS.MasterManagement.Library.Models;
 using ALISS.LabFileUpload.DTO;
 using ALISS.STARS.DTO.RepeatAutomate;
 using ALISS.STARS.DTO.STARSMapGene;
+using ALISS.STARS.DTO.NarstService;
 
 namespace ALISS.STARS.Library.DataAccess
 {
@@ -31,6 +32,7 @@ namespace ALISS.STARS.Library.DataAccess
         public DbSet<TRSTARSOrganismMapping> TRSTARSOrganismMappings { get; set; }
         public DbSet<STARSOrganismMappingListsDTO> STARSOrganismMappingListsDTOs { get; set; }
         public DbSet<STARSOrganismMappingDataDTO> STARSOrganismMappingDataDTOs { get; set; }
+        public DbSet<NarstServiceDTO> NarstServiceDTOs { get; set; }
         #endregion
 
         #region Receive Sample
