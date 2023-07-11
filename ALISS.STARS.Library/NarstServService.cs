@@ -23,6 +23,7 @@ namespace ALISS.STARS.Library
             _db = db;
             _mapper = mapper;
         }
+
         public List<NarstServiceDTO> GetInterpretResultInfo(string Param)
         {
             log.MethodStart();
@@ -37,7 +38,7 @@ namespace ALISS.STARS.Library
 
                 try
                 {
-                    objList = _db.NarstServiceDTOs.FromSqlRaw<NarstServiceDTO>("sp_GET_INTERP_RESULT_INFO {0} {1}", searchModel.start_date, searchModel.end_date).ToList();
+                    objList = _db.NarstServiceDTOs.FromSqlRaw<NarstServiceDTO>("sp_GET_INTERP_RESULT_INFO {0}, {1}", searchModel.start_date, searchModel.end_date).ToList();
                     trans.Commit();
                 }
                 catch (Exception ex)
@@ -56,9 +57,43 @@ namespace ALISS.STARS.Library
 
         }
 
-        public List<NarstServiceDTO> GetInterpretResultInfo(string startdate, string enddate)
+        public List<NarstServiceDTO> GetInterpretResultInfos(string startdate, string enddate)
         {
-            throw new NotImplementedException();
+            log.MethodStart();
+
+
+            List<NarstServiceDTO> objList = new List<NarstServiceDTO>();
+
+            var start_date = JsonSerializer.Deserialize<NarstServiceDTO>(startdate);
+            var end_date = JsonSerializer.Deserialize<NarstServiceDTO>(enddate);
+
+            var sttdate = DateTime.Parse(startdate);
+            var eddate = DateTime.Parse(enddate);
+
+            var convstdate = Convert.ToDateTime(startdate);
+
+            using (var trans = _db.Database.BeginTransaction())
+            {
+
+                try
+                {
+                    objList = _db.NarstServiceDTOs.FromSqlRaw<NarstServiceDTO>("sp_GET_INTERP_RESULT_INFO {0} {1}", convstdate.start_date, eddate.end_date).ToList();
+                    trans.Commit();
+                }
+                catch (Exception ex)
+                {
+                    // TODO: Handle failure
+                    trans.Rollback();
+                }
+                finally
+                {
+                    trans.Dispose();
+                }
+            }
+            log.MethodFinish();
+
+            return objList;
+
         }
     }
 }

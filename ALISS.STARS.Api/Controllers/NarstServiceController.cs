@@ -19,14 +19,22 @@ namespace ALISS.STARS.Api.Controllers
             _service = new NarstServService(db, mapper);
         }
 
-        [Route("api/STARSMapping/GetMappingList/{param}")]
+        [Route("api/NARST_Service/GetInterpretResultInfo/{param}")]
         [HttpGet]
-        public IEnumerable<NarstServiceDTO> GetInterpretResultInfo(string startdate, string enddate)
+        public IEnumerable<NarstServiceDTO> GetInterpretResultInfo(string param)
         {
 
-            var objReturn = _service.GetInterpretResultInfo(startdate, enddate);
+            var objReturn = _service.GetInterpretResultInfo(param);
             return objReturn;
         }
 
+        [Route("api/NARST_Service/GetInterpretResultInfo/{startdate}/{enddate}")]
+        [HttpGet]
+        public IEnumerable<NarstServiceDTO> GetInterpretResultInfos(string startdate, string enddate)
+        {
+
+            var objReturn = _service.GetInterpretResultInfos(startdate, enddate);
+            return objReturn;
+        }
     }
 }
