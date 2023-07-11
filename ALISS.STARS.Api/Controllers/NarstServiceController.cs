@@ -27,14 +27,5 @@ namespace ALISS.STARS.Api.Controllers
             var objReturn = _service.GetInterpretResultInfo(param);
             return objReturn;
         }
-
-        [Route("api/NARST_Service/GetInterpretResultInfo/{startdate}/{enddate}")]
-        [HttpGet]
-        public IEnumerable<NarstServiceDTO> GetInterpretResultInfos(string startdate, string enddate)
-        {
-
-            var objReturn = _service.GetInterpretResultInfos(startdate, enddate);
-            return objReturn;
-        }
     }
 }

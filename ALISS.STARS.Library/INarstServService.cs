@@ -7,7 +7,6 @@ namespace ALISS.STARS.Library
 {
     public interface INarstServService
     {
-        List<NarstServiceDTO> GetInterpretResultInfos(string startdate, string enddate);
         List<NarstServiceDTO> GetInterpretResultInfo(string param);
     }
 }

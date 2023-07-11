@@ -22,17 +22,17 @@ namespace ALISS.STARS.DTO.NarstService
 		public string first_name { get; set; }
 		public string last_name { get; set; }
 		public string sex { get; set; }
-		public string date_birth { get; set; }
+		public DateTime? date_birth { get; set; }
 		public string age { get; set; }
 		public string occupation { get; set; }
 		public string nationalty { get; set; }
-		public string date_admis { get; set; }
+		public DateTime? date_admis { get; set; }
 		public string x_refer { get; set; }
 		public string nosocomial { get; set; }
 		public string x_admis_spec { get; set; }
 		public string clnoutcome { get; set; }
 		public string diagnosis { get; set; }
-		public string date_disch { get; set; }
+		public DateTime? date_disch { get; set; }
 		public string x_status { get; set; }
 		public string department { get; set; }
 		public string institut { get; set; }
@@ -40,7 +40,7 @@ namespace ALISS.STARS.DTO.NarstService
 		public string ward_type { get; set; }
 		public string x_ref_no { get; set; }
 		public string spec_num { get; set; }
-		public string spec_date { get; set; }
+		public DateTime? spec_date { get; set; }
 		public string spec_type { get; set; }
 		public string spec_code { get; set; }
 		public string x_spec_ful { get; set; }
@@ -236,7 +236,7 @@ namespace ALISS.STARS.DTO.NarstService
 		public string x_suspect { get; set; }
 		public string x_samdesc { get; set; }
 		public string x_expr2 { get; set; }
-		public string x_testdate { get; set; }
+		public DateTime? x_testdate { get; set; }
 		public string x_reportno { get; set; }
 		public string x_reportda { get; set; }
 		public string x_approve { get; set; }
@@ -363,7 +363,5 @@ namespace ALISS.STARS.DTO.NarstService
 		public string food_type { get; set; }
 		public string spec_prov { get; set; }
 		public string spec_dist { get; set; }
-		public DateTime? start_date { get; set; }
-        public DateTime? end_date { get; set; }
     }
 }

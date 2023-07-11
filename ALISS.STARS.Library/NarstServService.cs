@@ -31,48 +31,13 @@ namespace ALISS.STARS.Library
 
             List<NarstServiceDTO> objList = new List<NarstServiceDTO>();
 
-            var searchModel = JsonSerializer.Deserialize<NarstServiceDTO>(Param);
+            var searchModel = JsonSerializer.Deserialize<NarstServiceSearchDTO>(Param);
 
             using (var trans = _db.Database.BeginTransaction())
             {
-
                 try
                 {
                     objList = _db.NarstServiceDTOs.FromSqlRaw<NarstServiceDTO>("sp_GET_INTERP_RESULT_INFO {0}, {1}", searchModel.start_date, searchModel.end_date).ToList();
-                    trans.Commit();
-                }
-                catch (Exception ex)
-                {
-                    // TODO: Handle failure
-                    trans.Rollback();
-                }
-                finally
-                {
-                    trans.Dispose();
-                }
-            }
-            log.MethodFinish();
-
-            return objList;
-
-        }
-
-        public List<NarstServiceDTO> GetInterpretResultInfos(string startdate, string enddate)
-        {
-            log.MethodStart();
-
-
-            List<NarstServiceDTO> objList = new List<NarstServiceDTO>();
-
-            var start_date = JsonSerializer.Deserialize<NarstServiceDTO>(startdate);
-            var end_date = JsonSerializer.Deserialize<NarstServiceDTO>(enddate);
-
-            using (var trans = _db.Database.BeginTransaction())
-            {
-
-                try
-                {
-                    objList = _db.NarstServiceDTOs.FromSqlRaw<NarstServiceDTO>("sp_GET_INTERP_RESULT_INFO {0} {1}", start_date.start_date, end_date.end_date).ToList();
                     trans.Commit();
                 }
                 catch (Exception ex)
