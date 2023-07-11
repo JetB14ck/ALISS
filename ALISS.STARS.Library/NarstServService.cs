@@ -67,17 +67,12 @@ namespace ALISS.STARS.Library
             var start_date = JsonSerializer.Deserialize<NarstServiceDTO>(startdate);
             var end_date = JsonSerializer.Deserialize<NarstServiceDTO>(enddate);
 
-            var sttdate = DateTime.Parse(startdate);
-            var eddate = DateTime.Parse(enddate);
-
-            var convstdate = Convert.ToDateTime(startdate);
-
             using (var trans = _db.Database.BeginTransaction())
             {
 
                 try
                 {
-                    objList = _db.NarstServiceDTOs.FromSqlRaw<NarstServiceDTO>("sp_GET_INTERP_RESULT_INFO {0} {1}", convstdate.start_date, eddate.end_date).ToList();
+                    objList = _db.NarstServiceDTOs.FromSqlRaw<NarstServiceDTO>("sp_GET_INTERP_RESULT_INFO {0} {1}", start_date.start_date, end_date.end_date).ToList();
                     trans.Commit();
                 }
                 catch (Exception ex)
