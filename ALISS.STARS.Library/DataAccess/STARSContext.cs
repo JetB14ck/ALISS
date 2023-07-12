@@ -88,6 +88,8 @@ namespace ALISS.STARS.Library.DataAccess
         #region Stars AMR Map
 
         public DbSet<StarsAMRMapGeneDataDTO> STARSMapGeneDataDTOs { get; set; }
+
+        public DbSet<StarAMRMapHosOrganismDataDTO> StarAMRMapHosOrganismDataDTOs { get; set; }
         #endregion
 
 
@@ -191,6 +193,8 @@ namespace ALISS.STARS.Library.DataAccess
 
             builder.Entity<StarsAMRMapGeneDataDTO>().HasNoKey();
             #endregion
+
+            builder.Entity<StarAMRMapHosOrganismDataDTO>().HasNoKey();
 
             builder.Entity<LogProcess>().HasKey(x => x.log_id);
             builder.Entity<LogProcess>().ToTable("XLogProcess");

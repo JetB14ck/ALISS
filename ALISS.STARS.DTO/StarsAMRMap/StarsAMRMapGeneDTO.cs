@@ -49,4 +49,24 @@ namespace ALISS.STARS.DTO.STARSMapGene
         public string stars_org_code { get; set; }
         public string stars_gene_code { get; set; }
     }
+
+    public class StarAMRMapHosOrganismDataDTO
+    {
+        public string hos_arh_code { get; set; }
+        public string hos_name { get; set; }
+        public string hos_code { get; set; }
+        public string hos_stars_arh_code { get; set; }
+    }
+
+    public class StarAMRMapOrganismListDTO
+    {
+        public string from_month { get; set; }
+        public string to_month { get; set; }
+        public string from_year_code { get; set; }
+        public string year_code { get; set; }
+        public string sap_who_org_code { get; set; }
+        public string gene_code { get; set; }
+        public string arh_code { get; set; }
+        public string hos_star_arh_code { get; set; }
+    }
 }
