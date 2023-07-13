@@ -58,7 +58,7 @@ namespace ALISS.STARS.DTO.STARSMapGene
         public string hos_stars_arh_code { get; set; }
     }
 
-    public class StarAMRMapOrganismListDTO
+    public class StarAMRMapHosOrganismSelectDTO
     {
         public string from_month { get; set; }
         public string to_month { get; set; }

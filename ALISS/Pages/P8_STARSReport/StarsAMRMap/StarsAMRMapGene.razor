@@ -47,9 +47,12 @@ else
                                         AllowFiltering="false" @bind-Value="searchAMR.from_month"
                                         Data="@MonthData" TextProperty="MonthName" ValueProperty="MonthValue" />
                     </div>
+                    <div style="width:80px; vertical-align: middle;display: inline-block">
+                        <RadzenNumeric TValue="string" Min="DateTime.Now.Year - 20" Max="DateTime.Now.Year" @bind-Value="searchAMR.year_code" />
+                    </div>
                     @*<div style="width:80px; vertical-align: middle;display: inline-block">
-                            <RadzenNumeric TValue="int" Min="2000" Max="9999" @bind-Value=@iYearFrom />
-                        </div>*@
+            <RadzenNumeric TValue="int" Min="2000" Max="9999" @bind-Value=@iYearFrom />
+        </div>*@
                 </div>
 
                 <div class="row justify-content-start divGroup">
@@ -116,16 +119,46 @@ else
                         <canvas id="cvsMax" style="left:717px; top:188px;" width="@CVS_MAX_WIDTH" height="@CVS_MAX_HEIGHT"></canvas> @*border: 1px solid #6DC6A9*@
                         <canvas id="cvsMin" style="left:717px; top:188px;" width="@CVS_MIN_WIDTH" height="@CVS_MIN_HEIGHT"></canvas> @*border: 1px solid #FF6633*@
 
-                        <canvas id="cvs01" width="@W01" height="@H01"></canvas>@*style="border: 1px solid #6DC6A9"*@
-                        <canvas id="cvs02" width="@W02" height="@H02"></canvas>
-                        <canvas id="cvs03" width="@W03" height="@H03"></canvas>
-                        <canvas id="cvs04" width="@W04" height="@H04"></canvas>
-                        <canvas id="cvs05" width="@W05" height="@H05"></canvas>@*style="border: 1px solid #FF6633"*@
-                        <canvas id="cvs06" width="@W06" height="@H06"></canvas>
-                        <canvas id="cvs07" width="@W07" height="@H07"></canvas><canvas id="cvs08" width="@W08" height="@H08"></canvas>
-                        <canvas id="cvs09" width="@W09" height="@H09"></canvas><canvas id="cvs10" width="@W10" height="@H10"></canvas>
-                        <canvas id="cvs11" width="@W11" height="@H11"></canvas><canvas id="cvs12" width="@W12" height="@H12"></canvas>
-                        <canvas id="cvs13" width="@W13" height="@H13"></canvas>
+                        <canvas id="cvs01" width="@W01" height="@H01" @onclick="@(() => SelectData(selectMap))"></canvas>@*style="border: 1px solid #6DC6A9"*@
+                        <canvas id="cvs02" width="@W02" height="@H02" @onclick="@(() => SelectData(selectMap))"></canvas>
+                        <canvas id="cvs03" width="@W03" height="@H03" @onclick="@(() => SelectData(selectMap))"></canvas>
+                        <canvas id="cvs04" width="@W04" height="@H04" @onclick="@(() => SelectData(selectMap))"></canvas>
+                        <canvas id="cvs05" width="@W05" height="@H05" @onclick="@(() => SelectData(selectMap))"></canvas>@*style="border: 1px solid #FF6633"*@
+                        <canvas id="cvs06" width="@W06" height="@H06" @onclick="@(() => SelectData(selectMap))"></canvas>
+                        <canvas id="cvs07" width="@W07" height="@H07" @onclick="@(() => SelectData(selectMap))"></canvas><canvas id="cvs08" width="@W08" height="@H08" @onclick="@(() => SelectData(selectMap))"></canvas>
+                        <canvas id="cvs09" width="@W09" height="@H09" @onclick="@(() => SelectData(selectMap))"></canvas><canvas id="cvs10" width="@W10" height="@H10" @onclick="@(() => SelectData(selectMap))"></canvas>
+                        <canvas id="cvs11" width="@W11" height="@H11" @onclick="@(() => SelectData(selectMap))"></canvas><canvas id="cvs12" width="@W12" height="@H12" @onclick="@(() => SelectData(selectMap))"></canvas>
+                        <canvas id="cvs13" width="@W13" height="@H13" @onclick="@(() => SelectData(selectMap))"></canvas>
+
+                        @if (ShowTable == true)
+                        {
+                        <div class="col-md-3" id="tbdetails">
+                            @foreach (var m in model)
+                             {
+                                <LabelBox inputLabel="@(string.Format("(เขตสุขภาพ) {0}", strHosArhName))" requireField="true" />
+                                <LabelBox inputLabel="@(string.Format("(Organism) {0}", strOrgName))" requireField="true" />
+                                <LabelBox inputLabel="@(string.Format("(Gene) {0}", strGeneName))" requireField="true" />
+
+                                <table class="table" id='tbHos' style="text-align: center; font-family: arial, sans-serif; border-collapse: collapse; width: 100%;">
+                                    <tbody>
+                                        <tr style="background-color: #dddddd;">
+                                            <th style="border: 1px solid #dddddd; text-align: left; padding: 8px;">โรงพยาบาล</th>
+                                            <th style="border: 1px solid #dddddd; text-align: left; padding: 8px;">%Positive</th>
+                                        </tr>
+
+                                        <tr style="background-color: #dddddd;">
+                                            <td style="border: 1px solid #dddddd; text-align: left; padding: 8px;">
+                                                @m.hos_name
+                                            </td>
+                                            <td style="border: 1px solid #dddddd; text-align: left; padding: 8px;">
+                                                @m.hos_stars_arh_code
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                             }
+                        </div>
+                        }
                     </div>
 
                     <div class="col-md-6">
@@ -155,30 +188,30 @@ else
                                                 <td>
                                                     @if (dict.Key == 1)
                                                     {<span class="dot" style="background-color:@colorArea01">@dict.Key</span>}
-                                                else if (dict.Key == 2)
-                                                {<span class="dot" style="background-color:@colorArea02">@dict.Key</span>}
-                                            else if (dict.Key == 3)
-                                            {<span class="dot" style="background-color:@colorArea03">@dict.Key</span> }
-                                        else if (dict.Key == 4)
-                                        {<span class="dot" style="background-color:@colorArea04">@dict.Key</span> }
-                                    else if (dict.Key == 5)
-                                    {<span class="dot" style="background-color:@colorArea05">@dict.Key</span> }
-                                else if (dict.Key == 6)
-                                {<span class="dot" style="background-color:@colorArea06">@dict.Key</span> }
-                            else if (dict.Key == 7)
-                            {<span class="dot" style="background-color:@colorArea07">@dict.Key</span> }
-                        else if (dict.Key == 8)
-                        {<span class="dot" style="background-color:@colorArea08">@dict.Key</span> }
-                    else if (dict.Key == 9)
-                    {<span class="dot" style="background-color:@colorArea09">@dict.Key</span> }
-                else if (dict.Key == 10)
-                {<span class="dot" style="background-color:@colorArea10">@dict.Key</span> }
-            else if (dict.Key == 11)
-            {<span class="dot" style="background-color:@colorArea11">@dict.Key</span> }
-        else if (dict.Key == 12)
-        {<span class="dot" style="background-color:@colorArea12">@dict.Key</span> }
-    else if (dict.Key == 13)
-    {<span class="dot" style="background-color:@colorArea13">@dict.Key</span>}
+                                                    else if (dict.Key == 2)
+                                                    {<span class="dot" style="background-color:@colorArea02">@dict.Key</span>}
+                                                    else if (dict.Key == 3)
+                                                    {<span class="dot" style="background-color:@colorArea03">@dict.Key</span> }
+                                                    else if (dict.Key == 4)
+                                                    {<span class="dot" style="background-color:@colorArea04">@dict.Key</span> }
+                                                    else if (dict.Key == 5)
+                                                    {<span class="dot" style="background-color:@colorArea05">@dict.Key</span> }
+                                                    else if (dict.Key == 6)
+                                                    {<span class="dot" style="background-color:@colorArea06">@dict.Key</span> }
+                                                    else if (dict.Key == 7)
+                                                    {<span class="dot" style="background-color:@colorArea07">@dict.Key</span> }
+                                                    else if (dict.Key == 8)
+                                                    {<span class="dot" style="background-color:@colorArea08">@dict.Key</span> }
+                                                    else if (dict.Key == 9)
+                                                    {<span class="dot" style="background-color:@colorArea09">@dict.Key</span> }
+                                                    else if (dict.Key == 10)
+                                                    {<span class="dot" style="background-color:@colorArea10">@dict.Key</span> }
+                                                    else if (dict.Key == 11)
+                                                    {<span class="dot" style="background-color:@colorArea11">@dict.Key</span> }
+                                                    else if (dict.Key == 12)
+                                                    {<span class="dot" style="background-color:@colorArea12">@dict.Key</span> }
+                                                    else if (dict.Key == 13)
+                                                    {<span class="dot" style="background-color:@colorArea13">@dict.Key</span>}
                                                 </td>
                                                 <td><div id="perc_@dict.Key">@dict.Value.ToString("n1")</div></td>
                                             </tr>
@@ -235,6 +268,8 @@ else
     private StarsAMRMapGeneDataDTO selectedAMR = new StarsAMRMapGeneDataDTO();
     private StarsAMRMapGeneSearchDTO searchAMR = new StarsAMRMapGeneSearchDTO();
     private StarsAMRMapGeneSearchDTO modelExport = new StarsAMRMapGeneSearchDTO();
+    private StarAMRMapHosOrganismSelectDTO selectMap = new StarAMRMapHosOrganismSelectDTO();
+    private List<StarAMRMapHosOrganismDataDTO> model = new List<StarAMRMapHosOrganismDataDTO>();
     private eAreaHealth selectedAreaHealth;
     private eAreaHealth selectedMaxAreaHealth;
     private eAreaHealth selectedMinAreaHealth;
@@ -250,6 +285,10 @@ else
     private List<ParameterDTO> ParameterList;
     private string strOrgName = string.Empty;
     private string strGeneName = string.Empty;
+    private string strHosArhName = string.Empty;
+    private string strHosOrgName = string.Empty;
+    private string strHosGeneName = string.Empty;
+    private Boolean ShowTable = false;
 
     private eSortby selectedSortBy = eSortby.regH;
     private class MonthItem
@@ -745,6 +784,17 @@ else
             }
         }
 
+    }
+
+    private async Task SelectData(StarAMRMapHosOrganismSelectDTO selectAMR)
+    {
+        if (selectAMR != null)
+        {
+            ShowTable = true;
+            selectMap = selectAMR;
+
+            lstAMRData = await ReportService.GetStarAMRMapHosOrganismModelAsync(selectMap);
+        }
     }
 
     private async Task SearchData()

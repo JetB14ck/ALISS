@@ -30,7 +30,7 @@ namespace ALISS.STARS.Api.Controllers
 
         [HttpPost]
         [Route("api/StarsMapAMR/GetStarAMRMapHosOrganismDataWithModel")]
-        public IEnumerable<StarAMRMapHosOrganismDataDTO> GetStarsAMRMapOrganismWithModel([FromBody] StarAMRMapOrganismListDTO searchModel)
+        public IEnumerable<StarsAMRMapGeneDataDTO> GetStarsAMRMapOrganismWithModel([FromBody] StarAMRMapHosOrganismSelectDTO searchModel)
         {
             var objReturn = _service.GetStarsAMRMapOrganismWithModel(searchModel);
 
