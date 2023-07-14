@@ -63,10 +63,10 @@ namespace ALISS.STARS.DTO.STARSMapGene
         public string from_month { get; set; }
         public string to_month { get; set; }
         public string from_year_code { get; set; }
-        public string year_code { get; set; }
+        public string to_year_code { get; set; }
         public string sap_who_org_code { get; set; }
         public string gene_code { get; set; }
         public string arh_code { get; set; }
-        public string hos_star_arh_code { get; set; }
+        //public string hos_star_arh_code { get; set; }
     }
 }

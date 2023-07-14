@@ -63,28 +63,28 @@ namespace ALISS.STARS.Library
             return objList;
         }
 
-        public List<StarsAMRMapGeneDataDTO> GetStarsAMRMapOrganismWithModel(StarAMRMapHosOrganismSelectDTO searchModel)
+        public List<StarAMRMapHosOrganismDataDTO> GetStarsAMRMapOrganismWithModel(StarAMRMapHosOrganismSelectDTO searchModel)
         {
             log.MethodStart();
 
-            List<StarsAMRMapGeneDataDTO> objList = new List<StarsAMRMapGeneDataDTO>();
+            List<StarAMRMapHosOrganismDataDTO> objList = new List<StarAMRMapHosOrganismDataDTO>();
 
 
             using (var trans = _db.Database.BeginTransaction())
             {
                 try
                 {
-                    var objDataList = _db.STARSMapGeneDataDTOs.FromSqlRaw<StarsAMRMapGeneDataDTO>("sp_GET_RPMapOrganism {0}, {1}, {2}, {3}, {4}, {5}, {6}"
+                    var objDataList = _db.StarAMRMapHosOrganismDataDTOs.FromSqlRaw<StarAMRMapHosOrganismDataDTO>("sp_GET_RPMapOrganism {0}, {1}, {2}, {3}, {4}, {5}, {6}"
                         , searchModel.from_month
                         , searchModel.to_month
                         , searchModel.from_year_code
-                        , searchModel.year_code
+                        , searchModel.to_year_code
                         , searchModel.sap_who_org_code
                         , searchModel.gene_code
                         , searchModel.arh_code
                     ).ToList();
 
-                    objList = _mapper.Map<List<StarsAMRMapGeneDataDTO>>(objDataList);
+                    objList = _mapper.Map<List<StarAMRMapHosOrganismDataDTO>>(objDataList);
 
                     trans.Commit();
                 }

@@ -9,6 +9,6 @@ namespace ALISS.STARS.Library
     public interface IStarsAMRMapService
     {
         List<StarsAMRMapGeneDataDTO> GetStarsAMRMapGeneDataWithModel(StarsAMRMapGeneSearchDTO searchModel);
-        List<StarsAMRMapGeneDataDTO> GetStarsAMRMapOrganismWithModel(StarAMRMapHosOrganismSelectDTO searchModel);
+        List<StarAMRMapHosOrganismDataDTO> GetStarsAMRMapOrganismWithModel(StarAMRMapHosOrganismSelectDTO searchModel);
     }
 }

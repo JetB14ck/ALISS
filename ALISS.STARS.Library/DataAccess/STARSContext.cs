@@ -90,6 +90,7 @@ namespace ALISS.STARS.Library.DataAccess
         public DbSet<StarsAMRMapGeneDataDTO> STARSMapGeneDataDTOs { get; set; }
 
         public DbSet<StarAMRMapHosOrganismDataDTO> StarAMRMapHosOrganismDataDTOs { get; set; }
+        public DbSet<StarAMRMapHosOrganismSelectDTO> StarAMRMapHosOrganismSelectDTOs { get; set; }
         #endregion
 
 
@@ -195,6 +196,7 @@ namespace ALISS.STARS.Library.DataAccess
             #endregion
 
             builder.Entity<StarAMRMapHosOrganismDataDTO>().HasNoKey();
+            builder.Entity<StarAMRMapHosOrganismSelectDTO>().HasNoKey();
 
             builder.Entity<LogProcess>().HasKey(x => x.log_id);
             builder.Entity<LogProcess>().ToTable("XLogProcess");

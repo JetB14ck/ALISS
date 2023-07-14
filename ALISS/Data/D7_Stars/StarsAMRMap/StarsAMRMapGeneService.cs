@@ -34,11 +34,11 @@ namespace ALISS.Data.D7_Stars.StarsAMRMap
             return objList;
         }
 
-        public async Task<List<StarsAMRMapGeneDataDTO>> GetStarAMRMapHosOrganismModelAsync(StarAMRMapHosOrganismSelectDTO searchData)
+        public async Task<List<StarAMRMapHosOrganismDataDTO>> GetStarAMRMapHosOrganismModelAsync(StarAMRMapHosOrganismSelectDTO searchData)
         {
-            List<StarsAMRMapGeneDataDTO> objList = new List<StarsAMRMapGeneDataDTO>();
+            List<StarAMRMapHosOrganismDataDTO> objList = new List<StarAMRMapHosOrganismDataDTO>();
 
-            objList = await _apiHelper.GetDataListByModelAsync<StarsAMRMapGeneDataDTO, StarAMRMapHosOrganismSelectDTO>("stars_map_amr_api/GetStarAMRMapHosOrganismDataWithModel", searchData);
+            objList = await _apiHelper.GetDataListByModelAsync<StarAMRMapHosOrganismDataDTO, StarAMRMapHosOrganismSelectDTO>("stars_map_amr_api/GetStarAMRMapHosOrganismDataWithModel", searchData);
 
             return objList;
         }

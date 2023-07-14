@@ -112,53 +112,22 @@ else
             <RadzenFieldset Text="Map">
 
                 <div class="row">
-
                     <div class="col-md-6">
                         <img id="thai" src="/Images/ThaiMap.png">
                         <br /><br />
                         <canvas id="cvsMax" style="left:717px; top:188px;" width="@CVS_MAX_WIDTH" height="@CVS_MAX_HEIGHT"></canvas> @*border: 1px solid #6DC6A9*@
                         <canvas id="cvsMin" style="left:717px; top:188px;" width="@CVS_MIN_WIDTH" height="@CVS_MIN_HEIGHT"></canvas> @*border: 1px solid #FF6633*@
 
-                        <canvas id="cvs01" width="@W01" height="@H01" @onclick="@(() => SelectData(selectMap))"></canvas>@*style="border: 1px solid #6DC6A9"*@
-                        <canvas id="cvs02" width="@W02" height="@H02" @onclick="@(() => SelectData(selectMap))"></canvas>
-                        <canvas id="cvs03" width="@W03" height="@H03" @onclick="@(() => SelectData(selectMap))"></canvas>
-                        <canvas id="cvs04" width="@W04" height="@H04" @onclick="@(() => SelectData(selectMap))"></canvas>
-                        <canvas id="cvs05" width="@W05" height="@H05" @onclick="@(() => SelectData(selectMap))"></canvas>@*style="border: 1px solid #FF6633"*@
-                        <canvas id="cvs06" width="@W06" height="@H06" @onclick="@(() => SelectData(selectMap))"></canvas>
-                        <canvas id="cvs07" width="@W07" height="@H07" @onclick="@(() => SelectData(selectMap))"></canvas><canvas id="cvs08" width="@W08" height="@H08" @onclick="@(() => SelectData(selectMap))"></canvas>
-                        <canvas id="cvs09" width="@W09" height="@H09" @onclick="@(() => SelectData(selectMap))"></canvas><canvas id="cvs10" width="@W10" height="@H10" @onclick="@(() => SelectData(selectMap))"></canvas>
-                        <canvas id="cvs11" width="@W11" height="@H11" @onclick="@(() => SelectData(selectMap))"></canvas><canvas id="cvs12" width="@W12" height="@H12" @onclick="@(() => SelectData(selectMap))"></canvas>
-                        <canvas id="cvs13" width="@W13" height="@H13" @onclick="@(() => SelectData(selectMap))"></canvas>
-
-                        @if (ShowTable == true)
-                        {
-                        <div class="col-md-3" id="tbdetails">
-                            @foreach (var m in model)
-                             {
-                                <LabelBox inputLabel="@(string.Format("(เขตสุขภาพ) {0}", strHosArhName))" requireField="true" />
-                                <LabelBox inputLabel="@(string.Format("(Organism) {0}", strOrgName))" requireField="true" />
-                                <LabelBox inputLabel="@(string.Format("(Gene) {0}", strGeneName))" requireField="true" />
-
-                                <table class="table" id='tbHos' style="text-align: center; font-family: arial, sans-serif; border-collapse: collapse; width: 100%;">
-                                    <tbody>
-                                        <tr style="background-color: #dddddd;">
-                                            <th style="border: 1px solid #dddddd; text-align: left; padding: 8px;">โรงพยาบาล</th>
-                                            <th style="border: 1px solid #dddddd; text-align: left; padding: 8px;">%Positive</th>
-                                        </tr>
-
-                                        <tr style="background-color: #dddddd;">
-                                            <td style="border: 1px solid #dddddd; text-align: left; padding: 8px;">
-                                                @m.hos_name
-                                            </td>
-                                            <td style="border: 1px solid #dddddd; text-align: left; padding: 8px;">
-                                                @m.hos_stars_arh_code
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                             }
-                        </div>
-                        }
+                        <canvas id="cvs01" width="@W01" height="@H01" @onclick="@(() => SelectData(selectMap, "01"))"></canvas>@*style="border: 1px solid #6DC6A9"*@
+                        <canvas id="cvs02" width="@W02" height="@H02" @onclick="@(() => SelectData(selectMap, "02"))"></canvas>
+                        <canvas id="cvs03" width="@W03" height="@H03" @onclick="@(() => SelectData(selectMap, "03"))"></canvas>
+                        <canvas id="cvs04" width="@W04" height="@H04" @onclick="@(() => SelectData(selectMap, "04"))"></canvas>
+                        <canvas id="cvs05" width="@W05" height="@H05" @onclick="@(() => SelectData(selectMap, "05"))"></canvas>@*style="border: 1px solid #FF6633"*@
+                        <canvas id="cvs06" width="@W06" height="@H06" @onclick="@(() => SelectData(selectMap, "06"))"></canvas>
+                        <canvas id="cvs07" width="@W07" height="@H07" @onclick="@(() => SelectData(selectMap, "07"))"></canvas><canvas id="cvs08" width="@W08" height="@H08" @onclick="@(() => SelectData(selectMap, "08"))"></canvas>
+                        <canvas id="cvs09" width="@W09" height="@H09" @onclick="@(() => SelectData(selectMap, "09"))"></canvas><canvas id="cvs10" width="@W10" height="@H10" @onclick="@(() => SelectData(selectMap, "10"))"></canvas>
+                        <canvas id="cvs11" width="@W11" height="@H11" @onclick="@(() => SelectData(selectMap, "11"))"></canvas><canvas id="cvs12" width="@W12" height="@H12" @onclick="@(() => SelectData(selectMap, "12"))"></canvas>
+                        <canvas id="cvs13" width="@W13" height="@H13" @onclick="@(() => SelectData(selectMap, "13"))"></canvas>
                     </div>
 
                     <div class="col-md-6">
@@ -221,6 +190,35 @@ else
                             </RadzenFieldset>
                         </div>
                     </div>
+
+                    <div class="col-md-6">
+                        @if (ShowTable == true)
+                        {
+                            <label>เขตสุขภาพ : @selectMap.arh_code</label><br />
+                            <label>Organism : @strOrgName</label><br />
+                            <label>Gene : @strGeneName</label><br />
+                            <table class="table" id='tbHos' style="border: 1px solid black;">
+                                <tbody>
+                                    <tr>
+                                        <th>โรงพยาบาล</th>
+                                        <th>%Positive</th>
+                                    </tr>
+                                    @foreach(var m in lstselectData)
+                                    {
+                                    <tr>
+                                        <td>
+                                            @m.hos_name
+                                        </td>
+                                        <td>
+                                            @m.hos_stars_arh_code
+                                        </td>
+                                    </tr>
+                                    }
+                                    
+                                </tbody>
+                            </table>
+                        }
+                    </div>
                 </div>
 
                 @if (!blnLoadingComplete)
@@ -270,6 +268,7 @@ else
     private StarsAMRMapGeneSearchDTO modelExport = new StarsAMRMapGeneSearchDTO();
     private StarAMRMapHosOrganismSelectDTO selectMap = new StarAMRMapHosOrganismSelectDTO();
     private List<StarAMRMapHosOrganismDataDTO> model = new List<StarAMRMapHosOrganismDataDTO>();
+    private List<StarAMRMapHosOrganismDataDTO> lstselectData = new List<StarAMRMapHosOrganismDataDTO>();
     private eAreaHealth selectedAreaHealth;
     private eAreaHealth selectedMaxAreaHealth;
     private eAreaHealth selectedMinAreaHealth;
@@ -291,6 +290,7 @@ else
     private Boolean ShowTable = false;
 
     private eSortby selectedSortBy = eSortby.regH;
+
     private class MonthItem
     {
         public string MonthValue { get; set; }
@@ -786,14 +786,57 @@ else
 
     }
 
-    private async Task SelectData(StarAMRMapHosOrganismSelectDTO selectAMR)
+    private async Task SelectData(StarAMRMapHosOrganismSelectDTO selectAMR, string arh_code)
     {
-        if (selectAMR != null)
+
+        selectMap.from_month = searchAMR.from_month;
+        if (string.IsNullOrEmpty(selectMap.from_month))
+        {
+            return;
+        }
+
+        selectMap.to_month = searchAMR.to_month;
+        if (string.IsNullOrEmpty(selectMap.to_month))
+        {
+            return;
+        }
+
+        selectMap.from_year_code = searchAMR.year_code;
+        if (string.IsNullOrEmpty(selectMap.from_year_code))
+        {
+            return;
+        }
+
+        selectMap.to_year_code = searchAMR.year_code;
+        if (string.IsNullOrEmpty(selectMap.to_year_code))
+        {
+            return;
+        }
+
+        selectMap.sap_who_org_code = searchAMR.stars_org_code;
+        if (string.IsNullOrEmpty(selectMap.sap_who_org_code))
+        {
+            return;
+        }
+
+        selectMap.gene_code = searchAMR.stars_gene_code;
+        if (string.IsNullOrEmpty(selectMap.gene_code))
+        {
+            return;
+        }
+
+        selectMap.arh_code = arh_code;
+        if (string.IsNullOrEmpty(selectMap.arh_code))
+        {
+            return;
+        }
+
+        if (selectMap != null)
         {
             ShowTable = true;
-            selectMap = selectAMR;
+            selectAMR = selectMap;
 
-            lstAMRData = await ReportService.GetStarAMRMapHosOrganismModelAsync(selectMap);
+            lstselectData = await ReportService.GetStarAMRMapHosOrganismModelAsync(selectMap);
         }
     }
 
