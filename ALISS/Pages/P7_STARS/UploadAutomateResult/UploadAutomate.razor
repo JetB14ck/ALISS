@@ -131,13 +131,18 @@ else
                         FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
                         AllowColumnResize="true">
                 <Columns>
-                    <RadzenGridColumn TItem="UploadAutomateDataDTO" Property="arh_name" Title="ศูนย์วิทย์" Width="200px">
+                    <RadzenGridColumn TItem="UploadAutomateDataDTO" Property="arh_name" Title="ศูนย์วิทย์" Width="100px">
                         <FooterTemplate>
                             <label title="@inboxGrid.FooterLabelString">@inboxGrid.FooterLabelString</label>
                         </FooterTemplate>
                     </RadzenGridColumn>
                     <RadzenGridColumn TItem="UploadAutomateDataDTO" Width="120px" Property="afu_machinetype" Title="Machine" />
-                    <RadzenGridColumn TItem="UploadAutomateDataDTO" Width="120px" Property="afu_filename" Title="File Name" />
+                    <RadzenGridColumn TItem="UploadAutomateDataDTO" Width="60px" Context="data">
+                        <Template>
+                            <RadzenButton Icon="get_app" Style="background: #0A6839" Click="@(() => NavigateToDownloadFile(data))" />
+                        </Template>
+                    </RadzenGridColumn>
+                    <RadzenGridColumn TItem="UploadAutomateDataDTO" Width="200px" Property="afu_filename" Title="File Name" />
                     <RadzenGridColumn TItem="UploadAutomateDataDTO" Width="100px" Property="afu_totalrecord" Title="Total STARS">
                         <Template Context="data">
                             @String.Format("{0:n0}", data.afu_totalrecord)
@@ -169,8 +174,8 @@ else
                         </Template>
                     </RadzenGridColumn>
                     <RadzenGridColumn TItem="UploadAutomateDataDTO" Width="70px" Property="afu_status_str" Title="Status" />
-                    <RadzenGridColumn TItem="UploadAutomateDataDTO" Width="110px" Property="afu_updatedate" Title="Upload Date" />
-                    <RadzenGridColumn TItem="UploadAutomateDataDTO" Width="80px" Property="afu_updateuser" Title="Upload By" />
+                    <RadzenGridColumn TItem="UploadAutomateDataDTO" Width="110px" Property="afu_createdate" Title="Upload Date" />
+                    <RadzenGridColumn TItem="UploadAutomateDataDTO" Width="80px" Property="afu_createuser" Title="Upload By" />
 
                     <RadzenGridColumn TItem="UploadAutomateDataDTO" Property="" Title="" Width="160px" Context="data" Filterable="false" Sortable="false">
                         <Template>

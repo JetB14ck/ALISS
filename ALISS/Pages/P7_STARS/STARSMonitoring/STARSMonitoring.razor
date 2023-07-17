@@ -224,14 +224,14 @@ else
 
                 <RadzenGridColumn TItem="STARSMonitoringListsDTO" Width="230px" Context="data">
                     <Template>
-                        <RadzenButton Icon="print" Text="STARS Barcode" Style="background: #0A6839" Click="@(() => ExportBarcode(data))"
+                        <RadzenButton Icon="print" Text="STARS Barcode" Style="background: #0A6839" IsBusy=@busy Click="@(() => ExportBarcode(data))"
                                       Visible="@(!string.IsNullOrEmpty(data.srr_starsno) ? true : false)" />
                     </Template>
                 </RadzenGridColumn>
                 <RadzenGridColumn TItem="STARSMonitoringListsDTO" Width="230px" Context="data">
                     <Template>
                         <RadzenButton Icon="grade" Text="Personal Report" Style="background: #0A6839" Click="@(() => ExportPersonalReport(data))"
-                                      Visible="@(!string.IsNullOrEmpty(data.srr_reportno) ? true : false)" />
+                                      Visible="@((!string.IsNullOrEmpty(data.srr_reportno) && (data.srr_status == "A")) ? true : false)" />
                     </Template>
                 </RadzenGridColumn>
             </Columns>
@@ -1287,6 +1287,7 @@ else
     private string repeatdate_str = string.Empty;
     private string recvdate_str = string.Empty;
     private string status_str = string.Empty;
+    private bool busy;
 
 
     private class StatusList
@@ -1313,11 +1314,11 @@ else
             status_code = "W",
             status_name = "Wait-Inspect"
         },
-            new StatusList
-        {
-            status_code = "A",
-            status_name = "Lab-Processing"
-        },
+        //    new StatusList
+        //{
+        //    status_code = "A",
+        //    status_name = "Lab-Processing"
+        //},
             new StatusList
         {
             status_code = "T",
@@ -1325,7 +1326,7 @@ else
         },
             new StatusList
         {
-            status_code = "C",
+            status_code = "A",
             status_name = "Complete"
         },
             new StatusList
@@ -1411,6 +1412,7 @@ else
     {
         try
         {
+            busy = true;
             if (file != null && file.srr_starsno != "")
             {
                 string tempPath = ParameterList.FirstOrDefault(x => x.prm_code_minor == "STARS_BARCODE_PATH").prm_value;
@@ -1420,11 +1422,12 @@ else
             {
                 await jsRuntime.InvokeAsync<object>("ShowAlert", "รายการนี้ไม่มี STARS No.");
             }
-
+            busy = false;
         }
         catch (Exception ex)
         {
             await jsRuntime.InvokeAsync<object>("ShowAlert", ex.Message);
+            busy = false;
         }
     }
 
@@ -1432,6 +1435,7 @@ else
     {
         try
         {
+            busy = true;
             if (file != null && file.srr_reportno != "")
             {
 
@@ -1445,11 +1449,12 @@ else
             {
                 await jsRuntime.InvokeAsync<object>("ShowAlert", "รายการนี้ยังไม่ได้สร้าง Personal Report");
             }
-
+            busy = false;
         }
         catch (Exception ex)
         {
             await jsRuntime.InvokeAsync<object>("ShowAlert", ex.Message);
+            busy = false;
         }
     }
 
@@ -1471,6 +1476,7 @@ else
 
         showModal = false;
 
+        inboxGrid.radzenGrid.CancelEditRow(selectedRow);
         StateHasChanged();
     }
 

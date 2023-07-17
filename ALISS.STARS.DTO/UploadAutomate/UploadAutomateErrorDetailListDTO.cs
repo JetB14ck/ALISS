@@ -7,8 +7,8 @@ namespace ALISS.STARS.DTO
 {
     public class UploadAutomateErrorDetailListDTO
     {
-        public Guid aed_id { get; set; }
-        public Guid aeh_id { get; set; }
+        public int aed_id { get; set; }
+        public int aeh_id { get; set; }
         public string aeh_type { get; set; }
         public string aeh_field { get; set; }
         public string aeh_message { get; set; }

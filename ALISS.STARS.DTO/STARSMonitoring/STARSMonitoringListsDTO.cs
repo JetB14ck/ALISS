@@ -75,9 +75,10 @@ namespace ALISS.STARS.DTO
                 if (srr_status == "N") objReturn = "New";
                 else if (srr_status == "W") objReturn = "Wait-Inspect";
                 else if (srr_status == "G") objReturn = "Transporting";
-                else if (srr_status == "A") objReturn = "Lab Processing";
+                //else if (srr_status == "A") objReturn = "Lab Processing";
                 else if (srr_status == "R") objReturn = "Received";
-                else if (srr_status == "C") objReturn = "Complete";
+                else if (srr_status == "A") objReturn = "Complete";
+                //else if (srr_status == "C") objReturn = "Complete";
                 else if (srr_status == "J") objReturn = "Reject Sample";
                 else if (srr_status == "T") objReturn = "Repeat Automate";
 
