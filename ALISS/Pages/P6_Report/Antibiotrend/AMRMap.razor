@@ -100,16 +100,16 @@ else
                         <canvas id="cvsMax" style="left:717px; top:188px;" width="@CVS_MAX_WIDTH" height="@CVS_MAX_HEIGHT"></canvas> @*border: 1px solid #6DC6A9*@
                         <canvas id="cvsMin" style="left:717px; top:188px;" width="@CVS_MIN_WIDTH" height="@CVS_MIN_HEIGHT"></canvas> @*border: 1px solid #FF6633*@
 
-                        <canvas id="cvs01" width="@W01" height="@H01"></canvas>@*style="border: 1px solid #6DC6A9"*@
-                        <canvas id="cvs02" width="@W02" height="@H02"></canvas>
-                        <canvas id="cvs03" width="@W03" height="@H03"></canvas>
-                        <canvas id="cvs04" width="@W04" height="@H04"></canvas>
-                        <canvas id="cvs05" width="@W05" height="@H05"></canvas>@*style="border: 1px solid #FF6633"*@
-                        <canvas id="cvs06" width="@W06" height="@H06"></canvas>
-                        <canvas id="cvs07" width="@W07" height="@H07"></canvas><canvas id="cvs08" width="@W08" height="@H08"></canvas>
-                        <canvas id="cvs09" width="@W09" height="@H09"></canvas><canvas id="cvs10" width="@W10" height="@H10"></canvas>
-                        <canvas id="cvs11" width="@W11" height="@H11"></canvas><canvas id="cvs12" width="@W12" height="@H12"></canvas>
-                        <canvas id="cvs13" width="@W13" height="@H13"></canvas>
+                        <canvas id="cvs01" width="@W01" height="@H01" @onclick="@(() => SelectData(selectMap, "01"))"></canvas>@*style="border: 1px solid #6DC6A9"*@
+                        <canvas id="cvs02" width="@W02" height="@H02" @onclick="@(() => SelectData(selectMap, "02"))"></canvas>
+                        <canvas id="cvs03" width="@W03" height="@H03" @onclick="@(() => SelectData(selectMap, "03"))"></canvas>
+                        <canvas id="cvs04" width="@W04" height="@H04" @onclick="@(() => SelectData(selectMap, "04"))"></canvas>
+                        <canvas id="cvs05" width="@W05" height="@H05" @onclick="@(() => SelectData(selectMap, "05"))"></canvas>@*style="border: 1px solid #FF6633"*@
+                        <canvas id="cvs06" width="@W06" height="@H06" @onclick="@(() => SelectData(selectMap, "06"))"></canvas>
+                        <canvas id="cvs07" width="@W07" height="@H07" @onclick="@(() => SelectData(selectMap, "07"))"></canvas><canvas id="cvs08" width="@W08" height="@H08" @onclick="@(() => SelectData(selectMap, "08"))"></canvas>
+                        <canvas id="cvs09" width="@W09" height="@H09" @onclick="@(() => SelectData(selectMap, "09"))"></canvas><canvas id="cvs10" width="@W10" height="@H10" @onclick="@(() => SelectData(selectMap, "10"))"></canvas>
+                        <canvas id="cvs11" width="@W11" height="@H11" @onclick="@(() => SelectData(selectMap, "11"))"></canvas><canvas id="cvs12" width="@W12" height="@H12" @onclick="@(() => SelectData(selectMap, "12"))"></canvas>
+                        <canvas id="cvs13" width="@W13" height="@H13" @onclick="@(() => SelectData(selectMap, "13"))"></canvas>
                     </div>
 
                     <div class="col-md-6">
@@ -119,84 +119,112 @@ else
                             <RadzenButton Text=@selectedAMR.org_label_name Style="margin-bottom: 20px; width: 100% ; height:38px; background: #E7F4EF 0% 0% no-repeat padding-box; color: #0A6839;border: 1px solid #6DC6A9;border-radius: 4px; font: Regular 18px/22px Arial;" />
                             <RadzenFieldset Text=" Sort By ">
                                 <RadzenRadioButtonList @bind-Value=@selectedSortBy TValue="eSortby" Change="@((args) => ChangeOrderBy(args, "RadioButtonList with horizontal orientation"))">
-                                 <Items>
-                                     <RadzenRadioButtonListItem Text="มากไปน้อย" Value="eSortby.desc" />
-                                     <RadzenRadioButtonListItem Text="น้อยไปมาก" Value="eSortby.asc" />
-                                     <RadzenRadioButtonListItem Text="เขตสุขภาพ" Value="eSortby.regH" />
-                                 </Items>
+                                    <Items>
+                                        <RadzenRadioButtonListItem Text="มากไปน้อย" Value="eSortby.desc" />
+                                        <RadzenRadioButtonListItem Text="น้อยไปมาก" Value="eSortby.asc" />
+                                        <RadzenRadioButtonListItem Text="เขตสุขภาพ" Value="eSortby.regH" />
+                                    </Items>
                                 </RadzenRadioButtonList>
-                            </RadzenFieldset>                           
+                            </RadzenFieldset>
                         </div>
                         <br />
                         <div class="row justify-content-center">
                             <RadzenFieldset Text=" เขตสุขภาพ " Style="width: 90%;">
-                                @*<img id="circle" src="/Images/Circle.png">*@                               
+                                @*<img id="circle" src="/Images/Circle.png">*@
                                 <table class="table" style="text-align:center">
                                     @*<thead>
-                                        <tr>
-                                            <th></th>
-                                            <th></th>
-                                            <th></th>
-                                        </tr>
-                                    </thead>*@
+                            <tr>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                            </tr>
+                        </thead>*@
                                     <tbody>
                                         @foreach (var dict in dictValue)
                                         {
                                             <tr>
                                                 <td width="20%"></td>
-                                                <td>                                                    
+                                                <td>
                                                     @if (dict.Key == 1)
                                                     {<span class="dot" style="background-color:@colorArea01">@dict.Key</span>}
-                                                    else if (dict.Key == 2)
-                                                    {<span class="dot" style="background-color:@colorArea02">@dict.Key</span>}
-                                                    else if (dict.Key == 3)
-                                                    {<span class="dot" style="background-color:@colorArea03">@dict.Key</span> }
-                                                    else if (dict.Key == 4)
-                                                    {<span class="dot" style="background-color:@colorArea04">@dict.Key</span> }
-                                                    else if (dict.Key == 5)
-                                                    {<span class="dot" style="background-color:@colorArea05">@dict.Key</span> }
-                                                    else if (dict.Key == 6)
-                                                    {<span class="dot" style="background-color:@colorArea06">@dict.Key</span> }
-                                                    else if (dict.Key == 7)
-                                                    {<span class="dot" style="background-color:@colorArea07">@dict.Key</span> }
-                                                    else if (dict.Key == 8)
-                                                    {<span class="dot" style="background-color:@colorArea08">@dict.Key</span> }
-                                                    else if (dict.Key == 9)
-                                                    {<span class="dot" style="background-color:@colorArea09">@dict.Key</span> }
-                                                    else if (dict.Key == 10)
-                                                    {<span class="dot" style="background-color:@colorArea10">@dict.Key</span> }
-                                                    else if (dict.Key == 11)
-                                                    {<span class="dot" style="background-color:@colorArea11">@dict.Key</span> }
-                                                    else if (dict.Key == 12)
-                                                    {<span class="dot" style="background-color:@colorArea12">@dict.Key</span> }
-                                                    else if (dict.Key == 13)
-                                                    {<span class="dot" style="background-color:@colorArea13">@dict.Key</span> }                                        
+                                                else if (dict.Key == 2)
+                                                {<span class="dot" style="background-color:@colorArea02">@dict.Key</span>}
+                                            else if (dict.Key == 3)
+                                            {<span class="dot" style="background-color:@colorArea03">@dict.Key</span> }
+                                        else if (dict.Key == 4)
+                                        {<span class="dot" style="background-color:@colorArea04">@dict.Key</span> }
+                                    else if (dict.Key == 5)
+                                    {<span class="dot" style="background-color:@colorArea05">@dict.Key</span> }
+                                else if (dict.Key == 6)
+                                {<span class="dot" style="background-color:@colorArea06">@dict.Key</span> }
+                            else if (dict.Key == 7)
+                            {<span class="dot" style="background-color:@colorArea07">@dict.Key</span> }
+                        else if (dict.Key == 8)
+                        {<span class="dot" style="background-color:@colorArea08">@dict.Key</span> }
+                    else if (dict.Key == 9)
+                    {<span class="dot" style="background-color:@colorArea09">@dict.Key</span> }
+                else if (dict.Key == 10)
+                {<span class="dot" style="background-color:@colorArea10">@dict.Key</span> }
+            else if (dict.Key == 11)
+            {<span class="dot" style="background-color:@colorArea11">@dict.Key</span> }
+            else if (dict.Key == 12)
+            {<span class="dot" style="background-color:@colorArea12">@dict.Key</span> }
+            else if (dict.Key == 13)
+            {<span class="dot" style="background-color:@colorArea13">@dict.Key</span>}
                                                 </td>
                                                 @*<td>@dict.Value</td>*@
                                                 <td><div id="perc_@dict.Key">@dict.Value</div></td>
                                             </tr>
-                                        }                                     
+                                        }
                                     </tbody>
                                 </table>
                             </RadzenFieldset>
 
-                        
-                           @*<canvas id="cvsIndex" width="200" height="200" style="border: 1px solid #FF6633"></canvas>*@
 
-                             @*<canvas id="idx_01" width="60px" height="35px"></canvas>
-                            <canvas id="idx_02" width="60px" height="35px"></canvas>
-                            <canvas id="idx_03" width="60px" height="35px"></canvas>
-                            <canvas id="idx_04" width="60px" height="35px"></canvas>
-                            <canvas id="idx_05" width="60px" height="35px"></canvas>
-                            <canvas id="idx_06" width="60px" height="35px"></canvas>
-                            <canvas id="idx_07" width="60px" height="35px"></canvas>
-                            <canvas id="idx_08" width="60px" height="35px"></canvas>
-                            <canvas id="idx_09" width="60px" height="35px"></canvas>
-                            <canvas id="idx_10" width="60px" height="35px"></canvas>
-                            <canvas id="idx_11" width="60px" height="35px"></canvas>
-                            <canvas id="idx_12" width="60px" height="35px"></canvas>
-                            <canvas id="idx_13" width="60px" height="35px"></canvas>*@
+                            @*<canvas id="cvsIndex" width="200" height="200" style="border: 1px solid #FF6633"></canvas>*@
+
+                            @*<canvas id="idx_01" width="60px" height="35px"></canvas>
+                <canvas id="idx_02" width="60px" height="35px"></canvas>
+                <canvas id="idx_03" width="60px" height="35px"></canvas>
+                <canvas id="idx_04" width="60px" height="35px"></canvas>
+                <canvas id="idx_05" width="60px" height="35px"></canvas>
+                <canvas id="idx_06" width="60px" height="35px"></canvas>
+                <canvas id="idx_07" width="60px" height="35px"></canvas>
+                <canvas id="idx_08" width="60px" height="35px"></canvas>
+                <canvas id="idx_09" width="60px" height="35px"></canvas>
+                <canvas id="idx_10" width="60px" height="35px"></canvas>
+                <canvas id="idx_11" width="60px" height="35px"></canvas>
+                <canvas id="idx_12" width="60px" height="35px"></canvas>
+                <canvas id="idx_13" width="60px" height="35px"></canvas>*@
                         </div>
+                    </div>
+                    <div class="col-md-6">
+                        @if (ShowTable == true)
+                        {
+                            <label>เขตสุขภาพ : @selectMap.arh_code</label><br />
+                            <label>Organism : @selectedAMR.org_label_name</label><br />
+                            <label>Antibiotic : @selectedAMR.anti_code</label><br />
+                            <table class="table" style="border: 1px solid black;">
+                                <tbody>
+                                    <tr>
+                                        <th>โรงพยาบาล</th>
+                                        <th>%NS</th>
+                                    </tr>
+                                    @foreach (var m in lstselectData)
+                                    {
+                                        <tr>
+                                            <td>
+                                                @m.hos_name
+                                            </td>
+                                            <td>
+                                                @m.hos_code
+                                            </td>
+                                        </tr>
+                                    }
+
+                                </tbody>
+                            </table>
+                        }
                     </div>
                 </div>
 
@@ -270,6 +298,9 @@ else
     private AntibiotrendAMRStrategyDTO selectedAMR = new AntibiotrendAMRStrategyDTO();
     private AMRStrategySearchDTO searchAMR = new AMRStrategySearchDTO();
     private AMRSearchMapDTO modelExport = new AMRSearchMapDTO();
+    private AMRMapHosStrategySelectDTO selectMap = new AMRMapHosStrategySelectDTO();
+    private List<AntibiotrendAMRMapHosStrategyDataDTO> model = new List<AntibiotrendAMRMapHosStrategyDataDTO>();
+    private List<AntibiotrendAMRMapHosStrategyDataDTO> lstselectData = new List<AntibiotrendAMRMapHosStrategyDataDTO>();
     private string antiPercentLabel = "";
     private eAreaHealth selectedAreaHealth;
     private eAreaHealth selectedMaxAreaHealth;
@@ -282,6 +313,7 @@ else
     private Dictionary<int, decimal> dictValue = new Dictionary<int, decimal>();
     private Dictionary<int,string> dictColor = new Dictionary<int,string>();
     private Dictionary<int, Dictionary<string,decimal>> dict = new Dictionary<int, Dictionary<string,decimal>>();
+    private Boolean ShowTable = false;
 
     private eSortby selectedSortBy = eSortby.regH;
     private class MonthItem
@@ -781,6 +813,60 @@ else
             }
         }
 
+    }
+
+    private async Task SelectData(AMRMapHosStrategySelectDTO selectAMR, string arh_code)
+    {
+
+        selectMap.from_month = searchAMR.month_start;
+        if (string.IsNullOrEmpty(selectMap.from_month_str))
+        {
+            return;
+        }
+
+        selectMap.to_month = searchAMR.month_end;
+        if (string.IsNullOrEmpty(selectMap.to_month_str))
+        {
+            return;
+        }
+
+        //selectMap.from_year_code = searchAMR.year_code;
+        //if (string.IsNullOrEmpty(selectMap.from_year_code))
+        //{
+        //    return;
+        //}
+
+        //selectMap.to_year_code = searchAMR.year_code;
+        //if (string.IsNullOrEmpty(selectMap.to_year_code))
+        //{
+        //    return;
+        //}
+
+        //selectMap.sap_who_org_code = searchAMR.org_code;
+        //if (string.IsNullOrEmpty(selectMap.sap_who_org_code))
+        //{
+        //    return;
+        //}
+
+        //selectMap.antibio_code = searchAMR.antibio_code;
+        //if (string.IsNullOrEmpty(selectMap.gene_code))
+        //{
+        //    return;
+        //}
+
+        selectMap.arh_code = arh_code;
+        if (string.IsNullOrEmpty(selectMap.arh_code))
+        {
+            return;
+        }
+
+        if (selectMap != null)
+        {
+            ShowTable = true;
+            selectAMR = selectMap;
+
+            lstselectData = await ReportService.GetAMRMapHosStrategyModelAsync(selectMap);
+        }
     }
 
     private async Task SearchData()

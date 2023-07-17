@@ -217,6 +217,16 @@ namespace ALISS.Data.D6_Report.Antibiotrend
 
             return objList;
         }
+
+        public async Task<List<AntibiotrendAMRMapHosStrategyDataDTO>> GetAMRMapHosStrategyModelAsync(AMRMapHosStrategySelectDTO searchData)
+        {
+            List<AntibiotrendAMRMapHosStrategyDataDTO> objList = new List<AntibiotrendAMRMapHosStrategyDataDTO>();
+
+            objList = await _apiHelper.GetDataListByModelAsync<AntibiotrendAMRMapHosStrategyDataDTO, AMRMapHosStrategySelectDTO>("antibiotrend_api/GetAMRMapHosStrategyModel", searchData);
+
+            return objList;
+        }
+
         public async Task<string> ExportMapDataAsync(AMRSearchMapDTO selectedobj)
         {
             string statuscode = "";
