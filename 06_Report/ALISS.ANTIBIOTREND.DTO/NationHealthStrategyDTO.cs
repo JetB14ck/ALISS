@@ -81,5 +81,41 @@ namespace ALISS.ANTIBIOTREND.DTO
         public int rank_arh_12 { get; set; }
         public int rank_arh_13 { get; set; }
     }
-   
+
+    public class AntibiotrendAMRMapHosStrategyDataDTO
+    {
+        public string hos_arh_code { get; set; }
+        public string hos_name { get; set; }
+        public string hos_code { get; set; }
+        //public string hos_stars_arh_code { get; set; }
+    }
+
+    public class AMRMapHosStrategySelectDTO
+    {
+        public DateTime? from_month { get; set; }
+        public DateTime? to_month { get; set; }
+
+        public string from_month_str
+        {
+            get
+            {
+                return (from_month != null) ? from_month.Value.ToString("yyyy/MM/dd", new CultureInfo("en-US")) : null;
+            }
+        }
+        public string to_month_str
+        {
+            get
+            {
+                return (to_month != null) ? to_month.Value.ToString("yyyy/MM/dd", new CultureInfo("en-US")) : null;
+            }
+        }
+
+        public string from_year_code { get; set; }
+        public string to_year_code { get; set; }
+        //public string sap_who_org_code { get; set; }
+        //public string antibio_code { get; set; }
+        public string arh_code { get; set; }
+        //public string hos_star_arh_code { get; set; }
+    }
+
 }

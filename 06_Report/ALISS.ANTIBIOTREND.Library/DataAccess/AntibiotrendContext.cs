@@ -11,6 +11,7 @@ namespace ALISS.ANTIBIOTREND.Library.DataAccess
         public DbSet<SP_AntimicrobialResistanceDTO> DropdownAMRListDTOs { get; set; }
         public DbSet<NationHealthStrategyDTO> AMRNationHealthStrategyListDTOs { get; set; }
         public DbSet<AntibiotrendAMRStrategyDTO> AntibiotrendAMRStrategyListDTOs { get; set; }
+        public DbSet<AntibiotrendAMRMapHosStrategyDataDTO> AntibiotrendAMRMapHosStrategyDataDTOs { get; set; }
         public DbSet<AntibioticNameDTO> AntibioticListDTOs { get; set; }
         public AntibiotrendContext(DbContextOptions<AntibiotrendContext> options) : base(options)
         {
@@ -22,6 +23,7 @@ namespace ALISS.ANTIBIOTREND.Library.DataAccess
             builder.Entity<SP_AntimicrobialResistanceDTO>().HasNoKey();
             builder.Entity<NationHealthStrategyDTO>().HasNoKey();
             builder.Entity<AntibiotrendAMRStrategyDTO>().HasNoKey();
+            builder.Entity<AntibiotrendAMRMapHosStrategyDataDTO>().HasNoKey();
             builder.Entity<AntibioticNameDTO>().HasNoKey();
             base.OnModelCreating(builder);
         }

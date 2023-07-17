@@ -68,6 +68,15 @@ namespace ALISS.ANTIBIOTREND.Api.Controllers
         }
 
         [HttpPost]
+        [Route("api/Antibiotrend/GetAMRMapHosStrategyModel")]
+        public IEnumerable<AntibiotrendAMRMapHosStrategyDataDTO> GetAMRMapHosStrategy([FromBody] AMRMapHosStrategySelectDTO selectModel)
+        {
+            var objReturn = _service.GetAntibiotrendAMRmapHosStrategyWithModel(selectModel);
+
+            return objReturn;
+        }
+
+        [HttpPost]
         [Route("api/Antibiotrend/GetAMROverallModel")]
         public IEnumerable<SP_AntimicrobialResistanceDTO> GetAMROverall([FromBody]SP_AntimicrobialResistanceSearchDTO searchModel)
         {

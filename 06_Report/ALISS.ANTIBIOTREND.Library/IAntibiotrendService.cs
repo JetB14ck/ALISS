@@ -10,6 +10,7 @@ namespace ALISS.ANTIBIOTREND.Library
         List<SP_AntimicrobialResistanceDTO> GetAMRWithModel(SP_AntimicrobialResistanceSearchDTO searchModel);
         List<NationHealthStrategyDTO> GetAMRNationStrategyWithModel(AMRStrategySearchDTO searchModel);
         List<AntibiotrendAMRStrategyDTO> GetAntibiotrendAMRStrategyWithModel(AMRStrategySearchDTO searchModel);
+        List<AntibiotrendAMRMapHosStrategyDataDTO> GetAntibiotrendAMRmapHosStrategyWithModel(AMRMapHosStrategySelectDTO searchModel);
         List<SP_AntimicrobialResistanceDTO> GetAMRByOverallWithModel(SP_AntimicrobialResistanceSearchDTO searchModel);
         List<SP_AntimicrobialResistanceDTO> GetAMRByOverallByHospWithModel(SP_AntimicrobialResistanceHospSearchDTO searchModel);
         List<SP_AntimicrobialResistanceDTO> GetAMRByOverallByAreaHWithModel(SP_AntimicrobialResistanceAreaHSearchDTO searchModel);

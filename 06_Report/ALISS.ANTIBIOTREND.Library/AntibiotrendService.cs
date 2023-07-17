@@ -134,6 +134,43 @@ namespace ALISS.ANTIBIOTREND.Library
             return objList;
         }
 
+        public List<AntibiotrendAMRMapHosStrategyDataDTO> GetAntibiotrendAMRmapHosStrategyWithModel(AMRMapHosStrategySelectDTO searchModel)
+        {
+            log.MethodStart();
+
+            List<AntibiotrendAMRMapHosStrategyDataDTO> objList = new List<AntibiotrendAMRMapHosStrategyDataDTO>();
+
+
+            using (var trans = _db.Database.BeginTransaction())
+            {
+                try
+                {
+                    var objDataList = _db.AntibiotrendAMRMapHosStrategyDataDTOs.FromSqlRaw<AntibiotrendAMRMapHosStrategyDataDTO>("sp_GET_RPMapAntibiotrend {0},{1},{2}"
+                                                                                                    , searchModel.from_month
+                                                                                                    , searchModel.to_month
+                                                                                                    , searchModel.arh_code
+                                                                                                    ).ToList();
+
+                    objList = _mapper.Map<List<AntibiotrendAMRMapHosStrategyDataDTO>>(objDataList);
+
+                    trans.Commit();
+                }
+                catch (Exception ex)
+                {
+                    // TODO: Handle failure
+                    trans.Rollback();
+                }
+                finally
+                {
+                    trans.Dispose();
+                }
+            }
+
+            log.MethodFinish();
+
+            return objList;
+        }
+
         public List<SP_AntimicrobialResistanceDTO> GetAMRByOverallWithModel(SP_AntimicrobialResistanceSearchDTO searchModel)
         {
             log.MethodStart();
