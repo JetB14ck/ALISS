@@ -111,6 +111,13 @@ else
                         <RadzenButton Text="Upload File" class="btnAdd"
                                       Click="@ShowUploadEntryDialog" Disabled="@(string.IsNullOrEmpty(searchModel.afu_machinetype) || string.IsNullOrEmpty(searchModel.afu_Area))" />
                     </div>
+                    <div class="col-auto buttonArea">
+                        <RadzenButton Text="Export Error" class="btnAdd"
+                                      Click="@GenerateExcelError" />
+                    </div>
+                    <div class="col-auto buttonArea">
+                        <RadzenButton Text="Import Error" class="btnAdd" />
+                    </div>
                 </div>
             </div>
             <br />
@@ -131,6 +138,17 @@ else
                         FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
                         AllowColumnResize="true">
                 <Columns>
+                    <RadzenGridColumn TItem="UploadAutomateDataDTO" Property="lfu_id" Width="50px" Filterable="false" Sortable="false">
+                        <HeaderTemplate>
+                            <RadzenCheckBox TriState="false" TValue="bool" Value="@(gridDatas.Any(i => selectedUploadAutomates != null && selectedUploadAutomates.Contains(i)))"
+                                            Change="@(args => selectedUploadAutomates = args ? gridDatas.Where(x => x.afu_status == "w" ).Select(x => x).ToList() : null)"
+                                            />
+                        </HeaderTemplate>
+                        <Template Context="data">
+                            <RadzenCheckBox TriState="false" Value="@(selectedUploadAutomates != null && selectedUploadAutomates.Contains(data))"
+                                            TValue="bool" Change=@(args => { OnGridRowSelected(data); }) />
+                        </Template>
+                    </RadzenGridColumn>
                     <RadzenGridColumn TItem="UploadAutomateDataDTO" Property="arh_name" Title="ศูนย์วิทย์" Width="100px">
                         <FooterTemplate>
                             <label title="@inboxGrid.FooterLabelString">@inboxGrid.FooterLabelString</label>
@@ -313,7 +331,7 @@ else
     private bool ShowUploadEntryPopup = false;
 
     private List<UploadAutomateDataDTO> gridDatas;
-    IList<string> selectedUploadAutomates;
+    IList<UploadAutomateDataDTO> selectedUploadAutomates;
 
     LoginUserRolePermissionDTO permission;
     private IBrowserFile selectedFiles;
@@ -328,6 +346,7 @@ else
     private List<HospitalLabDataDTO> lab_ddl_List;
     private List<ParameterDTO> ParameterList;
     private List<STARSMappingListsDTO> machine_ddl_list;
+    private string status = "W";
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -590,6 +609,44 @@ else
         }
 
 
+    }
+
+    void OnGridRowSelected(UploadAutomateDataDTO lab)
+    {
+        selectedUploadAutomates = selectedUploadAutomates ?? new List<UploadAutomateDataDTO>();
+        if ((lab.afu_status == "W")
+            && !selectedUploadAutomates.Contains(lab))
+            selectedUploadAutomates.Add(lab);
+        else if (selectedUploadAutomates.Contains(lab))
+            selectedUploadAutomates.Remove(lab);
+    }
+
+    private async Task GenerateExcelError()
+    {
+        if (selectedUploadAutomates == null || selectedUploadAutomates.Count == 0)
+        {
+            await jsRuntime.InvokeAsync<object>("ShowAlert", "Please select data!");
+            return;
+        }
+
+        var filterFDatas = selectedUploadAutomates;
+        if (filterFDatas.Where(x => x.afu_status != "W").Count() > 0)
+        {
+            await jsRuntime.InvokeAsync<object>("ShowAlert", "Please select error record only!");
+            return;
+        }
+
+        string [] afu_ids = selectedUploadAutomates.Select(x => x.afu_id.ToString()).ToArray();
+        string fileName = string.Format("ExportError_{0}", DateTime.Now.ToString("yyyy-MM-dd"));
+
+        try
+        {
+            UploadAutomateservice.GenerateExportError(jsRuntime, afu_ids, fileName);
+        }
+        catch (Exception ex)
+        {
+            await jsRuntime.InvokeAsync<object>("ShowAlert", ex.Message);
+        }
     }
 
 }

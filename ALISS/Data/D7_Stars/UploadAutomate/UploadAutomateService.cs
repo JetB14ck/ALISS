@@ -11,6 +11,7 @@ using System.IO;
 using ALISS.UserManagement.DTO;
 using ALISS.STARS.Report.DTO;
 using Log4NetLibrary;
+using ALISS.STARS.DTO.UploadAutomate;
 
 namespace ALISS.Data.D7_StarsMapping
 {
@@ -188,6 +189,86 @@ namespace ALISS.Data.D7_StarsMapping
                 iJSRuntime.InvokeAsync<UploadAutomateService>(
                     "saveAsFile",
                     string.Format("{0}.xlsx", "Summary"),
+                    Convert.ToBase64String(fileContents)
+                    );
+
+            }
+            catch (Exception ex)
+            {
+
+            }
+        }
+
+        public async void GenerateExportError(IJSRuntime iJSRuntime, string[] afu_ids, string LabFileName)
+        {
+            byte[] fileContents;
+
+            List<UploadAutomateExportErrorDTO> objList = new List<UploadAutomateExportErrorDTO>();
+
+            objList = await _apiHelper.PostDataByListAsync<List<UploadAutomateExportErrorDTO>>("upload_automate_api/GetUploadAutomateExportError", afu_ids);
+
+            ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
+
+            using (var package = new ExcelPackage())
+            {
+                int row_no = 2;
+                var workSheet = package.Workbook.Worksheets.Add("ExportError");
+
+                #region Hearder Row
+                string[] headers = new string[] { "เขตสุขภาพ", "เครื่องจักร", "File Name", "Field", "Field Value", "Field Descr", "Data Code", "Data Desc", "afu_id", "afu_smp_id"};
+                foreach (var (header, i) in headers.Select((value, i) => (value, i)))
+                {
+                    workSheet.Cells[1, i + 1].Value = header;
+                }
+                #endregion
+
+                #region Data Row
+                foreach (var row in objList)
+                {
+                    int col = 0;
+                    //foreach (var prop in row.GetType().GetProperties())
+                    //{
+                    //    workSheet.Cells[row_no, col + 1].Value = prop.GetValue(row, null);
+                    //    col++;
+                    //}
+                    workSheet.Cells[row_no, 1].Value = "string ss";
+                    workSheet.Cells[row_no, 2].Value = "string ss";
+                    workSheet.Cells[row_no, 3].Value = "string ss";
+                    workSheet.Cells[row_no, 4].Value = "string ss";
+                    workSheet.Cells[row_no, 5].Value = "string ss";
+                    workSheet.Cells[row_no, 6].Value = "string ss";
+                    workSheet.Cells[row_no, 7].Value = "string ss";
+                    workSheet.Cells[row_no, 8].Value = "string ss";
+                    workSheet.Cells[row_no, 9].Value = "string ss";
+                    workSheet.Cells[row_no, 10].Value = "string ss";
+                    row_no++;
+                }
+                #endregion
+
+                #region workSheet Properties
+                workSheet.Row(1).Style.Font.Bold = true;
+
+                workSheet.Column(1).Width = 16;
+                workSheet.Column(2).Width = 36;
+                workSheet.Column(3).Width = 11;
+                workSheet.Column(4).Width = 11;
+                workSheet.Column(5).Width = 11;
+                workSheet.Column(6).Width = 36;
+                workSheet.Column(7).Width = 14;
+                workSheet.Column(8).Width = 24;
+                workSheet.Column(9).Hidden = true;
+                workSheet.Column(10).Hidden = true;
+                #endregion
+
+                var filecont1 = package.GetAsByteArray();
+                fileContents = package.GetAsByteArray();
+            }
+
+            try
+            {
+                iJSRuntime.InvokeAsync<UploadAutomateService>(
+                    "saveAsFile",
+                    string.Format("{0}.xlsx", LabFileName),
                     Convert.ToBase64String(fileContents)
                     );
 

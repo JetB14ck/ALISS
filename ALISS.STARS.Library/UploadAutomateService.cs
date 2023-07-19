@@ -7,6 +7,7 @@ using ALISS.STARS.Library.Models;
 using System.Linq;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
+using ALISS.STARS.DTO.UploadAutomate;
 
 namespace ALISS.STARS.Library
 {
@@ -280,6 +281,36 @@ namespace ALISS.STARS.Library
                 {
                     objList = _db.UploadAutomateSummaryDetailListDTOs.FromSqlRaw<UploadAutomateSummaryDetailListDTO>("sp_GET_TRUploadAutomateSummaryDetailListByAfuId {0}", afu_Id).ToList();
                     trans.Commit();
+                }
+                catch (Exception ex)
+                {
+                    // TODO: Handle failure
+                    trans.Rollback();
+                }
+                finally
+                {
+                    trans.Dispose();
+                }
+            }
+
+            log.MethodFinish();
+
+            return objList;
+        }
+
+        public List<UploadAutomateExportErrorDTO> GetUploadAutomateExportError(string[] afu_ids)
+        {
+            log.MethodStart();
+            List<UploadAutomateExportErrorDTO> objList = new List<UploadAutomateExportErrorDTO>();
+
+            using (var trans = _db.Database.BeginTransaction())
+            {
+                string param = string.Join(",", afu_ids);
+                try
+                {
+                    objList = _db.UploadAutomateExportErrorDTOs.FromSqlRaw<UploadAutomateExportErrorDTO>("sp_GET_TRUploadAutomateErrorDetailAll {0}", param).ToList();
+                    trans.Commit();
+
                 }
                 catch (Exception ex)
                 {

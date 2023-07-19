@@ -9,6 +9,7 @@ using ALISS.LabFileUpload.DTO;
 using ALISS.STARS.DTO.RepeatAutomate;
 using ALISS.STARS.DTO.STARSMapGene;
 using ALISS.STARS.DTO.NarstService;
+using ALISS.STARS.DTO.UploadAutomate;
 
 namespace ALISS.STARS.Library.DataAccess
 {
@@ -54,6 +55,7 @@ namespace ALISS.STARS.Library.DataAccess
         public DbSet<UploadAutomateErrorHeaderListDTO> UploadAutomateErrorHeaderListDTOs { get; set; }
         public DbSet<UploadAutomateErrorDetailListDTO> UploadAutomateErrorDetailListDTOs { get; set; }
         public DbSet<UploadAutomateAlertSummaryListDTO> UploadAutomateAlertSummaryListDTOs { get; set; }
+        public DbSet<UploadAutomateExportErrorDTO> UploadAutomateExportErrorDTOs { get; set; }
 
         #endregion
 
@@ -208,6 +210,7 @@ namespace ALISS.STARS.Library.DataAccess
             builder.Entity<STARSMonitoringDetailDTO>().HasKey(x => x.srr_id);
 
             builder.Entity<NarstServiceDTO>().HasNoKey();
+            builder.Entity<UploadAutomateExportErrorDTO>().HasNoKey();
 
             base.OnModelCreating(builder);
         }

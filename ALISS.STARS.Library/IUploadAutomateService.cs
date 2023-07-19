@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Net;
 using System.Text;
 using ALISS.STARS.DTO;
+using ALISS.STARS.DTO.UploadAutomate;
 
 namespace ALISS.STARS.Library
 {
@@ -19,6 +20,6 @@ namespace ALISS.STARS.Library
         List<UploadAutomateSummaryHeaderListDTO> GetUploadAutomateSummaryHeaderByAfuId(string afu_id);
         List<UploadAutomateSummaryDetailListDTO> GetUploadAutomateSummaryDetailByAfuId(string fsh_id);
         List<UploadAutomateSummaryDetailListDTO> GetUploadAutomateSummaryDetailListByAfuId(string afu_Id);
-
+        List<UploadAutomateExportErrorDTO> GetUploadAutomateExportError(string[] afu_ids);
     }
 }

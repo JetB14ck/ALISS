@@ -7,7 +7,7 @@ using ALISS.STARS.DTO;
 using ALISS.STARS.Library;
 using ALISS.STARS.Library.DataAccess;
 using AutoMapper;
-
+using ALISS.STARS.DTO.UploadAutomate;
 
 namespace ALISS.UploadAutomate.Api.Controllers
 {
@@ -89,6 +89,14 @@ namespace ALISS.UploadAutomate.Api.Controllers
         {
 
             var objReturn = _service.GetUploadAutomateErrorDetailListByAfuId(param);
+            return objReturn;
+        }
+
+        [Route("api/UploadAutomate/GetUploadAutomateExportError")]
+        [HttpPost]
+        public List<UploadAutomateExportErrorDTO> GetUploadAutomateExportError([FromBody] string[] afu_ids)
+        {
+            var objReturn = _service.GetUploadAutomateExportError(afu_ids);
             return objReturn;
         }
 
