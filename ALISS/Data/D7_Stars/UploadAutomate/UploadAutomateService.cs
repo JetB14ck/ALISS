@@ -199,7 +199,7 @@ namespace ALISS.Data.D7_StarsMapping
             }
         }
 
-        public async void GenerateExportError(IJSRuntime iJSRuntime, string[] afu_ids, string LabFileName)
+        public async void GenerateExportError(IJSRuntime iJSRuntime, string[] afu_ids, string fileName)
         {
             byte[] fileContents;
 
@@ -226,21 +226,12 @@ namespace ALISS.Data.D7_StarsMapping
                 foreach (var row in objList)
                 {
                     int col = 0;
-                    //foreach (var prop in row.GetType().GetProperties())
-                    //{
-                    //    workSheet.Cells[row_no, col + 1].Value = prop.GetValue(row, null);
-                    //    col++;
-                    //}
-                    workSheet.Cells[row_no, 1].Value = "string ss";
-                    workSheet.Cells[row_no, 2].Value = "string ss";
-                    workSheet.Cells[row_no, 3].Value = "string ss";
-                    workSheet.Cells[row_no, 4].Value = "string ss";
-                    workSheet.Cells[row_no, 5].Value = "string ss";
-                    workSheet.Cells[row_no, 6].Value = "string ss";
-                    workSheet.Cells[row_no, 7].Value = "string ss";
-                    workSheet.Cells[row_no, 8].Value = "string ss";
-                    workSheet.Cells[row_no, 9].Value = "string ss";
-                    workSheet.Cells[row_no, 10].Value = "string ss";
+                    foreach (var prop in row.GetType().GetProperties())
+                    {
+                        workSheet.Cells[row_no, col + 1].Value = prop.GetValue(row, null);
+                        col++;
+                    }
+
                     row_no++;
                 }
                 #endregion
@@ -254,13 +245,13 @@ namespace ALISS.Data.D7_StarsMapping
                 workSheet.Column(4).Width = 11;
                 workSheet.Column(5).Width = 11;
                 workSheet.Column(6).Width = 36;
-                workSheet.Column(7).Width = 14;
-                workSheet.Column(8).Width = 24;
+                workSheet.Column(7).Hidden = false;
+                workSheet.Column(8).Hidden = false;
                 workSheet.Column(9).Hidden = true;
                 workSheet.Column(10).Hidden = true;
                 #endregion
 
-                var filecont1 = package.GetAsByteArray();
+                //var filecont1 = package.GetAsByteArray();
                 fileContents = package.GetAsByteArray();
             }
 
@@ -268,7 +259,7 @@ namespace ALISS.Data.D7_StarsMapping
             {
                 iJSRuntime.InvokeAsync<UploadAutomateService>(
                     "saveAsFile",
-                    string.Format("{0}.xlsx", LabFileName),
+                    string.Format("{0}.xlsx", fileName),
                     Convert.ToBase64String(fileContents)
                     );
 
@@ -280,4 +271,3 @@ namespace ALISS.Data.D7_StarsMapping
         }
     }
 }
-
