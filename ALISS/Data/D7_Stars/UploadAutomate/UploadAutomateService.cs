@@ -245,8 +245,8 @@ namespace ALISS.Data.D7_StarsMapping
                 workSheet.Column(4).Width = 11;
                 workSheet.Column(5).Width = 11;
                 workSheet.Column(6).Width = 36;
-                workSheet.Column(7).Hidden = false;
-                workSheet.Column(8).Hidden = false;
+                workSheet.Column(7).Width = 36;
+                workSheet.Column(8).Width = 36;
                 workSheet.Column(9).Hidden = true;
                 workSheet.Column(10).Hidden = true;
                 #endregion
