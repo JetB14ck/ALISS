@@ -12,6 +12,13 @@ using ALISS.UserManagement.DTO;
 using ALISS.STARS.Report.DTO;
 using Log4NetLibrary;
 using ALISS.STARS.DTO.UploadAutomate;
+using ALISS.STARS.DTO.RepeatAutomate;
+using ALISS.DropDownList.DTO;
+using ALISS.Mapping.DTO;
+using ALISS.Helpers;
+using System.Data;
+using ExcelDataReader;
+using Newtonsoft.Json;
 
 namespace ALISS.Data.D7_StarsMapping
 {
@@ -268,6 +275,169 @@ namespace ALISS.Data.D7_StarsMapping
             {
 
             }
+        }
+
+        public async Task<string> GetPath()
+        {
+            var ErrorMessage = new List<UploadAutomateLogErrorMessageDTO>();
+
+            string path = "";
+            List<ParameterDTO> objParamList = new List<ParameterDTO>();
+            var searchModel = new ParameterDTO() { prm_code_major = "AUTOMATE_MAPPING_ERROR_PATH" };
+
+            objParamList = await _apiHelper.GetDataListByModelAsync<ParameterDTO, ParameterDTO>("dropdownlist_api/GetParameterList", searchModel);
+
+            if (objParamList.FirstOrDefault(x => x.prm_code_minor == "PATH") != null)
+            {
+                path = objParamList.FirstOrDefault(x => x.prm_code_minor == "PATH").prm_value;
+            }
+            return path;
+        }
+
+        public async Task<List<UploadAutomateLogErrorMessageDTO>> ValidateFileAsync(string path, string fileName)
+        {
+
+            var ErrorMessage = new List<UploadAutomateLogErrorMessageDTO>();
+            int row = 1;
+            try
+            {
+                path = Path.Combine(path, fileName);
+                #region ReadExcel
+                if (Path.GetExtension(fileName) == ".xls" || Path.GetExtension(fileName) == ".xlsx")
+                {
+                    ExcelDataSetConfiguration option = new ExcelDataSetConfiguration();
+
+                    using (var stream = File.Open(path, FileMode.Open, FileAccess.Read))
+                    {
+                        using (var reader = ExcelReaderFactory.CreateReader(stream))
+                        {
+                            DataSet result = new DataSet();
+
+                            //First row is header
+                            result = reader.AsDataSet(new ExcelDataSetConfiguration()
+                            {
+                                ConfigureDataTable = (tableReader) => new ExcelDataTableConfiguration()
+                                {
+                                    UseHeaderRow = true
+                                }
+                            }
+                                );
+
+
+                            //Rename column by mapping
+                            string columns = "[{\"OriginalName\":\"เขตสุขภาพ\",\"NewName\":\"afu_arh_code\"},{\"OriginalName\":\"เครื่องจักร\",\"NewName\":\"afu_machinetype\"}," +
+                                            "{\"OriginalName\":\"File Name\",\"NewName\":\"afu_filename\"},{\"OriginalName\":\"Field\",\"NewName\":\"aeh_field\"}," +
+                                            "{\"OriginalName\":\"Field Value\",\"NewName\":\"aed_localvalue\"},{\"OriginalName\":\"Field Descr\",\"NewName\":\"aed_localdescr\"}," +
+                                            "{\"OriginalName\":\"Data Code\",\"NewName\":\"data_code\"},{\"OriginalName\":\"Data Desc\",\"NewName\":\"data_desc\"}," +
+                                            "{\"OriginalName\":\"afu_id\",\"NewName\":\"afu_id\"},{\"OriginalName\":\"afu_smp_id\",\"NewName\":\"afu_smp_id\"}]";
+                            List<MappingColumn> names = JsonConvert.DeserializeObject<List<MappingColumn>>(columns);
+                            DataTable source = result.Tables[0];
+
+                            // Validate file
+                            if (names.Count != source.Columns.Count)
+                            {
+                                ErrorMessage.Add(new UploadAutomateLogErrorMessageDTO
+                                {
+                                    afu_status = 'E',
+                                    afu_Err_type = 'E',
+                                    afu_Err_no = 1,
+                                    afu_Err_Column = "All",
+                                    afu_Err_Message = "รูปแบบไฟล์ไม่ถูกต้อง กรุณาตรวจสอบ!"
+                                });
+                                return ErrorMessage;
+                            }
+
+                            int error_no = 1;
+                            foreach (DataColumn col in source.Columns)
+                            {
+                                if (!names.Where(x => x.OriginalName == col.ColumnName).Any())
+                                {
+                                    ErrorMessage.Add(new UploadAutomateLogErrorMessageDTO
+                                    {
+                                        afu_status = 'E',
+                                        afu_Err_type = 'E',
+                                        afu_Err_no = error_no,
+                                        afu_Err_Column = col.ColumnName,
+                                        afu_Err_Message = string.Format("ไม่พบ column {0} กรุณาตรวจสอบ!", col.ColumnName)
+                                    });
+                                    error_no++;
+                                }
+                            }
+                            if (ErrorMessage.Any())
+                            {
+                                return ErrorMessage;
+                            }
+
+                            // Rename
+                            //var dtResult = DataTableHelper.RenameColumn(result.Tables[0], names).Select("whonet_code<>''").CopyToDataTable();
+                            var dtResult = DataTableHelper.RenameColumn(result.Tables[0], names);
+                            //Save Temp to table
+                            List<TempImportUploadAutomateLogDTO> objReturn = new List<TempImportUploadAutomateLogDTO>();
+                            List<TempImportUploadAutomateLogDTO> models = new List<TempImportUploadAutomateLogDTO>();
+                            models = DataTableHelper.ConvertDataTable<TempImportUploadAutomateLogDTO>(dtResult);
+                            objReturn = await _apiHelper.PostDataAsync("mapping_api/Post_SaveImportUploadAutomateLogData", models);
+
+                            ErrorMessage.Add(new UploadAutomateLogErrorMessageDTO
+                            {
+                                afu_status = 'I',
+                                afu_Err_type = 'I',
+                                afu_Err_no = 1,
+                                afu_Err_Column = "Who_code",
+                                afu_Err_Message = dtResult.Rows.Count.ToString()
+                            });
+
+                            ErrorMessage.Add(new UploadAutomateLogErrorMessageDTO
+                            {
+                                afu_status = 'I',
+                                afu_Err_type = 'I',
+                                afu_Err_no = 1,
+                                afu_Err_Column = "Total",
+                                afu_Err_Message = source.Rows.Count.ToString()
+                            });
+                        }
+                    }
+                }
+                #endregion
+
+
+                var chkError = ErrorMessage.FirstOrDefault(x => x.afu_status == 'E');
+                if (chkError != null)
+                {
+                    File.Delete(path);
+                }
+                else
+                {
+                    ErrorMessage.Add(new UploadAutomateLogErrorMessageDTO
+                    {
+                        afu_status = 'I',
+                        afu_Err_type = 'P',
+                        afu_Err_no = 1,
+                        afu_Err_Column = "path",
+                        afu_Err_Message = path
+                    });
+                }
+            }
+            catch (Exception ex)
+            {
+                ErrorMessage.Add(new UploadAutomateLogErrorMessageDTO
+                {
+                    afu_status = 'E',
+                    afu_Err_type = 'E',
+                    afu_Err_no = 1,
+                    afu_Err_Column = "",
+                    afu_Err_Message = ex.Message
+                });
+            }
+
+            return ErrorMessage;
+        }
+
+        public async Task<UploadAutomateLogDTO> UploadFileAsync(UploadAutomateLogDTO model)
+        {
+            UploadAutomateLogDTO objReturn = new UploadAutomateLogDTO();
+            objReturn = await _apiHelper.PostDataAsync("mapping_api/Post_SaveTempImportUploadAutomateLogData", model);
+
+            return objReturn;
         }
     }
 }

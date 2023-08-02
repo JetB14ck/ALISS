@@ -8,6 +8,7 @@ using System.Linq;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using ALISS.STARS.DTO.UploadAutomate;
+using EFCore.BulkExtensions;
 
 namespace ALISS.STARS.Library
 {
@@ -326,6 +327,81 @@ namespace ALISS.STARS.Library
             log.MethodFinish();
 
             return objList;
+        }
+
+        public UploadAutomateLogDTO SaveImportUploadAutomateLogData(UploadAutomateLogDTO model)
+        {
+            log.MethodStart();
+
+            var currentDateTime = DateTime.Now;
+            UploadAutomateLogDTO objReturn = new UploadAutomateLogDTO();
+
+            using (var trans = _db.Database.BeginTransaction())
+            {
+                try
+                {
+                    var objModel = new UploadAutomateLogDTO();
+                    objModel = _mapper.Map<UploadAutomateLogDTO>(model);
+
+                    objModel.iml_createdate = currentDateTime;
+                    objModel.iml_import_date = currentDateTime;
+
+                    _db.UploadAutomateLogDTOs.Add(objModel);
+
+                    _db.SaveChanges();
+
+                    trans.Commit();
+
+                    objReturn = _mapper.Map<UploadAutomateLogDTO>(objModel);
+                }
+                catch (Exception ex)
+                {
+                    // TODO: Handle failure
+                    trans.Rollback();
+                }
+                finally
+                {
+                    trans.Dispose();
+                }
+            }
+
+            return objReturn;
+        }
+
+        public List<TempImportUploadAutomateLogDTO> SaveTempImportUploadAutomateLogData(List<TempImportUploadAutomateLogDTO> tmpmodel)
+        {
+            log.MethodStart();
+
+            List<TempImportUploadAutomateLogDTO> objReturn = new List<TempImportUploadAutomateLogDTO>();
+
+            using (var trans = _db.Database.BeginTransaction())
+            {
+                try
+                {
+                    // Insert Temp table
+                    var objModel = new List<TempImportUploadAutomateLogDTO>();
+                    objModel = _mapper.Map<List<TempImportUploadAutomateLogDTO>>(tmpmodel);
+
+                    _db.BulkInsert(tmpmodel);
+
+                    _db.SaveChanges();
+
+                    var result = _db.Database.ExecuteSqlCommand("exec sp_UPDATE_ImportMappingAutomateError {0}", "SYSTEM");
+
+                    trans.Commit();
+                }
+                catch (Exception ex)
+                {
+                    // TODO: Handle failure
+                    trans.Rollback();
+                }
+                finally
+                {
+                    trans.Dispose();
+                }
+            }
+
+            return objReturn;
         }
     }
 }

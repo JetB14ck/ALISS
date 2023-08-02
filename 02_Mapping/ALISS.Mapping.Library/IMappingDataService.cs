@@ -56,5 +56,10 @@ namespace ALISS.Mapping.Library
         TRImportMappingLogDTO SaveTRImportMappingLogData(TRImportMappingLogDTO model);
         List<TempImportMappingLogDTO> SaveTempImportMappingLogData(List<TempImportMappingLogDTO> model);
         #endregion
+
+        #region ImportMappingAutomateError
+        TRImportMappingLogDTO SaveTRImportMappingAutomateLogData(TRImportMappingLogDTO model);
+        List<TempImportMappingLogDTO> SaveTempImportMappingAutomateLogData(List<TempImportMappingLogDTO> model);
+        #endregion
     }
 }
