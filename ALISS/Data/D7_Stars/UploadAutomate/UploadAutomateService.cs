@@ -369,8 +369,8 @@ namespace ALISS.Data.D7_StarsMapping
                             }
 
                             // Rename
-                            //var dtResult = DataTableHelper.RenameColumn(result.Tables[0], names).Select("whonet_code<>''").CopyToDataTable();
-                            var dtResult = DataTableHelper.RenameColumn(result.Tables[0], names);
+                            var dtResult = DataTableHelper.RenameColumn(result.Tables[0], names).Select("whonet_code<>''").CopyToDataTable();
+                            //var dtResult = DataTableHelper.RenameColumn(result.Tables[0], names);
                             //Save Temp to table
                             List<TempImportUploadAutomateLogDTO> objReturn = new List<TempImportUploadAutomateLogDTO>();
                             List<TempImportUploadAutomateLogDTO> models = new List<TempImportUploadAutomateLogDTO>();

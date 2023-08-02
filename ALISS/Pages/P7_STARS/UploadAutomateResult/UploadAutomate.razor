@@ -831,8 +831,8 @@ else
             string ErrorMessage = "";
             foreach (UploadAutomateLogErrorMessageDTO item in chkValidate)
             {
-                if (item.afu_status == 'I' && item.afu_Err_Column == "afu_id")
-                    ErrorMessage += "afu_id Record(s) = " + item.afu_Err_Message + "\n";
+                if (item.afu_status == 'I' && item.afu_Err_Column == "Who_code")
+                    ErrorMessage += "WHO Code Record(s) = " + item.afu_Err_Message + "\n";
                 if (item.afu_status == 'I' && item.afu_Err_Column == "Total")
                 {
                     Int32.TryParse(item.afu_Err_Message, out totalRec);
