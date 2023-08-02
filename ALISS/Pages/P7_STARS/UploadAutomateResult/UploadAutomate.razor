@@ -4,6 +4,8 @@
 @using ALISS.STARS.DTO
 @using System.IO;
 @using ALISS.STARS.DTO.RepeatAutomate;
+@using ALISS.Data.D1_Upload;
+@using ALISS.Data.D2_Mapping;
 @using ALISS.Data.D7_StarsRepeat
 
 @inject IJSRuntime jsRuntime
@@ -116,7 +118,7 @@ else
                                       Click="@GenerateExcelError" />
                     </div>
                     <div class="col-auto buttonArea">
-                        <RadzenButton Text="Import Error" class="btnAdd" />
+                        <RadzenButton Text="Import Error" class="btnAdd" Click="@(() => OpenImportErrorMapping())" />
                     </div>
                 </div>
             </div>
@@ -141,8 +143,7 @@ else
                     <RadzenGridColumn TItem="UploadAutomateDataDTO" Property="lfu_id" Width="50px" Filterable="false" Sortable="false">
                         <HeaderTemplate>
                             <RadzenCheckBox TriState="false" TValue="bool" Value="@(gridDatas.Any(i => selectedUploadAutomates != null && selectedUploadAutomates.Contains(i)))"
-                                            Change="@(args => selectedUploadAutomates = args ? gridDatas.Where(x => x.afu_status == "w" ).Select(x => x).ToList() : null)"
-                                            />
+                                            Change="@(args => selectedUploadAutomates = args ? gridDatas.Where(x => x.afu_status == "w" ).Select(x => x).ToList() : null)" />
                         </HeaderTemplate>
                         <Template Context="data">
                             <RadzenCheckBox TriState="false" Value="@(selectedUploadAutomates != null && selectedUploadAutomates.Contains(data))"
@@ -313,6 +314,84 @@ else
     </div>
 }
 
+@*PopupImportError*@
+@if (ShowUploadErrorPopup == true)
+{
+    <div class="modal" tabindex="-1" style="display:block;" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                </div>
+                <div class="modal-body">
+                    <EditForm Model="@uploadautomateLog" OnValidSubmit="()=> ValidateFileError()">
+                        <DataAnnotationsValidator />
+                        <div class="container inputArea">
+                            <div class="row justify-content-center">
+
+                                <div class="col-12">
+                                    <div class="row justify-content-center divGroup">
+                                        <div class="col">
+                                            <LabelBox inputLabel="Upload Lab File" />
+                                        </div>
+                                        <div class="col">
+                                            <InputFile OnChange="OnInputFileErrorChange"></InputFile>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-12">
+                                    <div class="row justify-content-center divGroup">
+                                        <div class="col">
+                                            @*<LabelBox inputLabel="Upload Lab File" />*@
+                                        </div>
+                                        <div class="col" style="font-size:small">
+                                            <label>(ไฟล์ต้องมีขนาดไม่เกิน 500MB)</label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                @if (selectedErrorFiles != null)
+                                {
+                                    <div class="col-12">
+                                        <div class="row justify-content-center divGroup">
+                                            <div class="col">
+                                                <LabelBox inputLabel="@configData.Get_Label("Filename")" />
+                                            </div>
+                                            <div class="col">
+                                                <label>@selectedErrorFiles.Name</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-12">
+                                        <div class="row justify-content-center divGroup">
+                                            <div class="col">
+                                                <div>@LargeUploadMessage</div>
+                                                <progress style="height:50px;width:100%;" value="@UploadedBytes" max="@TotalBytes"></progress>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                }
+                                <div class="col-xl-12">
+                                    <div class="row justify-content-center divGroup buttonArea">
+                                        <div class="col-auto">
+                                            <RadzenButton class="btnCancel" Text="Cancel" Click="@(() => ControlPopupError(false))" />
+                                        </div>
+                                        <div class="col-auto">
+                                            <RadzenButton Icon="save" ButtonType="ButtonType.Submit" class="btnSave" Text="Upload"
+                                                          disabled="@(selectedErrorFiles == null ? true : false)" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </EditForm>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
 <Loading ShowModel="showModal" />
 
 @code {
@@ -329,12 +408,14 @@ else
 
     private bool showModal = false;
     private bool ShowUploadEntryPopup = false;
+    private bool ShowUploadErrorPopup = false;
 
     private List<UploadAutomateDataDTO> gridDatas;
     IList<UploadAutomateDataDTO> selectedUploadAutomates;
 
     LoginUserRolePermissionDTO permission;
     private IBrowserFile selectedFiles;
+    private IBrowserFile selectedErrorFiles;
 
     string LargeUploadMessage = "";
     long UploadedBytes;
@@ -342,11 +423,13 @@ else
 
     UploadAutomateSearchDTO searchModel = new UploadAutomateSearchDTO();
     UploadAutomateDataDTO UploadFileData = new UploadAutomateDataDTO();
+    UploadAutomateDataDTO UploadFileErrorData = new UploadAutomateDataDTO();
+
+    UploadAutomateLogDTO uploadautomateLog = new UploadAutomateLogDTO();
 
     private List<HospitalLabDataDTO> lab_ddl_List;
     private List<ParameterDTO> ParameterList;
     private List<STARSMappingListsDTO> machine_ddl_list;
-    private string status = "W";
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -431,7 +514,7 @@ else
 
         string str_CurrentDate = DateTime.Now.ToString("yyyyMMdd");
 
-        string filepath = await RepeatService.GetPath();
+        string filepath = await UploadAutomateservice.GetPath();
         filepath = Path.Combine(filepath, UploadFileData.afu_arh_code, str_CurrentDate);
         bool exists = System.IO.Directory.Exists(filepath);
 
@@ -636,7 +719,7 @@ else
             return;
         }
 
-        string [] afu_ids = selectedUploadAutomates.Select(x => x.afu_id.ToString()).ToArray();
+        string[] afu_ids = selectedUploadAutomates.Select(x => x.afu_id.ToString()).ToArray();
         string fileName = string.Format("ExportError_{0}", DateTime.Now.ToString("yyyy-MM-dd"));
 
         try
@@ -649,4 +732,181 @@ else
         }
     }
 
+    async Task OpenImportErrorMapping()
+    {
+        ControlPopupError(true);
+    }
+
+    async Task ControlPopupError(bool control)
+    {
+        ShowUploadErrorPopup = control;
+        if (control == false)
+        {
+            selectedErrorFiles = null;
+        }
+    }
+
+    async Task ValidateFileError()
+    {
+        string confirmMessage = "";
+        confirmMessage = "Confirm upload data." + "\n" + " File Name: " + selectedErrorFiles.Name + "\n";
+
+        var result = await jsRuntime.InvokeAsync<bool>("ShowConfirm", confirmMessage);
+        if (result == false)
+            return;
+
+        showModal = true;
+
+        string str_CurrentDate = DateTime.Now.ToString("yyyyMMdd");
+
+        string filepath = await UploadAutomateservice.GetPath();
+        filepath = Path.Combine(filepath, str_CurrentDate, string.Empty);
+        bool exists = System.IO.Directory.Exists(filepath);
+
+        if (!exists)
+            System.IO.Directory.CreateDirectory(filepath);
+
+        var filename = Path.Combine(filepath, selectedErrorFiles.Name);
+
+        UploadedBytes = 0;
+
+        TotalBytes = selectedErrorFiles.Size;
+
+        long percent = 0;
+        long chunckSize = 400000;
+        long numChunks = TotalBytes / chunckSize;
+        long remainder = TotalBytes % chunckSize;
+
+        if (File.Exists(filename)) File.Delete(filename);
+
+        using (var inStream = selectedErrorFiles.OpenReadStream(long.MaxValue))
+        {
+            using (var outStream = File.OpenWrite(filename))
+            {
+                for (int i = 0; i < numChunks; i++)
+                {
+                    var buffer = new byte[chunckSize];
+                    await inStream.ReadAsync(buffer, 0, buffer.Length);
+
+                    await outStream.WriteAsync(buffer, 0, buffer.Length);
+
+                    UploadedBytes += chunckSize;
+
+                    percent = UploadedBytes * 100 / TotalBytes;
+
+                    LargeUploadMessage = $"กำลังอัปโหลดไฟล์ {percent}%";
+
+                    await InvokeAsync(StateHasChanged);
+                }
+
+                if (remainder > 0)
+                {
+                    var buffer = new byte[remainder];
+                    await inStream.ReadAsync(buffer, 0, buffer.Length);
+
+                    await outStream.WriteAsync(buffer, 0, buffer.Length);
+
+                    UploadedBytes += remainder;
+
+                    percent = UploadedBytes * 100 / TotalBytes;
+
+                    LargeUploadMessage = $"กำลังอัปโหลดไฟล์ {percent}%";
+
+                    await InvokeAsync(StateHasChanged);
+                }
+            }
+        }
+
+        LargeUploadMessage = "กำลังตรวจสอบไฟล์ ...";
+        await InvokeAsync(StateHasChanged);
+
+        //UploadFileErrorData.afu_smp_id = machine_ddl_list.Find(x => x.smp_machinetype == UploadFileErrorData.afu_machinetype).smp_id;
+        var chkValidate = await UploadAutomateservice.ValidateFileAsync(filepath, selectedErrorFiles.Name);
+
+        LargeUploadMessage = "อัปโหลดเรียบร้อยแล้ว";
+        await InvokeAsync(StateHasChanged);
+        int totalRec = 0;
+        if (chkValidate != null)
+        {
+            string ErrorMessage = "";
+            foreach (UploadAutomateLogErrorMessageDTO item in chkValidate)
+            {
+                if (item.afu_status == 'I' && item.afu_Err_Column == "afu_id")
+                    ErrorMessage += "afu_id Record(s) = " + item.afu_Err_Message + "\n";
+                if (item.afu_status == 'I' && item.afu_Err_Column == "Total")
+                {
+                    Int32.TryParse(item.afu_Err_Message, out totalRec);
+                    ErrorMessage += "Total Record(s) = " + String.Format("{0:n0}", totalRec) + "\n";
+                }
+                else if (item.afu_status == 'E')
+                    ErrorMessage += "- " + item.afu_Err_Message + "\n";
+            }
+            await jsRuntime.InvokeAsync<object>("ShowAlert", ErrorMessage);
+        }
+
+        var chkError = chkValidate.FirstOrDefault(x => x.afu_status == 'W');
+
+        if (chkError == null)
+        {
+            //var path = chkValidate.FirstOrDefault(x => x.afu_status == 'W' && x.afu_Err_Column == "path").afu_Err_Message;
+            await UploadFileError(filename, totalRec, 0, string.Empty);
+            await ControlPopupError(false);
+            showModal = false;
+
+            SearchData();
+            StateHasChanged();
+
+        }
+        else
+        {
+            showModal = false;
+            return;
+        }
+
+        UploadedBytes = 0;
+        TotalBytes = 0;
+        LargeUploadMessage = "";
+
+    }
+
+    private async Task OnInputFileErrorChange(InputFileChangeEventArgs e)
+    {
+        selectedErrorFiles = e.File;
+
+        var type = Path.GetExtension(selectedErrorFiles.Name);
+        if (type != ".xlsx")
+        {
+            await jsRuntime.InvokeAsync<object>("ShowAlert", "ไม่สามารถ Upload ไฟล์ประเภท " + type + "ได้ (ระบบรองรับ .xlsx เท่านั้น)");
+            selectedFiles = null;
+            return;
+        }
+
+        long maxFileSize = 1024L; // 1KB
+        maxFileSize *= 1024L; // 1MB
+        maxFileSize *= 512L; // 0.5GB
+
+        if (selectedErrorFiles.Size > maxFileSize)
+        {
+            await jsRuntime.InvokeAsync<object>("ShowAlert", "ไม่สามารถ Upload ไฟล์ ขนาดมากกว่า 500MB ได้");
+            selectedErrorFiles = null;
+            return;
+        }
+    }
+
+    async Task UploadFileError(string file_name, int total_record, int who_record, string status)
+    {
+
+        UploadAutomateLogDTO model = new UploadAutomateLogDTO();
+
+        model.iml_import_date = DateTime.Now;
+        model.iml_filename = file_name;
+        model.iml_total_record = total_record;
+        model.iml_who_record = who_record;
+        model.iml_status = status;
+        model.iml_createduser = mainLayout.loginUser.Username;
+        model.iml_createdate = DateTime.Now;
+
+        var x = await UploadAutomateservice.UploadFileAsync(model);
+
+    }
 }

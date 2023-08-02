@@ -56,6 +56,8 @@ namespace ALISS.STARS.Library.DataAccess
         public DbSet<UploadAutomateErrorDetailListDTO> UploadAutomateErrorDetailListDTOs { get; set; }
         public DbSet<UploadAutomateAlertSummaryListDTO> UploadAutomateAlertSummaryListDTOs { get; set; }
         public DbSet<UploadAutomateExportErrorDTO> UploadAutomateExportErrorDTOs { get; set; }
+        public DbSet<UploadAutomateLogDTO> UploadAutomateLogDTOs { get; set; }
+        public DbSet<TempImportUploadAutomateLogDTO> TempImportUploadAutomateLogDTOs { get; set; }
 
         #endregion
 
@@ -211,6 +213,9 @@ namespace ALISS.STARS.Library.DataAccess
 
             builder.Entity<NarstServiceDTO>().HasNoKey();
             builder.Entity<UploadAutomateExportErrorDTO>().HasNoKey();
+
+            builder.Entity<UploadAutomateLogDTO>().HasNoKey();
+            builder.Entity<TempImportUploadAutomateLogDTO>().HasNoKey();
 
             base.OnModelCreating(builder);
         }

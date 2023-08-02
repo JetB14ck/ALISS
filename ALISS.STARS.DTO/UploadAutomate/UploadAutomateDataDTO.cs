@@ -41,6 +41,7 @@ namespace ALISS.STARS.DTO
                     case "I": objReturn = "Wait Approve"; break;
                     case "R": objReturn = "Repeat"; break;
                     case "A": objReturn = "Approve"; break;
+                    case "RP": objReturn = "ReProcess"; break;
                     default: objReturn = ""; break;
                 }
 
@@ -55,5 +56,40 @@ namespace ALISS.STARS.DTO
         public string afu_Area { get; set; }
         public string afu_machinetype { get; set; }
     }
-   
+
+    public class UploadAutomateLogDTO
+    {
+        public int iml_id { get; set; }
+        public DateTime iml_import_date { get; set; }
+        public string iml_filename { get; set; }
+        public int iml_total_record { get; set; }
+        public int iml_who_record { get; set; }
+        public string iml_status { get; set; }
+        public string iml_createduser { get; set; }
+        public DateTime iml_createdate { get; set; }
+    }
+
+    public class UploadAutomateLogErrorMessageDTO
+    {
+        public char afu_status { get; set; }
+        public char afu_Err_type { get; set; }
+        public int afu_Err_no { get; set; }
+        public string afu_Err_Column { get; set; }
+        public string afu_Err_Message { get; set; }
+    }
+
+    public class TempImportUploadAutomateLogDTO
+    {
+        public int tae_id { get; set; }
+        public string afu_arh_code { get; set; } // เขตสุขภาพ
+        public string afu_machinetype { get; set; } // เครื่องจักร
+        public string afu_filename { get; set; } // File Name
+        public string aeh_field { get; set; } // Field
+        public string aed_localvalue { get; set; } // Field Value
+        public string aed_localdescr { get; set; } // Field Descr
+        public string data_code { get; set; }
+        public string data_desc { get; set; }
+        public int afu_id { get; set; } // hide in excel
+        public Guid afu_smp_id { get; set; } // hide in excel
+    }
 }

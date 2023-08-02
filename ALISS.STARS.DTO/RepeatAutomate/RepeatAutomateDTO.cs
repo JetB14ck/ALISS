@@ -63,6 +63,12 @@ namespace ALISS.STARS.DTO.RepeatAutomate
                 return objReturn;
             }
         }
+        public string aeh_field { get; set; }
+        public string aed_localvalue { get; set; }
+        public string aed_localdescr { get; set; }
+
+        public string data_code { get; set; }
+        public string data_desc { get; set; }
     }
     public class RepeatAutomateSearchDTO
     {

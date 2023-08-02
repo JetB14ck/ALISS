@@ -100,5 +100,23 @@ namespace ALISS.UploadAutomate.Api.Controllers
             return objReturn;
         }
 
+        [HttpPost]
+        [Route("api/Mapping/Post_SaveTRImportMappingLogData")]
+        public UploadAutomateLogDTO Post_SaveTRImportMappingLogData([FromBody] UploadAutomateLogDTO model)
+        {
+            var objReturn = _service.SaveImportUploadAutomateLogData(model);
+
+            return objReturn;
+        }
+
+        [HttpPost]
+        [Route("api/Mapping/Post_SaveTempImportMappingLogData")]
+        public List<TempImportUploadAutomateLogDTO> Post_SaveTempImportMappingLogData([FromBody] List<TempImportUploadAutomateLogDTO> model)
+        {
+            var objReturn = _service.SaveTempImportUploadAutomateLogData(model);
+
+            return objReturn;
+        }
+
     }
 }

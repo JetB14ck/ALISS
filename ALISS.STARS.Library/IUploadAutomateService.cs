@@ -21,5 +21,7 @@ namespace ALISS.STARS.Library
         List<UploadAutomateSummaryDetailListDTO> GetUploadAutomateSummaryDetailByAfuId(string fsh_id);
         List<UploadAutomateSummaryDetailListDTO> GetUploadAutomateSummaryDetailListByAfuId(string afu_Id);
         List<UploadAutomateExportErrorDTO> GetUploadAutomateExportError(string[] afu_ids);
+        UploadAutomateLogDTO SaveImportUploadAutomateLogData(UploadAutomateLogDTO model);
+        List<TempImportUploadAutomateLogDTO> SaveTempImportUploadAutomateLogData(List<TempImportUploadAutomateLogDTO> model);
     }
 }
