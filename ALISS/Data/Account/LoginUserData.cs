@@ -51,6 +51,8 @@ namespace ALISS.Data.Account
         public string hos_name { get; set; }
         public string lab_code { get; set; }
         public string lab_name { get; set; }
+        public string stars_arh_code { get; set; }
+        public string stars_arh_name { get; set; }
 
         public List<RolePermissionDTO> rol_permission_List { get; set; } = new List<RolePermissionDTO>();
 

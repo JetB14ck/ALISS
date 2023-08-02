@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace ALISS.STARS.Library.Models
+namespace ALISS.STARS.DTO.InspectResult
 {
-    public class TRStarsResult
+    public class InspectStarsResultDataDTO
     {
         public int srr_id { get; set; }
         public string srr_starsno { get; set; }
@@ -15,7 +15,6 @@ namespace ALISS.STARS.Library.Models
         public DateTime? srr_recvdate { get; set; }
         public string srr_hos_code { get; set; }
         public string srr_arh_code { get; set; }
-        public string srr_stars_arh_code { get; set; }
         public string srr_stars_labno { get; set; }
         public string srr_stars_orgnaism { get; set; }
         public string srr_stars_specimen { get; set; }
@@ -25,7 +24,7 @@ namespace ALISS.STARS.Library.Models
         public string srr_name { get; set; }
         public string srr_age { get; set; }
         public string srr_sex { get; set; }
-        public int? srr_afu_id { get; set; }
+        public int srr_afu_id { get; set; }
         public string srr_local_labno { get; set; }
         public string srr_local_organism { get; set; }
         public string srr_ident_org_code { get; set; }
@@ -43,7 +42,9 @@ namespace ALISS.STARS.Library.Models
         public string srr_reportno { get; set; }
         public string srr_reportuser { get; set; }
         public DateTime? srr_reportdate { get; set; }
-        public string srr_status { get; set; }
+          public Boolean? srr_repeat_flag { get; set; }
+      public string srr_status { get; set; }
+        public string srr_remark { get; set; }
         public DateTime? srr_stars_specimendate { get; set; }
         public string srr_receive_organism { get; set; }
         public DateTime? srr_tatdate { get; set; }
@@ -51,7 +52,8 @@ namespace ALISS.STARS.Library.Models
         public DateTime? srr_createddate { get; set; }
         public string srr_updateuser { get; set; }
         public DateTime? srr_updatedate { get; set; }
-        public string srr_remark { get; set; }
-        public Boolean? srr_repeat_flag { get; set; }
+        public string method_antibiotic { get; set; }
+        public string method_resistance { get; set; }
+      
     }
 }

@@ -1,0 +1,1993 @@
+﻿@page "/InspectResult"
+
+@using ALISS.Data.D7_StarsRepeat
+@using ALISS.Data
+@using ALISS.STARS.DTO
+
+@using Radzen
+@using Radzen.Blazor
+@using ALISS.STARS.DTO.InspectResult;
+
+@inject IJSRuntime jsRuntime
+@inject NavigationManager navigationManager
+@inject InspectResultService inspectResultService
+@inject DropDownListDataService ddlDataService
+@inject ConfigDataService configDataService
+
+<style>
+    .ant-padding {
+        padding: 0px 0px 0px 10px;
+    }
+    .buttonArea .btnRollback {
+        background: #FFEACC 0% 0% no-repeat padding-box;
+        border: 1px solid #E4E4E4;
+        border-radius: 3px;
+        opacity: 1;
+        color: #FF6D41;
+    }
+    .buttonArea .btnRepeat {
+        background: #FF6D41 0% 0% no-repeat padding-box;
+        border: 1px solid #E4E4E4;
+        border-radius: 3px;
+        opacity: 1;
+        color: #FFFFFF;
+    }
+</style>
+<div style="width: 90%;">
+    <div class="divHead">
+        Inspect Result
+    </div>
+</div>
+
+@if (gridDatas == null)
+{
+    <p><em>Loading...</em></p>
+    <Loading ShowModel="true" />
+}
+else
+{
+    <div class="container inputArea">
+        <div class="row justify-content-between">
+            <div class="col-12 col-xl-4">
+                <div class="row justify-content-center divGroup">
+                    <div class="@classLabel">
+                        <LabelBox inputLabel="@configData.Get_Label("AreaHealth")" />
+                    </div>
+                    <div class="@classInput">
+                        <RadzenDropDown @bind-Value="searchModel.search_arh_code" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+                                        AllowClear="true" TValue="string" AllowFiltering="true" Placeholder="Select..."
+                                        Data="lab_ddl_List.Select(x => new { x.arh_code, x.arh_name }).Distinct().OrderBy(o => o.arh_code)" ValueProperty="arh_code" TextProperty="arh_name"
+                                        Disabled="(!string.IsNullOrEmpty(mainLayout.loginUser.arh_code))"
+                                        Change="@(args => DDL_Change("Arh", args))" />
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-12 col-xl-4">
+                <div class="row justify-content-center divGroup">
+                    <div class="@classLabel">
+                        <LabelBox inputLabel="@configData.Get_Label("RecvDateFrom")" />
+                    </div>
+                    <div class="@classInput">
+                        <RadzenDatePicker @bind-Value="searchModel.search_receive_date_from" ShowTime="false" ShowSeconds="false" DateFormat="dd/MM/yyyy" />
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-12 col-xl-4">
+                <div class="row justify-content-center divGroup">
+                    <div class="@classLabel">
+                        <LabelBox inputLabel="@configData.Get_Label("RecvDateTo")" />
+                    </div>
+                    <div class="@classInput">
+                        <RadzenDatePicker @bind-Value="searchModel.search_receive_date_to" ShowTime="false" ShowSeconds="false" DateFormat="dd/MM/yyyy" />
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="row justify-content-between">
+            <div class="col-12 col-xl-4">
+                <div class="row justify-content-center divGroup">
+                    <div class="@classLabel">
+                        <LabelBox inputLabel="@configData.Get_Label("Hos")" />
+                    </div>
+                    <div class="@classInput">
+                        <RadzenDropDown @bind-Value="searchModel.search_hos_code" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+                                        AllowClear="true" TValue="string" AllowFiltering="true" Placeholder="Select..."
+                                        Data="lab_ddl_List.Select(x => new { x.arh_code, x.arh_name, x.prv_code, x.prv_name, x.hos_code, x.hos_name, x.stars_arh_code, x.stars_arh_name }).Where(x => (searchModel.search_arh_code == null ||  x.stars_arh_code == searchModel.search_arh_code))" ValueProperty="hos_code" TextProperty="hos_name"
+                                        Change="@(args => DDL_Change("Hos", args))" Disabled="(!string.IsNullOrEmpty(mainLayout.loginUser.hos_code))" />
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-12 col-xl-4">
+                <div class="row justify-content-center divGroup">
+                    <div class="@classLabel">
+                        <LabelBox inputLabel="@configData.Get_Label("TesingDate")" />
+                    </div>
+                    <div class="@classInput">
+                        <RadzenDatePicker @bind-Value="searchModel.search_testing_date" ShowTime="false" ShowSeconds="false" DateFormat="dd/MM/yyyy" />
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-12 col-xl-4">
+            </div>
+
+        </div>
+
+        <div class="row justify-content-between">
+            <div class="col-12 col-xl-4">
+                <div class="row justify-content-center divGroup">
+                    <div class="@classLabel">
+                        <LabelBox inputLabel="@configData.Get_Label("AutomateFilename")" />
+                    </div>
+                    <div class="@classInput">
+                        <RadzenTextBox @bind-Value="searchModel.search_automate_filename" Style="width: 100%;" />
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-12 col-xl-4">
+                <div class="row justify-content-center divGroup">
+                    <div class="@classLabel">
+                        <LabelBox inputLabel="@configData.Get_Label("Status")" />
+                    </div>
+                    <div class="@classInput">
+                        <RadzenDropDown @bind-Value="searchModel.search_repeat_status" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+                                        AllowClear="true" TValue="string" AllowFiltering="true" Placeholder="Select..."
+                                        Data="repeat_status_ddl_list.Select(x => new { x.status_code, x.status_name }).Distinct()" ValueProperty="status_code" TextProperty="status_name" />
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-12 col-xl-4">
+                <div class="row justify-content-center divGroup">
+                    <div class="@classLabel">
+                        <LabelBox inputLabel="@configData.Get_Label("ShowRepeat")" />
+                    </div>
+                    <div class="@classInput">
+                        <RadzenCheckBox TriState="false" Value="searchModel.search_show_repeat" TValue="bool" />
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="col-12 col-xl-12">
+            <div class="row justify-content-end divGroup buttonArea">
+                <div class="col-auto">
+                    <RadzenButton class="btnSearch" Text="Search" Click="SearchData" />
+                </div>
+                <div class="col-auto">
+                    <RadzenButton class="btnClear" Text="Clear" Click="ClearInboxData" />
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <hr />
+
+    <div style="width:100%;margin:0px auto;">
+        <div class="container">
+            <div class="row justify-content-end">
+                <div class="col-auto">
+                    <label>Rows : </label>
+                </div>
+                <div class="col-auto">
+                    <RadzenDropDown @bind-Value="inboxGrid.PageSize" TValue="int" AllowFiltering="true" Data="inboxGrid.PageSizeOption" Change="SearchData" Style="width:50px" />
+                </div>
+            </div>
+        </div>
+
+        <RadzenGrid AllowFiltering="true" AllowSorting="true" AllowPaging="true" Style="max-width: 1597px"
+                    PageSize="inboxGrid.PageSize" @ref="inboxGrid.radzenGrid" Data="@gridDatas" TItem="InspectResultDataDTO"
+                    FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+                    AllowColumnResize="true">
+            <Columns>
+                <RadzenGridColumn TItem="InspectResultDataDTO" Property="afu_id" Width="50px" Filterable="false" Sortable="false">
+                    <HeaderTemplate>
+                        <RadzenCheckBox TriState="false" TValue="bool" Value="@(gridDatas.Any(i => selectedRow != null && selectedRow.Contains(i)))"
+                                        Change="@(args => selectedRow = args ? gridDatas.ToList() : null)" />
+                    </HeaderTemplate>
+                    <Template Context="data">
+                        <RadzenCheckBox TriState="false" Value="@(selectedRow != null && selectedRow.Contains(data))"
+                                        TValue="bool" Change=@(args => { OnGridCheckboxSelected(data); }) />
+                    </Template>
+                </RadzenGridColumn>
+                <RadzenGridColumn TItem="InspectResultDataDTO" Width="50px" Context="data">
+                    <Template>
+                        @if (mainLayout.loginUser.PagePermission.rop_edit && data.srr_status != "C")
+                        {
+                            <RadzenButton Icon="edit" Style="background: #0A6839" Click="@(() => OpenDetailDiv(data))" />
+                        }
+                    </Template>
+                </RadzenGridColumn>
+                <RadzenGridColumn TItem="InspectResultDataDTO" Property="srr_starsno" Title="STARS No." Width="120px">
+                    <FooterTemplate>
+                        <label title="@inboxGrid.FooterLabelString">@inboxGrid.FooterLabelString</label>
+                    </FooterTemplate>
+                </RadzenGridColumn>
+
+                <RadzenGridColumn TItem="InspectResultDataDTO" Width="100px" Property="srr_recvdate_str" Title="Receive Date" />
+                <RadzenGridColumn TItem="InspectResultDataDTO" Width="100px" Property="srr_tatdate_str" Title="TAT Date" />
+                <RadzenGridColumn TItem="InspectResultDataDTO" Width="100px" Property="srr_receive_organism" Title="receive_organism" />
+                <RadzenGridColumn TItem="InspectResultDataDTO" Width="110px" Property="srr_status_str" Title="Status" />
+                <RadzenGridColumn TItem="InspectResultDataDTO" Width="100px" Property="srr_ident_organism" Title="ident_organism" />
+                <RadzenGridColumn TItem="InspectResultDataDTO" Width="40px" Property="mi_name" Title="mi_name" />
+
+                <RadzenGridColumn TItem="InspectResultDataDTO" Width="40px" Property="srg_vana_gene" Title="vana" />
+                <RadzenGridColumn TItem="InspectResultDataDTO" Width="40px" Property="srg_vanb_gene" Title="vanb" />
+                <RadzenGridColumn TItem="InspectResultDataDTO" Width="40px" Property="srg_vanc1_gene" Title="vanc1" />
+                <RadzenGridColumn TItem="InspectResultDataDTO" Width="40px" Property="srg_vanc2c3_gene" Title="vanc2c3" />
+
+                <RadzenGridColumn TItem="InspectResultDataDTO" Width="40px" Property="srg_meca_gene" Title="meca" />
+                @*<RadzenGridColumn TItem="InspectResultDataDTO" Width="40px" Property="srg_mecb_gene" Title="mecb" />*@
+                <RadzenGridColumn TItem="InspectResultDataDTO" Width="40px" Property="srg_mecc_gene" Title="mecc" />
+
+                <RadzenGridColumn TItem="InspectResultDataDTO" Width="40px" Property="srg_imp_gene" Title="imp" />
+                <RadzenGridColumn TItem="InspectResultDataDTO" Width="40px" Property="srg_vim_gene" Title="vim" />
+                <RadzenGridColumn TItem="InspectResultDataDTO" Width="40px" Property="srg_ndm_gene" Title="ndm" />
+                <RadzenGridColumn TItem="InspectResultDataDTO" Width="40px" Property="srg_kpc_gene" Title="kpc" />
+                <RadzenGridColumn TItem="InspectResultDataDTO" Width="40px" Property="srg_oxa_gene" Title="oxa" />
+
+                <RadzenGridColumn TItem="InspectResultDataDTO" Width="40px" Property="srg_mcr1_gene" Title="mcr1" />
+                <RadzenGridColumn TItem="InspectResultDataDTO" Width="40px" Property="srg_mcr2_gene" Title="mcr2" />
+                <RadzenGridColumn TItem="InspectResultDataDTO" Width="40px" Property="srg_mcr3_gene" Title="mcr3" />
+                <RadzenGridColumn TItem="InspectResultDataDTO" Width="40px" Property="srg_mcr4_gene" Title="mcr4" />
+                <RadzenGridColumn TItem="InspectResultDataDTO" Width="40px" Property="srg_mcr5_gene" Title="mcr5" />
+                <RadzenGridColumn TItem="InspectResultDataDTO" Width="40px" Property="srg_mcr6_gene" Title="mcr6" />
+                <RadzenGridColumn TItem="InspectResultDataDTO" Width="40px" Property="srg_mcr7_gene" Title="mcr7" />
+                <RadzenGridColumn TItem="InspectResultDataDTO" Width="40px" Property="srg_mcr8_gene" Title="mcr8" />
+                <RadzenGridColumn TItem="InspectResultDataDTO" Width="40px" Property="srg_mcr9_gene" Title="mcr9" />
+                <RadzenGridColumn TItem="InspectResultDataDTO" Width="40px" Property="srg_mcr10_gene" Title="mcr10" />
+
+            </Columns>
+        </RadzenGrid>
+    </div>
+
+    <br />
+    <div>
+        <div class="container">
+            <div class="row justify-content-between buttonArea">
+                <div class="col-auto">
+                    <RadzenButton class="btnRollback" Text="Rollback Automate" Click="RollbackAutomate" Visible="@(canSendApprove || canApprove)" />
+                </div>
+                <div class="col-auto justify-content-end">
+                    <RadzenButton class="btnRepeat" Text="Repeat Automate" Click="RepeatAutomate" Visible="@(canSendApprove || canApprove)" />&nbsp;&nbsp;
+                    <RadzenButton class="btnRepeat" Text="Repeat Gene" Click="RepeatGene" Visible="@(canSendApprove || canApprove)" />&nbsp;&nbsp;
+                    <RadzenButton class="btnSave" Text="Send To Approve List" Click="SendToApproveList" Visible="@canSendApprove" />
+                    <RadzenButton class="btnSave" Text="Approve List" Click="ApproveList" Visible="@canApprove" />
+                </div>
+            </div>
+        </div>
+        <br />
+    </div>
+
+    @if (ShowDetailData)
+    {
+        <hr />
+
+        <div class="container inputArea">
+            <div class="row justify-content-between">
+
+                <div class="col-12 col-xl-12">
+                    <div class="row justify-content-end divGroup buttonArea">
+                        <div class="col-auto">
+                            <RadzenButton Icon="close" Click="@(() => showDetail = false)" />
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-xl-3">
+                    <div class="row justify-content-center divGroup">
+                        <div class="@classLabel">
+                            <LabelBox inputLabel="@configData.Get_Label("srr_starsno")" />
+                        </div>
+                        <div class="@classInput">
+                            <RadzenTextBox Disabled="true" @bind-Value="resultData.srr_starsno" Style="width: 100%;" />
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-xl-3">
+                    <div class="row justify-content-center divGroup">
+                        <div class="@classLabel">
+                            <LabelBox inputLabel="@configData.Get_Label("srr_recvdate")" />
+                        </div>
+                        <div class="@classInput">
+                            <RadzenDatePicker @bind-Value="resultData.srr_recvdate" ShowTime="false" ShowSeconds="false" DateFormat="dd/MM/yyyy" />
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-xl-3">
+                    <div class="row justify-content-center divGroup">
+                        <div class="@classLabel">
+                            <LabelBox inputLabel="@configData.Get_Label("srr_starsno_ref")" />
+                        </div>
+                        <div class="@classInput">
+                            <RadzenTextBox Disabled="true" @bind-Value="resultData.srr_starsno_ref" Style="width: 100%;" />
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-xl-3">
+                    <div class="row justify-content-center divGroup">
+                        <div class="@classLabel">
+                            <LabelBox inputLabel="@configData.Get_Label("afu_repeatdate")" />
+                        </div>
+                        <div class="@classInput">
+                            <RadzenTextBox Disabled="true" @bind-Value="repeatdate_str" Style="width: 100%;" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12 col-xl-3">
+                    <div class="row justify-content-center divGroup">
+                        <div class="@classLabel">
+                            <LabelBox inputLabel="@configData.Get_Label("srr_stars_orgnaism")" />
+                        </div>
+                        <div class="@classInput">
+                            <RadzenTextBox Disabled="true" @bind-Value="resultData.srr_stars_orgnaism" Style="width: 100%;" />
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-xl-3">
+                    <div class="row justify-content-center divGroup">
+                        <div class="@classLabel">
+                            <LabelBox inputLabel="@configData.Get_Label("srr_ident_organism")" />
+                        </div>
+                        <div class="@classInput">
+                            <RadzenDropDownDataGrid @bind-Value="resultData.srr_ident_organism" AllowFilteringByAllStringColumns="true"
+                                            AllowClear="true" TValue="string" Placeholder="Select .."
+                                            Data="identification_ddl_list" ValueProperty="data_id" TextProperty="data_Text">
+                                <Columns>
+                                    <RadzenDropDownDataGridColumn Property="data_id" Title="whonetcode" Width="100px" />
+                                    <RadzenDropDownDataGridColumn Property="data_Value" Title="localorganismcode" Width="100px" />
+                                    <RadzenDropDownDataGridColumn Property="data_Text" Title="whonetdesc" Width="200px" />
+                                </Columns>
+                            </RadzenDropDownDataGrid>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-xl-3">
+                    <div class="row justify-content-center divGroup">
+                        <div class="@classLabel">
+                            <LabelBox inputLabel="@configData.Get_Label("method_ident")" />
+                        </div>
+                        <div class="@classInput">
+                            <RadzenDropDown @bind-Value="resultData.srr_mi_id" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+                                            AllowClear="true" TValue="int?" Placeholder="Select .."
+                                            Data="methodIdentification_ddl_list" ValueProperty="datalist_code" TextProperty="datalist_name" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12 col-xl-3">
+                    <div class="row justify-content-center divGroup">
+                        <div class="@classLabel">
+                            <LabelBox inputLabel="@configData.Get_Label("specimen_type")" />
+                        </div>
+                        <div class="@classInput">
+                            <RadzenTextBox Disabled="true" @bind-Value="resultData.srr_stars_specimen" Style="width: 100%;" />
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-xl-3">
+                    <div class="row justify-content-center divGroup">
+                        <div class="@classLabel">
+                            <LabelBox inputLabel="@configData.Get_Label("method_antibiotic")" />
+                        </div>
+                        <div class="@classInput">
+                            <RadzenDropDown @bind-Value="resultData.srr_ma_id" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+                                            AllowClear="true" TValue="int?" Placeholder="Select .."
+                                            Data="methodAntibiotic_ddl_list" ValueProperty="datalist_code" TextProperty="datalist_name" />
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-xl-3">
+                    <div class="row justify-content-center divGroup">
+                        <div class="@classLabel">
+                            <LabelBox inputLabel="@configData.Get_Label("method_resistance")" />
+                        </div>
+                        <div class="@classInput">
+                            <RadzenDropDown @bind-Value="resultData.srr_mg_id" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+                                            AllowClear="true" TValue="int?" Placeholder="Select .."
+                                            Data="methodResistantGenes_ddl_list" ValueProperty="datalist_code" TextProperty="datalist_name" />
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-xl-3">
+                    <div class="row justify-content-center divGroup">
+                        <div class="@classLabel">
+                            <LabelBox inputLabel="@configData.Get_Label("srr_status")" />
+                        </div>
+                        <div class="@classInput">
+                            <RadzenTextBox Disabled="true" @bind-Value="status_str" Style="width: 100%;" />
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-xl-3">
+                </div>
+            </div>
+            <hr />
+            <div class="row">
+                <div class="col-12">
+                    <b>Gene</b>
+                </div>
+                <div class="col-12 col-xl-3">
+                    <div class="row justify-content-center divGroup">
+                        <div class="@classLabel">
+                            @*<LabelBox inputLabel="@configData.Get_Label("srg_imp_gene")" />*@
+                            <i>bla</i> IMP Gene :
+                        </div>
+                        <div class="@classInput">
+                            <RadzenDropDown @bind-Value="geneData.srg_imp_gene" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+                                            AllowClear="true" TValue="string" Placeholder="Select .."
+                                            Data="geneStatus_ddl_list" ValueProperty="status_code" TextProperty="status_name" />
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-xl-3">
+                    <div class="row justify-content-center divGroup">
+                        <div class="@classLabel">
+                            @*<LabelBox inputLabel="@configData.Get_Label("srg_vim_gene")" />*@
+                            <i>bla</i> VIM Gene :
+                        </div>
+                        <div class="@classInput">
+                            <RadzenDropDown @bind-Value="geneData.srg_vim_gene" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+                                            AllowClear="true" TValue="string" Placeholder="Select .."
+                                            Data="geneStatus_ddl_list" ValueProperty="status_code" TextProperty="status_name" />
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-xl-3">
+                    <div class="row justify-content-center divGroup">
+                        <div class="@classLabel">
+                            @*<LabelBox inputLabel="@configData.Get_Label("srg_ndm_gene")" />*@
+                            <i>bla</i> NDM Gene :
+                        </div>
+                        <div class="@classInput">
+                            <RadzenDropDown @bind-Value="geneData.srg_ndm_gene" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+                                            AllowClear="true" TValue="string" Placeholder="Select .."
+                                            Data="geneStatus_ddl_list" ValueProperty="status_code" TextProperty="status_name" />
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-xl-3">
+                    <div class="row justify-content-center divGroup">
+                        <div class="@classLabel">
+                            @*<LabelBox inputLabel="@configData.Get_Label("srg_kpc_gene")" />*@
+                            <i>bla</i> KPC Gene :
+                        </div>
+                        <div class="@classInput">
+                            <RadzenDropDown @bind-Value="geneData.srg_kpc_gene" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+                                            AllowClear="true" TValue="string" Placeholder="Select .."
+                                            Data="geneStatus_ddl_list" ValueProperty="status_code" TextProperty="status_name" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12 col-xl-3">
+                    <div class="row justify-content-center divGroup">
+                        <div class="@classLabel">
+                            @*<LabelBox inputLabel="@configData.Get_Label("dxa_gene")" />*@
+                            <i>bla</i> OXA-48-like Gene :
+                        </div>
+                        <div class="@classInput">
+                            <RadzenDropDown @bind-Value="geneData.srg_oxa_gene" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+                                            AllowClear="true" TValue="string" Placeholder="Select .."
+                                            Data="geneStatus_ddl_list" ValueProperty="status_code" TextProperty="status_name" />
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-xl-3">
+                    <div class="row justify-content-center divGroup">
+                        <div class="@classLabel">
+                            <LabelBox inputLabel="@configData.Get_Label("serotype_gene")" />
+                        </div>
+                        <div class="@classInput">
+                            <RadzenDropDown @bind-Value="geneData.srg_serotype_gene" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+                                            AllowClear="true" TValue="string" Placeholder="Select .."
+                                            Data="serotypeGene_ddl_list" ValueProperty="datalist_code" TextProperty="datalist_name" />
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-xl-3">
+                    <div class="row justify-content-center divGroup">
+                        <div class="@classLabel">
+                            <LabelBox inputLabel="@configData.Get_Label("serogroup_gene")" />
+                        </div>
+                        <div class="@classInput">
+                            <RadzenDropDown @bind-Value="geneData.srg_serogroup_gene" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+                                            AllowClear="true" TValue="string" Placeholder="Select .."
+                                            Data="setogroupGene_ddl_list" ValueProperty="datalist_code" TextProperty="datalist_name" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12 col-xl-3">
+                    <div class="row justify-content-center divGroup">
+                        <div class="@classLabel">
+                            <LabelBox inputLabel="@configData.Get_Label("srg_vana_gene")" />
+                        </div>
+                        <div class="@classInput">
+                            <RadzenDropDown @bind-Value="geneData.srg_vana_gene" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+                                            AllowClear="true" TValue="string" Placeholder="Select .."
+                                            Data="geneStatus_ddl_list" ValueProperty="status_code" TextProperty="status_name" />
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-xl-3">
+                    <div class="row justify-content-center divGroup">
+                        <div class="@classLabel">
+                            <LabelBox inputLabel="@configData.Get_Label("srg_vanb_gene")" />
+                        </div>
+                        <div class="@classInput">
+                            <RadzenDropDown @bind-Value="geneData.srg_vanb_gene" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+                                            AllowClear="true" TValue="string" Placeholder="Select .."
+                                            Data="geneStatus_ddl_list" ValueProperty="status_code" TextProperty="status_name" />
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-xl-3">
+                    <div class="row justify-content-center divGroup">
+                        <div class="@classLabel">
+                            <LabelBox inputLabel="@configData.Get_Label("srg_vanc1_gene")" />
+                        </div>
+                        <div class="@classInput">
+                            <RadzenDropDown @bind-Value="geneData.srg_vanc1_gene" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+                                            AllowClear="true" TValue="string" Placeholder="Select .."
+                                            Data="geneStatus_ddl_list" ValueProperty="status_code" TextProperty="status_name" />
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-xl-3">
+                    <div class="row justify-content-center divGroup">
+                        <div class="@classLabel">
+                            <LabelBox inputLabel="@configData.Get_Label("srg_vanc2c3_gene")" />
+                        </div>
+                        <div class="@classInput">
+                            <RadzenDropDown @bind-Value="geneData.srg_vanc2c3_gene" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+                                            AllowClear="true" TValue="string" Placeholder="Select .."
+                                            Data="geneStatus_ddl_list" ValueProperty="status_code" TextProperty="status_name" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12 col-xl-3">
+                    <div class="row justify-content-center divGroup">
+                        <div class="@classLabel">
+                            <LabelBox inputLabel="@configData.Get_Label("srg_meca_gene")" />
+                        </div>
+                        <div class="@classInput">
+                            <RadzenDropDown @bind-Value="geneData.srg_meca_gene" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+                                            AllowClear="true" TValue="string" Placeholder="Select .."
+                                            Data="geneStatus_ddl_list" ValueProperty="status_code" TextProperty="status_name" />
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-xl-3">
+                    <div class="row justify-content-center divGroup">
+                        <div class="@classLabel">
+                            <LabelBox inputLabel="@configData.Get_Label("srg_mecc_gene")" />
+                        </div>
+                        <div class="@classInput">
+                            <RadzenDropDown @bind-Value="geneData.srg_mecc_gene" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+                                            AllowClear="true" TValue="string" Placeholder="Select .."
+                                            Data="geneStatus_ddl_list" ValueProperty="status_code" TextProperty="status_name" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12 col-xl-3">
+                    <div class="row justify-content-center divGroup">
+                        <div class="@classLabel">
+                            <LabelBox inputLabel="@configData.Get_Label("srg_mcr1_gene")" />
+                        </div>
+                        <div class="@classInput">
+                            <RadzenDropDown @bind-Value="geneData.srg_mcr1_gene" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+                                            AllowClear="true" TValue="string" Placeholder="Select .."
+                                            Data="geneStatus_ddl_list" ValueProperty="status_code" TextProperty="status_name" />
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-xl-3">
+                    <div class="row justify-content-center divGroup">
+                        <div class="@classLabel">
+                            <LabelBox inputLabel="@configData.Get_Label("srg_mcr2_gene")" />
+                        </div>
+                        <div class="@classInput">
+                            <RadzenDropDown @bind-Value="geneData.srg_mcr2_gene" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+                                            AllowClear="true" TValue="string" Placeholder="Select .."
+                                            Data="geneStatus_ddl_list" ValueProperty="status_code" TextProperty="status_name" />
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-xl-3">
+                    <div class="row justify-content-center divGroup">
+                        <div class="@classLabel">
+                            <LabelBox inputLabel="@configData.Get_Label("srg_mcr3_gene")" />
+                        </div>
+                        <div class="@classInput">
+                            <RadzenDropDown @bind-Value="geneData.srg_mcr3_gene" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+                                            AllowClear="true" TValue="string" Placeholder="Select .."
+                                            Data="geneStatus_ddl_list" ValueProperty="status_code" TextProperty="status_name" />
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-xl-3">
+                    <div class="row justify-content-center divGroup">
+                        <div class="@classLabel">
+                            <LabelBox inputLabel="@configData.Get_Label("srg_mcr4_gene")" />
+                        </div>
+                        <div class="@classInput">
+                            <RadzenDropDown @bind-Value="geneData.srg_mcr4_gene" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+                                            AllowClear="true" TValue="string" Placeholder="Select .."
+                                            Data="geneStatus_ddl_list" ValueProperty="status_code" TextProperty="status_name" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12 col-xl-3">
+                    <div class="row justify-content-center divGroup">
+                        <div class="@classLabel">
+                            <LabelBox inputLabel="@configData.Get_Label("srg_mcr5_gene")" />
+                        </div>
+                        <div class="@classInput">
+                            <RadzenDropDown @bind-Value="geneData.srg_mcr5_gene" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+                                            AllowClear="true" TValue="string" Placeholder="Select .."
+                                            Data="geneStatus_ddl_list" ValueProperty="status_code" TextProperty="status_name" />
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-xl-3">
+                    <div class="row justify-content-center divGroup">
+                        <div class="@classLabel">
+                            <LabelBox inputLabel="@configData.Get_Label("srg_mcr6_gene")" />
+                        </div>
+                        <div class="@classInput">
+                            <RadzenDropDown @bind-Value="geneData.srg_mcr6_gene" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+                                            AllowClear="true" TValue="string" Placeholder="Select .."
+                                            Data="geneStatus_ddl_list" ValueProperty="status_code" TextProperty="status_name" />
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-xl-3">
+                    <div class="row justify-content-center divGroup">
+                        <div class="@classLabel">
+                            <LabelBox inputLabel="@configData.Get_Label("srg_mcr7_gene")" />
+                        </div>
+                        <div class="@classInput">
+                            <RadzenDropDown @bind-Value="geneData.srg_mcr7_gene" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+                                            AllowClear="true" TValue="string" Placeholder="Select .."
+                                            Data="geneStatus_ddl_list" ValueProperty="status_code" TextProperty="status_name" />
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-xl-3">
+                    <div class="row justify-content-center divGroup">
+                        <div class="@classLabel">
+                            <LabelBox inputLabel="@configData.Get_Label("srg_mcr8_gene")" />
+                        </div>
+                        <div class="@classInput">
+                            <RadzenDropDown @bind-Value="geneData.srg_mcr8_gene" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+                                            AllowClear="true" TValue="string" Placeholder="Select .."
+                                            Data="geneStatus_ddl_list" ValueProperty="status_code" TextProperty="status_name" />
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-xl-3">
+                    <div class="row justify-content-center divGroup">
+                        <div class="@classLabel">
+                            <LabelBox inputLabel="@configData.Get_Label("srg_mcr9_gene")" />
+                        </div>
+                        <div class="@classInput">
+                            <RadzenDropDown @bind-Value="geneData.srg_mcr9_gene" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+                                            AllowClear="true" TValue="string" Placeholder="Select .."
+                                            Data="geneStatus_ddl_list" ValueProperty="status_code" TextProperty="status_name" />
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-xl-3">
+                    <div class="row justify-content-center divGroup">
+                        <div class="@classLabel">
+                            <LabelBox inputLabel="@configData.Get_Label("srg_mcr10_gene")" />
+                        </div>
+                        <div class="@classInput">
+                            <RadzenDropDown @bind-Value="geneData.srg_mcr10_gene" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+                                            AllowClear="true" TValue="string" Placeholder="Select .."
+                                            Data="geneStatus_ddl_list" ValueProperty="status_code" TextProperty="status_name" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <hr />
+            <div class="row">
+
+                <div class="col-12">
+                    <b>Automate Result</b>
+                </div>
+
+            </div>
+            <div class="row">
+
+                <div class="col-12 col-xl-3">
+                    <div class="row justify-content-center divGroup">
+                        <div class="col-6">
+                        </div>
+                        <div class="col-3 text-center">
+                            <b>MIC</b>
+                        </div>
+                        <div class="col-3 text-center">
+                            <b>RIS</b>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-12 col-xl-3">
+                    <div class="row justify-content-center divGroup">
+                        <div class="col-6">
+                        </div>
+                        <div class="col-3 text-center">
+                            <b>MIC</b>
+                        </div>
+                        <div class="col-3 text-center">
+                            <b>RIS</b>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-12 col-xl-3">
+                    <div class="row justify-content-center divGroup">
+                        <div class="col-6">
+                        </div>
+                        <div class="col-3 text-center">
+                            <b>MIC</b>
+                        </div>
+                        <div class="col-3 text-center">
+                            <b>RIS</b>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-12 col-xl-3">
+                    <div class="row justify-content-center divGroup">
+                        <div class="col-6">
+                        </div>
+                        <div class="col-3 text-center">
+                            <b>MIC</b>
+                        </div>
+                        <div class="col-3 text-center">
+                            <b>RIS</b>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+
+                <div class="col-12 col-xl-3">
+                    <div class="row justify-content-center divGroup">
+                        <div class="col-6">
+                            <LabelBox inputLabel="@configData.Get_Label("AMK_Label")" />
+                        </div>
+                        <div class="col-3 ant-padding">
+                            <RadzenTextBox @bind-Value="automateData.X_AMK_MIC" Style="width: 100%;" />
+                        </div>
+                        <div class="col-3 ant-padding">
+                            <RadzenTextBox @bind-Value="automateData.X_AMK_RIS" Style="width: 100%;" />
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-12 col-xl-3">
+                    <div class="row justify-content-center divGroup">
+                        <div class="col-6">
+                            <LabelBox inputLabel="@configData.Get_Label("CXM_Label")" />
+                        </div>
+                        <div class="col-3 ant-padding">
+                            <RadzenTextBox @bind-Value="automateData.X_CXM_MIC" Style="width: 100%;" />
+                        </div>
+                        <div class="col-3 ant-padding">
+                            <RadzenTextBox @bind-Value="automateData.X_CXM_RIS" Style="width: 100%;" />
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-12 col-xl-3">
+                    <div class="row justify-content-center divGroup">
+                        <div class="col-6">
+                            <LabelBox inputLabel="@configData.Get_Label("GEH_Label")" />
+                        </div>
+                        <div class="col-3 ant-padding">
+                            <RadzenTextBox @bind-Value="automateData.X_GEH_MIC" Style="width: 100%;" />
+                        </div>
+                        <div class="col-3 ant-padding">
+                            <RadzenTextBox @bind-Value="automateData.X_GEH_RIS" Style="width: 100%;" />
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-12 col-xl-3">
+                    <div class="row justify-content-center divGroup">
+                        <div class="col-6">
+                            <LabelBox inputLabel="@configData.Get_Label("OXA_Label")" />
+                        </div>
+                        <div class="col-3 ant-padding">
+                            <RadzenTextBox @bind-Value="automateData.X_OXA_MIC" Style="width: 100%;" />
+                        </div>
+                        <div class="col-3 ant-padding">
+                            <RadzenTextBox @bind-Value="automateData.X_OXA_RIS" Style="width: 100%;" />
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <div class="row">
+
+                <div class="col-12 col-xl-3">
+                    <div class="row justify-content-center divGroup">
+                        <div class="col-6">
+                            <LabelBox inputLabel="@configData.Get_Label("AMC_Label")" />
+                        </div>
+                        <div class="col-3 ant-padding">
+                            <RadzenTextBox @bind-Value="automateData.X_AMC_MIC" Style="width: 100%;" />
+                        </div>
+                        <div class="col-3 ant-padding">
+                            <RadzenTextBox @bind-Value="automateData.X_AMC_RIS" Style="width: 100%;" />
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-12 col-xl-3">
+                    <div class="row justify-content-center divGroup">
+                        <div class="col-6">
+                            <LabelBox inputLabel="@configData.Get_Label("CHL_Label")" />
+                        </div>
+                        <div class="col-3 ant-padding">
+                            <RadzenTextBox @bind-Value="automateData.X_CHL_MIC" Style="width: 100%;" />
+                        </div>
+                        <div class="col-3 ant-padding">
+                            <RadzenTextBox @bind-Value="automateData.X_CHL_RIS" Style="width: 100%;" />
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-12 col-xl-3">
+                    <div class="row justify-content-center divGroup">
+                        <div class="col-6">
+                            <LabelBox inputLabel="@configData.Get_Label("GEN_Label")" />
+                        </div>
+                        <div class="col-3 ant-padding">
+                            <RadzenTextBox @bind-Value="automateData.X_GEN_MIC" Style="width: 100%;" />
+                        </div>
+                        <div class="col-3 ant-padding">
+                            <RadzenTextBox @bind-Value="automateData.X_GEN_RIS" Style="width: 100%;" />
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-12 col-xl-3">
+                    <div class="row justify-content-center divGroup">
+                        <div class="col-6">
+                            <LabelBox inputLabel="@configData.Get_Label("PEN_Label")" />
+                        </div>
+                        <div class="col-3 ant-padding">
+                            <RadzenTextBox @bind-Value="automateData.X_PEN_MIC" Style="width: 100%;" />
+                        </div>
+                        <div class="col-3 ant-padding">
+                            <RadzenTextBox @bind-Value="automateData.X_PEN_RIS" Style="width: 100%;" />
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <div class="row">
+
+                <div class="col-12 col-xl-3">
+                    <div class="row justify-content-center divGroup">
+                        <div class="col-6">
+                            <LabelBox inputLabel="@configData.Get_Label("SAM_Label")" />
+                        </div>
+                        <div class="col-3 ant-padding">
+                            <RadzenTextBox @bind-Value="automateData.X_SAM_MIC" Style="width: 100%;" />
+                        </div>
+                        <div class="col-3 ant-padding">
+                            <RadzenTextBox @bind-Value="automateData.X_SAM_RIS" Style="width: 100%;" />
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-12 col-xl-3">
+                    <div class="row justify-content-center divGroup">
+                        <div class="col-6">
+                            <LabelBox inputLabel="@configData.Get_Label("CIP_Label")" />
+                        </div>
+                        <div class="col-3 ant-padding">
+                            <RadzenTextBox @bind-Value="automateData.X_CIP_MIC" Style="width: 100%;" />
+                        </div>
+                        <div class="col-3 ant-padding">
+                            <RadzenTextBox @bind-Value="automateData.X_CIP_RIS" Style="width: 100%;" />
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-12 col-xl-3">
+                    <div class="row justify-content-center divGroup">
+                        <div class="col-6">
+                            <LabelBox inputLabel="@configData.Get_Label("IMP_Label")" />
+                        </div>
+                        <div class="col-3 ant-padding">
+                            <RadzenTextBox @bind-Value="automateData.X_IPM_MIC" Style="width: 100%;" />
+                        </div>
+                        <div class="col-3 ant-padding">
+                            <RadzenTextBox @bind-Value="automateData.X_IPM_RIS" Style="width: 100%;" />
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-12 col-xl-3">
+                    <div class="row justify-content-center divGroup">
+                        <div class="col-6">
+                            <LabelBox inputLabel="@configData.Get_Label("TZP_Label")" />
+                        </div>
+                        <div class="col-3 ant-padding">
+                            <RadzenTextBox @bind-Value="automateData.X_TZP_MIC" Style="width: 100%;" />
+                        </div>
+                        <div class="col-3 ant-padding">
+                            <RadzenTextBox @bind-Value="automateData.X_TZP_RIS" Style="width: 100%;" />
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <div class="row">
+
+                <div class="col-12 col-xl-3">
+                    <div class="row justify-content-center divGroup">
+                        <div class="col-6">
+                            <LabelBox inputLabel="@configData.Get_Label("AZM_Label")" />
+                        </div>
+                        <div class="col-3 ant-padding">
+                            <RadzenTextBox @bind-Value="automateData.X_AZM_MIC" Style="width: 100%;" />
+                        </div>
+                        <div class="col-3 ant-padding">
+                            <RadzenTextBox @bind-Value="automateData.X_AZM_RIS" Style="width: 100%;" />
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-12 col-xl-3">
+                    <div class="row justify-content-center divGroup">
+                        <div class="col-6">
+                            <LabelBox inputLabel="@configData.Get_Label("CLI_Label")" />
+                        </div>
+                        <div class="col-3 ant-padding">
+                            <RadzenTextBox @bind-Value="automateData.X_CLI_MIC" Style="width: 100%;" />
+                        </div>
+                        <div class="col-3 ant-padding">
+                            <RadzenTextBox @bind-Value="automateData.X_CLI_RIS" Style="width: 100%;" />
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-12 col-xl-3">
+                    <div class="row justify-content-center divGroup">
+                        <div class="col-6">
+                            <LabelBox inputLabel="@configData.Get_Label("LVX_Label")" />
+                        </div>
+                        <div class="col-3 ant-padding">
+                            <RadzenTextBox @bind-Value="automateData.X_LVX_MIC" Style="width: 100%;" />
+                        </div>
+                        <div class="col-3 ant-padding">
+                            <RadzenTextBox @bind-Value="automateData.X_LVX_RIS" Style="width: 100%;" />
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-12 col-xl-3">
+                    <div class="row justify-content-center divGroup">
+                        <div class="col-6">
+                            <LabelBox inputLabel="@configData.Get_Label("STH_Label")" />
+                        </div>
+                        <div class="col-3 ant-padding">
+                            <RadzenTextBox @bind-Value="automateData.X_STH_MIC" Style="width: 100%;" />
+                        </div>
+                        <div class="col-3 ant-padding">
+                            <RadzenTextBox @bind-Value="automateData.X_STH_RIS" Style="width: 100%;" />
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <div class="row">
+
+                <div class="col-12 col-xl-3">
+                    <div class="row justify-content-center divGroup">
+                        <div class="col-6">
+                            <LabelBox inputLabel="@configData.Get_Label("FEP_Label")" />
+                        </div>
+                        <div class="col-3 ant-padding">
+                            <RadzenTextBox @bind-Value="automateData.X_FEP_MIC" Style="width: 100%;" />
+                        </div>
+                        <div class="col-3 ant-padding">
+                            <RadzenTextBox @bind-Value="automateData.X_FEP_RIS" Style="width: 100%;" />
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-12 col-xl-3">
+                    <div class="row justify-content-center divGroup">
+                        <div class="col-6">
+                            <LabelBox inputLabel="@configData.Get_Label("COL_Label")" />
+                        </div>
+                        <div class="col-3 ant-padding">
+                            <RadzenTextBox @bind-Value="automateData.X_COL_MIC" Style="width: 100%;" />
+                        </div>
+                        <div class="col-3 ant-padding">
+                            <RadzenTextBox @bind-Value="automateData.X_COL_RIS" Style="width: 100%;" />
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-12 col-xl-3">
+                    <div class="row justify-content-center divGroup">
+                        <div class="col-6">
+                            <LabelBox inputLabel="@configData.Get_Label("LNZ_Label")" />
+                        </div>
+                        <div class="col-3 ant-padding">
+                            <RadzenTextBox @bind-Value="automateData.X_LNZ_MIC" Style="width: 100%;" />
+                        </div>
+                        <div class="col-3 ant-padding">
+                            <RadzenTextBox @bind-Value="automateData.X_LNZ_RIS" Style="width: 100%;" />
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-12 col-xl-3">
+                    <div class="row justify-content-center divGroup">
+                        <div class="col-6">
+                            <LabelBox inputLabel="@configData.Get_Label("TEC_Label")" />
+                        </div>
+                        <div class="col-3 ant-padding">
+                            <RadzenTextBox @bind-Value="automateData.X_TEC_MIC" Style="width: 100%;" />
+                        </div>
+                        <div class="col-3 ant-padding">
+                            <RadzenTextBox @bind-Value="automateData.X_TEC_RIS" Style="width: 100%;" />
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <div class="row">
+
+                <div class="col-12 col-xl-3">
+                    <div class="row justify-content-center divGroup">
+                        <div class="col-6">
+                            <LabelBox inputLabel="@configData.Get_Label("CTX_Label")" />
+                        </div>
+                        <div class="col-3 ant-padding">
+                            <RadzenTextBox @bind-Value="automateData.X_CTX_MIC" Style="width: 100%;" />
+                        </div>
+                        <div class="col-3 ant-padding">
+                            <RadzenTextBox @bind-Value="automateData.X_CTX_RIS" Style="width: 100%;" />
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-12 col-xl-3">
+                    <div class="row justify-content-center divGroup">
+                        <div class="col-6">
+                            <LabelBox inputLabel="@configData.Get_Label("DAP_Label")" />
+                        </div>
+                        <div class="col-3 ant-padding">
+                            <RadzenTextBox @bind-Value="automateData.X_DAP_MIC" Style="width: 100%;" />
+                        </div>
+                        <div class="col-3 ant-padding">
+                            <RadzenTextBox @bind-Value="automateData.X_DAP_RIS" Style="width: 100%;" />
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-12 col-xl-3">
+                    <div class="row justify-content-center divGroup">
+                        <div class="col-6">
+                            <LabelBox inputLabel="@configData.Get_Label("MEM_Label")" />
+                        </div>
+                        <div class="col-3 ant-padding">
+                            <RadzenTextBox @bind-Value="automateData.X_MEM_MIC" Style="width: 100%;" />
+                        </div>
+                        <div class="col-3 ant-padding">
+                            <RadzenTextBox @bind-Value="automateData.X_MEM_RIS" Style="width: 100%;" />
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-12 col-xl-3">
+                    <div class="row justify-content-center divGroup">
+                        <div class="col-6">
+                            <LabelBox inputLabel="@configData.Get_Label("TCY_Label")" />
+                        </div>
+                        <div class="col-3 ant-padding">
+                            <RadzenTextBox @bind-Value="automateData.X_TCY_MIC" Style="width: 100%;" />
+                        </div>
+                        <div class="col-3 ant-padding">
+                            <RadzenTextBox @bind-Value="automateData.X_TCY_RIS" Style="width: 100%;" />
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <div class="row">
+
+                <div class="col-12 col-xl-3">
+                    <div class="row justify-content-center divGroup">
+                        <div class="col-6">
+                            <LabelBox inputLabel="@configData.Get_Label("FOX_Label")" />
+                        </div>
+                        <div class="col-3 ant-padding">
+                            <RadzenTextBox @bind-Value="automateData.X_FOX_MIC" Style="width: 100%;" />
+                        </div>
+                        <div class="col-3 ant-padding">
+                            <RadzenTextBox @bind-Value="automateData.X_FOX_RIS" Style="width: 100%;" />
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-12 col-xl-3">
+                    <div class="row justify-content-center divGroup">
+                        <div class="col-6">
+                            <LabelBox inputLabel="@configData.Get_Label("DOR_Label")" />
+                        </div>
+                        <div class="col-3 ant-padding">
+                            <RadzenTextBox @bind-Value="automateData.X_DOR_MIC" Style="width: 100%;" />
+                        </div>
+                        <div class="col-3 ant-padding">
+                            <RadzenTextBox @bind-Value="automateData.X_DOR_RIS" Style="width: 100%;" />
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-12 col-xl-3">
+                    <div class="row justify-content-center divGroup">
+                        <div class="col-6">
+                            <LabelBox inputLabel="@configData.Get_Label("MET_Label")" />
+                        </div>
+                        <div class="col-3 ant-padding">
+                            <RadzenTextBox @bind-Value="automateData.X_MET_MIC" Style="width: 100%;" />
+                        </div>
+                        <div class="col-3 ant-padding">
+                            <RadzenTextBox @bind-Value="automateData.X_MET_RIS" Style="width: 100%;" />
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-12 col-xl-3">
+                    <div class="row justify-content-center divGroup">
+                        <div class="col-6">
+                            <LabelBox inputLabel="@configData.Get_Label("TGC_Label")" />
+                        </div>
+                        <div class="col-3 ant-padding">
+                            <RadzenTextBox @bind-Value="automateData.X_TGC_MIC" Style="width: 100%;" />
+                        </div>
+                        <div class="col-3 ant-padding">
+                            <RadzenTextBox @bind-Value="automateData.X_TGC_RIS" Style="width: 100%;" />
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <div class="row">
+
+                <div class="col-12 col-xl-3">
+                    <div class="row justify-content-center divGroup">
+                        <div class="col-6">
+                            <LabelBox inputLabel="@configData.Get_Label("CAZ_Label")" />
+                        </div>
+                        <div class="col-3 ant-padding">
+                            <RadzenTextBox @bind-Value="automateData.X_CAZ_MIC" Style="width: 100%;" />
+                        </div>
+                        <div class="col-3 ant-padding">
+                            <RadzenTextBox @bind-Value="automateData.X_CAZ_RIS" Style="width: 100%;" />
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-12 col-xl-3">
+                    <div class="row justify-content-center divGroup">
+                        <div class="col-6">
+                            <LabelBox inputLabel="@configData.Get_Label("ETP_Label")" />
+                        </div>
+                        <div class="col-3 ant-padding">
+                            <RadzenTextBox @bind-Value="automateData.X_ETP_MIC" Style="width: 100%;" />
+                        </div>
+                        <div class="col-3 ant-padding">
+                            <RadzenTextBox @bind-Value="automateData.X_ETP_RIS" Style="width: 100%;" />
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-12 col-xl-3">
+                    <div class="row justify-content-center divGroup">
+                        <div class="col-6">
+                            <LabelBox inputLabel="@configData.Get_Label("MFX_Label")" />
+                        </div>
+                        <div class="col-3 ant-padding">
+                            <RadzenTextBox @bind-Value="automateData.X_MFX_MIC" Style="width: 100%;" />
+                        </div>
+                        <div class="col-3 ant-padding">
+                            <RadzenTextBox @bind-Value="automateData.X_MFX_RIS" Style="width: 100%;" />
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-12 col-xl-3">
+                    <div class="row justify-content-center divGroup">
+                        <div class="col-6">
+                            <LabelBox inputLabel="@configData.Get_Label("SXT_Label")" />
+                        </div>
+                        <div class="col-3 ant-padding">
+                            <RadzenTextBox @bind-Value="automateData.X_SXT_MIC" Style="width: 100%;" />
+                        </div>
+                        <div class="col-3 ant-padding">
+                            <RadzenTextBox @bind-Value="automateData.X_SXT_RIS" Style="width: 100%;" />
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <div class="row">
+
+                <div class="col-12 col-xl-3">
+                    <div class="row justify-content-center divGroup">
+                        <div class="col-6">
+                            <LabelBox inputLabel="@configData.Get_Label("CRO_Label")" />
+                        </div>
+                        <div class="col-3 ant-padding">
+                            <RadzenTextBox @bind-Value="automateData.X_CRO_MIC" Style="width: 100%;" />
+                        </div>
+                        <div class="col-3 ant-padding">
+                            <RadzenTextBox @bind-Value="automateData.X_CRO_RIS" Style="width: 100%;" />
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-12 col-xl-3">
+                    <div class="row justify-content-center divGroup">
+                        <div class="col-6">
+                            <LabelBox inputLabel="@configData.Get_Label("ERY_Label")" />
+                        </div>
+                        <div class="col-3 ant-padding">
+                            <RadzenTextBox @bind-Value="automateData.X_ERY_MIC" Style="width: 100%;" />
+                        </div>
+                        <div class="col-3 ant-padding">
+                            <RadzenTextBox @bind-Value="automateData.X_ERY_RIS" Style="width: 100%;" />
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-12 col-xl-3">
+                    <div class="row justify-content-center divGroup">
+                        <div class="col-6">
+                            <LabelBox inputLabel="@configData.Get_Label("NET_Label")" />
+                        </div>
+                        <div class="col-3 ant-padding">
+                            <RadzenTextBox @bind-Value="automateData.X_NET_MIC" Style="width: 100%;" />
+                        </div>
+                        <div class="col-3 ant-padding">
+                            <RadzenTextBox @bind-Value="automateData.X_NET_RIS" Style="width: 100%;" />
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-12 col-xl-3">
+                    <div class="row justify-content-center divGroup">
+                        <div class="col-6">
+                            <LabelBox inputLabel="@configData.Get_Label("VAN_Label")" />
+                        </div>
+                        <div class="col-3 ant-padding">
+                            <RadzenTextBox @bind-Value="automateData.X_VAN_MIC" Style="width: 100%;" />
+                        </div>
+                        <div class="col-3 ant-padding">
+                            <RadzenTextBox @bind-Value="automateData.X_VAN_RIS" Style="width: 100%;" />
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <hr />
+        </div>
+        <div class="container inputArea">
+            <div class="row">
+                <div class="col-12 col-xl-3">
+                    <div class="row justify-content-center divGroup">
+                        <div class="@classLabel">
+                            <LabelBox inputLabel="@configData.Get_Label("MCIM_Label")" />
+                        </div>
+                        <div class="@classInput">
+                            <RadzenDropDown @bind-Value="geneData.srg_mcim_gene" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+                                            AllowClear="true" TValue="string" Placeholder="Select .."
+                                            Data="geneStatus_ddl_list" ValueProperty="status_code" TextProperty="status_name" />
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-xl-3">
+                    <div class="row justify-content-center divGroup">
+                        <div class="col-6">
+                            <LabelBox inputLabel="@configData.Get_Label("CBDE_Label")" />
+                        </div>
+                        <div class="col-3 ant-padding">
+                            <RadzenTextBox @bind-Value="automateData.X_CBDE_MIC" Style="width: 100%;" />
+                        </div>
+                        <div class="col-3 ant-padding">
+                            <RadzenTextBox @bind-Value="automateData.X_CBDE_RIS" Style="width: 100%;" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12 col-xl-3">
+                    <div class="row justify-content-center divGroup">
+                        <div class="@classLabel">
+                            <LabelBox inputLabel="@configData.Get_Label("srr_testuser")" />
+                        </div>
+                        <div class="@classInput">
+                            <RadzenTextBox Disabled="true" @bind-Value="resultData.srr_testuser" Style="width: 100%;" />
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-xl-3">
+                    <div class="row justify-content-center divGroup">
+                        <div class="@classLabel">
+                            <LabelBox inputLabel="@configData.Get_Label("srr_approveuser")" />
+                        </div>
+                        <div class="@classInput">
+                            <RadzenTextBox Disabled="true" @bind-Value="resultData.srr_approveuser" Style="width: 100%;" />
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-xl-6">
+                    <div class="row justify-content-end divGroup">
+                        <RadzenButton class="btnSave" Text="Save" Click="SaveData" Visible="@(canSendApprove || canApprove)" />&nbsp;&nbsp;
+                        <RadzenButton class="btnSave" Text="Save & Send To Approve" Click="SendData" Visible="@canSendApprove" />&nbsp;&nbsp;
+                        <RadzenButton class="btnSave" Text="Approve" Click="ApproveData" Visible="@canApprove" />
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br />
+    }
+
+}
+
+<Loading ShowModel="showModal" />
+@code {
+    [CascadingParameter] MainLayout mainLayout { get; set; }
+    private const string MENU_CODE = "MNU_0805";
+    private ConfigData configData = new ConfigData();
+    private string classLabel = "col-4";
+    private string classInput = "col-8";
+
+    private RadzenGridCustom<InspectResultDataDTO> inboxGrid = new RadzenGridCustom<InspectResultDataDTO>();
+
+    private InspectStarsResultDataDTO resultData = new InspectStarsResultDataDTO();
+    private InspectStarsResultAutomateDataDTO automateData = new InspectStarsResultAutomateDataDTO();
+    private InspectStarsResultGeneDataDTO geneData = new InspectStarsResultGeneDataDTO();
+
+    private List<HospitalLabDataDTO> lab_ddl_List;
+    private List<ParameterDTO> ParameterList;
+    private List<InspectResultDataDTO> gridDatas;
+
+    private List<DropDownListDTO> machineType_ddl_List;
+    private bool ShowDetailData = false;
+    private InspectResultDataDTO FileData = new InspectResultDataDTO();
+    private IBrowserFile selectedFiles;
+    string LargeUploadMessage = "";
+    long UploadedBytes;
+    long TotalBytes;
+
+    private bool showModal = false;
+    private bool showDetail = false;
+    private string repeatdate_str = string.Empty;
+    private string recvdate_str = string.Empty;
+    private string status_str = string.Empty;
+    private List<InspectResultDataDTO> selectedRow = new List<InspectResultDataDTO>();
+
+    private bool canSendApprove = false;
+    private bool canApprove = false;
+
+    private class StatusList
+    {
+        public string status_code { get; set; }
+        public string status_name { get; set; }
+    }
+
+    List<StatusList> repeat_status_ddl_list = new List<StatusList>()
+    {
+        new StatusList
+        {
+            status_code = "N",
+            status_name = "New"
+        },
+        new StatusList
+        {
+            status_code = "W",
+            status_name = "Wait-Inspect"
+        },
+            new StatusList
+        {
+            status_code = "P",
+            status_name = "Pending Approve"
+        },
+            new StatusList
+        {
+            status_code = "RG",
+            status_name = "Repeat Gene"
+        },
+            new StatusList
+        {
+            status_code = "T",
+            status_name = "Repeat Automate"
+        },
+            new StatusList
+        {
+            status_code = "A",
+            status_name = "Approve"
+        },
+            new StatusList
+        {
+            status_code = "E",
+            status_name = "Cancel"
+        },
+    };
+
+    List<StatusList> geneStatus_ddl_list = new List<StatusList>()
+    {
+        new StatusList
+        {
+            status_code = "N",
+            status_name = "Negative"
+        },
+            new StatusList
+        {
+            status_code = "P",
+            status_name = "Positive"
+        }
+    };
+
+    private class DDL_DataList
+    {
+        public int datalist_code { get; set; }
+        public string datalist_name { get; set; }
+    }
+
+    private class DDL_DataList_str
+    {
+        public string datalist_code { get; set; }
+        public string datalist_name { get; set; }
+    }
+
+    List<DropDownListDTO> identification_ddl_list = new List<DropDownListDTO>();
+
+    List<DDL_DataList> methodIdentification_ddl_list = new List<DDL_DataList>()
+    {
+        new DDL_DataList
+        {
+            datalist_code = 1,
+            datalist_name = "ชีวเคมี"
+        },
+        new DDL_DataList
+        {
+            datalist_code = 2,
+            datalist_name = "เครื่องทดสอบอัตโนมัติ"
+        },
+        new DDL_DataList
+        {
+            datalist_code = 3,
+            datalist_name = "PCR"
+        },
+        new DDL_DataList
+        {
+            datalist_code = 4,
+            datalist_name = "16 rRNA sequencing"
+        }
+    };
+
+    List<DDL_DataList> methodAntibiotic_ddl_list = new List<DDL_DataList>()
+    {
+        new DDL_DataList
+        {
+            datalist_code = 1,
+            datalist_name = "disk diff."
+        },
+        new DDL_DataList
+        {
+            datalist_code = 2,
+            datalist_name = "E-test"
+        },
+        new DDL_DataList
+        {
+            datalist_code = 3,
+            datalist_name = "microbroth dilution"
+        },
+        new DDL_DataList
+        {
+            datalist_code = 4,
+            datalist_name = "เครื่องทดสอบอัตโนมัติ"
+        }
+    };
+
+    List<DDL_DataList> methodResistantGenes_ddl_list = new List<DDL_DataList>()
+    {
+        new DDL_DataList
+        {
+            datalist_code = 1,
+            datalist_name = "PCR"
+        },
+        new DDL_DataList
+        {
+            datalist_code = 2,
+            datalist_name = "real-time PCR"
+        }
+    };
+
+    List<DDL_DataList_str> serotypeGene_ddl_list = new List<DDL_DataList_str>()
+    {
+        new DDL_DataList_str
+        {
+            datalist_code = "A",
+            datalist_name = "a"
+        },
+        new DDL_DataList_str
+        {
+            datalist_code = "B",
+            datalist_name = "b"
+        },
+        new DDL_DataList_str
+        {
+            datalist_code = "C",
+            datalist_name = "c"
+        },
+        new DDL_DataList_str
+        {
+            datalist_code = "D",
+            datalist_name = "d"
+        },
+        new DDL_DataList_str
+        {
+            datalist_code = "F",
+            datalist_name = "f"
+        },
+        new DDL_DataList_str
+        {
+            datalist_code = "N",
+            datalist_name = "non-type"
+        },
+        new DDL_DataList_str
+        {
+            datalist_code = "O",
+            datalist_name = "อื่นๆ ระบุ"
+        }
+    };
+
+    List<DDL_DataList_str> setogroupGene_ddl_list = new List<DDL_DataList_str>()
+    {
+        new DDL_DataList_str
+        {
+            datalist_code = "A",
+            datalist_name = "A"
+        },
+        new DDL_DataList_str
+        {
+            datalist_code = "B",
+            datalist_name = "B"
+        },
+        new DDL_DataList_str
+        {
+            datalist_code = "C",
+            datalist_name = "C"
+        },
+        new DDL_DataList_str
+        {
+            datalist_code = "W",
+            datalist_name = "W135"
+        },
+        new DDL_DataList_str
+        {
+            datalist_code = "Y",
+            datalist_name = "Y"
+        },
+        new DDL_DataList_str
+        {
+            datalist_code = "X",
+            datalist_name = "X 29E"
+        },
+        new DDL_DataList_str
+        {
+            datalist_code = "O",
+            datalist_name = "อื่นๆ ระบุ"
+        }
+    };
+
+
+    InspectResultSearchDTO searchModel = new InspectResultSearchDTO();
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await mainLayout.GetLoginUser();
+
+            if (mainLayout.loginUser.CheckPagePermission(MENU_CODE) == false) navigationManager.NavigateTo("/NoPermissionPage");
+
+            configData.ConfigDTOList = await configDataService.Get_TBConfig_DataList_Async(new TBConfigDTO() { tbc_mnu_code = MENU_CODE });
+            ParameterList = await ddlDataService.GetParameterListByModelAsync(new ParameterDTO() { prm_code_major = "REPEAT_AUTOMATE" });
+
+            //var role_code = string.Empty;
+            //if (role_code == "SYSTEM" || role_code == "Admin" || role_code == "")
+            //{
+            //    canSendApprove = true;
+            //}
+            //if (role_code == "SYSTEM" || role_code == "Admin" || role_code == "")
+            //{
+            //    canApprove = true;
+            //}
+
+            canApprove = mainLayout.loginUser.PagePermission.rop_approve;
+            canSendApprove = mainLayout.loginUser.PagePermission.rop_edit;
+
+            var searchData = new HospitalLabDataDTO()
+            {
+                stars_arh_code = searchModel.search_arh_code = FileData.srr_arh_code = mainLayout.loginUser.arh_code,
+            };
+            var mm = new DropDownListDTO();
+            lab_ddl_List = await ddlDataService.GetAllLabListByModelAsync(searchData);
+            machineType_ddl_List = await ddlDataService.GetMachineTypeListByModelAsync(mm);
+            identification_ddl_list = await ddlDataService.GetIdentificationListByModelAsync(mm);
+
+            searchModel.search_receive_date_from = DateTime.Now.AddDays(-5);
+            searchModel.search_receive_date_to = DateTime.Now;
+            searchModel.search_testing_date = DateTime.Now.AddDays(-5);
+
+            gridDatas = await inspectResultService.GetInspectResultListByParamAsync(searchModel);
+        }
+    }
+
+    private async void SearchData()
+    {
+        showModal = true;
+        gridDatas = await inspectResultService.GetInspectResultListByParamAsync(searchModel);
+        if (inboxGrid.radzenGrid != null) inboxGrid.radzenGrid.GoToPage(0);
+        showModal = false;
+
+        resultData = null;
+        geneData = null;
+        automateData = null;
+
+        ShowDetailData = false;
+
+        StateHasChanged();
+
+    }
+
+    private async void ClearInboxData()
+    {
+        searchModel.search_arh_code = FileData.srr_arh_code = mainLayout.loginUser.arh_code;
+        //searchModel.search_hos_code = FileData.srr_arh_code = mainLayout.loginUser.hos_code;
+        searchModel.search_receive_date_from = DateTime.Now.AddDays(-5);
+        searchModel.search_receive_date_to = DateTime.Now;
+        searchModel.search_testing_date = DateTime.Now.AddDays(-5);
+        searchModel.search_repeat_status = null;
+
+        selectedRow = new List<InspectResultDataDTO>();
+        SearchData();
+    }
+
+
+    private async void OnGridCheckboxSelected(InspectResultDataDTO row)
+    {
+        //selectedRow = selectedRow ?? new List<string>();
+        //if (!selectedRow.Contains(row.srr_starsno))
+        //    selectedRow.Add(row.srr_starsno);
+        //else if (selectedRow.Contains(row.srr_starsno))
+        //    selectedRow.Remove(row.srr_starsno);
+
+        if (!selectedRow.Contains(row))
+            selectedRow.Add(row);
+        else if (selectedRow.Contains(row))
+            selectedRow.Remove(row);
+    }
+
+    private async void OpenDetailDiv(InspectResultDataDTO row)
+    {
+        var paramModel = new InspectResultSearchDTO();
+        paramModel.search_starsno = row.srr_starsno;
+        status_str = row.srr_status_str;
+
+        resultData = await inspectResultService.Get_InspectStarsResultModelByParamAsync(paramModel);
+        geneData = await inspectResultService.Get_InspectStarsResultGeneModelByParamAsync(paramModel);
+        automateData = await inspectResultService.Get_InspectStarsResultAutomateModelByParamAsync(paramModel);
+
+        ShowDetailData = true;
+        StateHasChanged();
+    }
+
+    private async Task ControlPopup(string type, bool control)
+    {
+        ShowDetailData = control;
+
+        if (control == false)
+        {
+            selectedFiles = null;
+            //LabFileData.lfu_Program = null;
+            //LabFileData.lfu_FileType = null;
+        }
+
+    }
+
+    private void DDL_Change(string ddl_name, object value)
+    {
+        if (ddl_name == "Arh" && value == null)
+        {
+            FileData.srr_arh_code = null;
+        }
+        else
+        {
+            FileData.srr_arh_code = value.ToString();
+        }
+        StateHasChanged();
+    }
+
+    private async void RollbackAutomate()
+    {
+        if (selectedRow.Count == 0)
+        {
+            await jsRuntime.InvokeAsync<object>("ShowAlert", "Please select data.");
+        }
+        //else if (selectedRow.Where(x => x.EndsWith("R")).ToList().Count == 0)
+        //{
+        //    await jsRuntime.InvokeAsync<object>("ShowAlert", "Please select repeat data.");
+        //}
+        else if (selectedRow.Select(x => x.srr_starsno.EndsWith("R")).ToList().Count == 0)
+        {
+            await jsRuntime.InvokeAsync<object>("ShowAlert", "Please select repeat data.");
+        }
+        else if (selectedRow.Where(x => (x.srr_status != "T" && x.srr_status != "W")).ToList().Count > 0)
+        {
+            await jsRuntime.InvokeAsync<object>("ShowAlert", "Please select only status 'Wait-Inspect' or 'Repeat Automate' data.");
+        }
+        else
+        {
+            var result = await jsRuntime.InvokeAsync<bool>("ShowConfirm", "Do you want to save data?");
+            if (result)
+            {
+                foreach (var item in selectedRow)
+                {
+                    var currentDate = DateTime.Now;
+
+                    searchModel.search_starsno = item.srr_starsno;
+                    var resultDataSelect = await inspectResultService.Get_InspectStarsResultModelByParamAsync(searchModel);
+
+                    resultDataSelect.srr_status = "E"; // Cancel 
+                    resultDataSelect.srr_updateuser = mainLayout.loginUser.Username;
+                    resultDataSelect.srr_updatedate = currentDate;
+                    var resultReturn = await inspectResultService.Save_InspectStarsResultModelAsync(resultDataSelect);
+
+                    searchModel.search_starsno = item.srr_starsno_ref;
+                    var resultDataSelectRef = await inspectResultService.Get_InspectStarsResultModelByParamAsync(searchModel);
+
+                    resultDataSelectRef.srr_status = "W"; // Wait-Inspect
+                    resultDataSelectRef.srr_updateuser = mainLayout.loginUser.Username;
+                    resultDataSelectRef.srr_updatedate = currentDate;
+                    var resultReturnRef = await inspectResultService.Save_InspectStarsResultModelAsync(resultDataSelectRef);
+
+                    await jsRuntime.InvokeAsync<object>("ShowAlert", "Save data complete.");
+                    SearchData();
+                }
+            }
+        }
+    }
+
+    private async void RepeatAutomate()
+    {
+        if (selectedRow.Count == 0)
+        {
+            await jsRuntime.InvokeAsync<object>("ShowAlert", "Please select data.");
+        }
+        else if (selectedRow.Where(x => x.srr_starsno.EndsWith("R")).ToList().Count > 0)
+        {
+            await jsRuntime.InvokeAsync<object>("ShowAlert", "Please don't select repeat data.");
+        }
+        else
+        {
+            var result = await jsRuntime.InvokeAsync<bool>("ShowConfirm", "Do you want to save repeat automate data?");
+            if (result)
+            {
+                foreach (var item in selectedRow)
+                {
+                    var currentDate = DateTime.Now;
+
+                    searchModel.search_starsno = item.srr_starsno;
+                    searchModel.search_username = mainLayout.loginUser.Username;
+                    var resultReturn = await inspectResultService.Save_InspectStarsResultRepeatAutomateModelAsync(searchModel);
+                }
+
+                await jsRuntime.InvokeAsync<object>("ShowAlert", "Save repeat automate data complete.");
+                SearchData();
+            }
+        }
+    }
+
+    private async void RepeatGene()
+    {
+        if (selectedRow.Count == 0)
+        {
+            await jsRuntime.InvokeAsync<object>("ShowAlert", "Please select data.");
+        }
+        else
+        {
+            var result = await jsRuntime.InvokeAsync<bool>("ShowConfirm", "Do you want to repeat gene data?");
+            if (result)
+            {
+                foreach (var item in selectedRow)
+                {
+                    var currentDate = DateTime.Now;
+
+                    searchModel.search_starsno = item.srr_starsno;
+                    var resultDataSelect = await inspectResultService.Get_InspectStarsResultModelByParamAsync(searchModel);
+
+                    resultDataSelect.srr_status = "RG";
+                    resultDataSelect.srr_updateuser = mainLayout.loginUser.Username;
+                    resultDataSelect.srr_updatedate = currentDate;
+                    var resultReturn = await inspectResultService.Save_InspectStarsResultModelAsync(resultDataSelect);
+                }
+
+                await jsRuntime.InvokeAsync<object>("ShowAlert", "Save repeat gene data complete.");
+                SearchData();
+            }
+        }
+    }
+
+    private async void SendToApproveList()
+    {
+        if (selectedRow.Count == 0)
+        {
+            await jsRuntime.InvokeAsync<object>("ShowAlert", "Please select data.");
+        }
+        else
+        {
+            var result = await jsRuntime.InvokeAsync<bool>("ShowConfirm", "Do you want to send data to approve?");
+            if (result)
+            {
+                foreach (var item in selectedRow)
+                {
+                    var currentDate = DateTime.Now;
+
+                    searchModel.search_starsno = item.srr_starsno;
+                    var resultDataSelect = await inspectResultService.Get_InspectStarsResultModelByParamAsync(searchModel);
+
+                    resultDataSelect.srr_status = "P";
+                    resultDataSelect.srr_updateuser = mainLayout.loginUser.Username;
+                    resultDataSelect.srr_updatedate = currentDate;
+                    var resultReturn = await inspectResultService.Save_InspectStarsResultModelAsync(resultDataSelect);
+                }
+
+                await jsRuntime.InvokeAsync<object>("ShowAlert", "Send data to approve complete.");
+                SearchData();
+            }
+        }
+    }
+
+    private async void ApproveList()
+    {
+        if (selectedRow.Count == 0)
+        {
+            await jsRuntime.InvokeAsync<object>("ShowAlert", "Please select data.");
+        }
+        else
+        {
+            var result = await jsRuntime.InvokeAsync<bool>("ShowConfirm", "Do you want to save data?");
+            if (result)
+            {
+                foreach (var item in selectedRow)
+                {
+                    var currentDate = DateTime.Now;
+
+                    searchModel.search_starsno = item.srr_starsno;
+                    var resultDataSelect = await inspectResultService.Get_InspectStarsResultModelByParamAsync(searchModel);
+
+                    resultDataSelect.srr_status = "A";
+                    resultDataSelect.srr_updateuser = mainLayout.loginUser.Username;
+                    resultDataSelect.srr_updatedate = currentDate;
+                    var resultReturn = await inspectResultService.Save_InspectStarsResultModelAsync(resultDataSelect);
+                }
+
+                await jsRuntime.InvokeAsync<object>("ShowAlert", "Pending approve data complete.");
+                SearchData();
+            }
+        }
+    }
+
+    private async void SaveData()
+    {
+        var result = await jsRuntime.InvokeAsync<bool>("ShowConfirm", "Do you want to save data?");
+        if (result)
+        {
+            var currentDate = DateTime.Now;
+
+            resultData.srr_testuser = mainLayout.loginUser.Username;
+            resultData.srr_testdate = currentDate;
+            resultData.srr_updateuser = mainLayout.loginUser.Username;
+            resultData.srr_updatedate = currentDate;
+            var resultReturn = await inspectResultService.Save_InspectStarsResultModelAsync(resultData);
+
+            geneData.srg_updateuser = mainLayout.loginUser.Username;
+            geneData.srg_updatedate = currentDate;
+            var geneReturn = await inspectResultService.Save_InspectStarsResultGeneModelAsync(geneData);
+
+            automateData.sra_updateuser = mainLayout.loginUser.Username;
+            automateData.sra_updatedate = currentDate;
+            var automateReturn = await inspectResultService.Save_InspectStarsResultAutomateModelAsync(automateData);
+
+            await jsRuntime.InvokeAsync<object>("ShowAlert", "Save data complete.");
+            SearchData();
+        }
+    }
+
+    private async void SendData()
+    {
+        var result = await jsRuntime.InvokeAsync<bool>("ShowConfirm", "Do you want to send data to approve?");
+        if (result)
+        {
+            var currentDate = DateTime.Now;
+
+            resultData.srr_status = "P";
+            resultData.srr_updateuser = mainLayout.loginUser.Username;
+            resultData.srr_updatedate = currentDate;
+            var resultReturn = await inspectResultService.Save_InspectStarsResultModelAsync(resultData);
+
+            geneData.srg_updateuser = mainLayout.loginUser.Username;
+            geneData.srg_updatedate = currentDate;
+            var geneReturn = await inspectResultService.Save_InspectStarsResultGeneModelAsync(geneData);
+
+            automateData.sra_updateuser = mainLayout.loginUser.Username;
+            automateData.sra_updatedate = currentDate;
+            var automateReturn = await inspectResultService.Save_InspectStarsResultAutomateModelAsync(automateData);
+
+            await jsRuntime.InvokeAsync<object>("ShowAlert", "Sand data to approve complete.");
+            SearchData();
+        }
+    }
+
+    private async void ApproveData()
+    {
+        var result = await jsRuntime.InvokeAsync<bool>("ShowConfirm", "Do you want to approve data?");
+        if (result)
+        {
+            var currentDate = DateTime.Now;
+
+            resultData.srr_status = "A";
+            resultData.srr_updateuser = mainLayout.loginUser.Username;
+            resultData.srr_updatedate = currentDate;
+            var resultReturn = await inspectResultService.Save_InspectStarsResultModelAsync(resultData);
+
+            geneData.srg_updateuser = mainLayout.loginUser.Username;
+            geneData.srg_updatedate = currentDate;
+            var geneReturn = await inspectResultService.Save_InspectStarsResultGeneModelAsync(geneData);
+
+            automateData.sra_updateuser = mainLayout.loginUser.Username;
+            automateData.sra_updatedate = currentDate;
+            var automateReturn = await inspectResultService.Save_InspectStarsResultAutomateModelAsync(automateData);
+
+            await jsRuntime.InvokeAsync<object>("ShowAlert", "Approve data complete.");
+            SearchData();
+        }
+    }
+
+}

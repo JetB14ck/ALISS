@@ -111,6 +111,15 @@ namespace ALISS.Data.D0_Master
             return objList;
         }
 
+        public async Task<List<DropDownListDTO>> GetIdentificationListByModelAsync(DropDownListDTO searchModel)
+        {
+            List<DropDownListDTO> objList = new List<DropDownListDTO>();
+
+            objList = await _apiHelper.GetDataListByModelAsync<DropDownListDTO, DropDownListDTO>("dropdownlist_api/GetIdentificationList", searchModel);
+
+            return objList;
+        }
+
         public List<DropDownListDTO> GetMonthList()
         {
             List<DropDownListDTO> objList = new List<DropDownListDTO>();

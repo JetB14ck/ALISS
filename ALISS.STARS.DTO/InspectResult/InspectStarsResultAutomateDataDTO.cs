@@ -1,0 +1,109 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
+
+namespace ALISS.STARS.DTO.InspectResult
+{
+    public class InspectStarsResultAutomateDataDTO
+    {
+        public int sra_id { get; set; }
+        public string sra_starsno { get; set; }
+        public string X_AMK_MIC { get; set; }
+        public string X_AMK_RIS { get; set; }
+        public string X_AMC_MIC { get; set; }
+        public string X_AMC_RIS { get; set; }
+        public string X_AMP_MIC { get; set; }
+        public string X_AMP_RIS { get; set; }
+        public string X_SAM_MIC { get; set; }
+        public string X_SAM_RIS { get; set; }
+        public string X_AZM_MIC { get; set; }
+        public string X_AZM_RIS { get; set; }
+        public string X_FEP_MIC { get; set; }
+        public string X_FEP_RIS { get; set; }
+        public string X_CTX_MIC { get; set; }
+        public string X_CTX_RIS { get; set; }
+        public string X_FOX_MIC { get; set; }
+        public string X_FOX_RIS { get; set; }
+        public string X_CAZ_MIC { get; set; }
+        public string X_CAZ_RIS { get; set; }
+        public string X_CRO_MIC { get; set; }
+        public string X_CRO_RIS { get; set; }
+        public string X_CXM_MIC { get; set; }
+        public string X_CXM_RIS { get; set; }
+        public string X_CHL_MIC { get; set; }
+        public string X_CHL_RIS { get; set; }
+        public string X_CIP_MIC { get; set; }
+        public string X_CIP_RIS { get; set; }
+        public string X_CLI_MIC { get; set; }
+        public string X_CLI_RIS { get; set; }
+        public string X_COL_MIC { get; set; }
+        public string X_COL_RIS { get; set; }
+        public string X_CPO_MIC { get; set; }
+        public string X_CPO_RIS { get; set; }
+        public string X_CZO_MIC { get; set; }
+        public string X_CZO_RIS { get; set; }
+        public string X_CXA_MIC { get; set; }
+        public string X_CXA_RIS { get; set; }
+        public string X_CSL_MIC { get; set; }
+        public string X_CSL_RIS { get; set; }
+        public string X_DAP_MIC { get; set; }
+        public string X_DAP_RIS { get; set; }
+        public string X_DOR_MIC { get; set; }
+        public string X_DOR_RIS { get; set; }
+        public string X_ETP_MIC { get; set; }
+        public string X_ETP_RIS { get; set; }
+        public string X_ERT_MIC { get; set; }
+        public string X_ERT_RIS { get; set; }
+        public string X_ERY_MIC { get; set; }
+        public string X_ERY_RIS { get; set; }
+        public string X_FUS_MIC { get; set; }
+        public string X_FUS_RIS { get; set; }
+        public string X_FOS_MIC { get; set; }
+        public string X_FOS_RIS { get; set; }
+        public string X_GEH_MIC { get; set; }
+        public string X_GEH_RIS { get; set; }
+        public string X_GEN_MIC { get; set; }
+        public string X_GEN_RIS { get; set; }
+        public string X_IPM_MIC { get; set; }
+        public string X_IPM_RIS { get; set; }
+        public string X_LVX_MIC { get; set; }
+        public string X_LVX_RIS { get; set; }
+        public string X_LNZ_MIC { get; set; }
+        public string X_LNZ_RIS { get; set; }
+        public string X_MEM_MIC { get; set; }
+        public string X_MEM_RIS { get; set; }
+        public string X_MFX_MIC { get; set; }
+        public string X_MFX_RIS { get; set; }
+        public string X_NET_MIC { get; set; }
+        public string X_NET_RIS { get; set; }
+        public string X_OXA_MIC { get; set; }
+        public string X_OXA_RIS { get; set; }
+        public string X_PEN_MIC { get; set; }
+        public string X_PEN_RIS { get; set; }
+        public string X_TZP_MIC { get; set; }
+        public string X_TZP_RIS { get; set; }
+        public string X_RIF_MIC { get; set; }
+        public string X_RIF_RIS { get; set; }
+        public string X_STH_MIC { get; set; }
+        public string X_STH_RIS { get; set; }
+        public string X_TEC_MIC { get; set; }
+        public string X_TEC_RIS { get; set; }
+        public string X_TCY_MIC { get; set; }
+        public string X_TCY_RIS { get; set; }
+        public string X_TGC_MIC { get; set; }
+        public string X_TGC_RIS { get; set; }
+        public string X_SXT_MIC { get; set; }
+        public string X_SXT_RIS { get; set; }
+        public string X_VAN_MIC { get; set; }
+        public string X_VAN_RIS { get; set; }
+        public string X_MET_MIC { get; set; }
+        public string X_MET_RIS { get; set; }
+        public string X_CBDE_MIC { get; set; }
+        public string X_CBDE_RIS { get; set; }
+        public string sra_status { get; set; }
+        public string sra_createduser { get; set; }
+        public DateTime? sra_createddate { get; set; }
+        public string sra_updateuser { get; set; }
+        public DateTime? sra_updatedate { get; set; }
+    }
+}

@@ -63,7 +63,7 @@ namespace ALISS.DropDownList.Library
             {
                 try
                 {
-                    objList = _db.HospitalLabDataDTOs.FromSqlRaw<HospitalLabDataDTO>("sp_GET_DDL_AllLab {0}, {1}, {2}, {3}", searchModel.arh_code, searchModel.prv_code, searchModel.hos_code, searchModel.lab_code).ToList();
+                    objList = _db.HospitalLabDataDTOs.FromSqlRaw<HospitalLabDataDTO>("sp_GET_DDL_AllLab {0}, {1}, {2}, {3}, {4}", searchModel.arh_code, searchModel.prv_code, searchModel.hos_code, searchModel.lab_code, searchModel.stars_arh_code).ToList();
 
                     trans.Commit();
                 }
@@ -82,6 +82,6 @@ namespace ALISS.DropDownList.Library
 
             return objList;
         }
-
+      
     }
 }
