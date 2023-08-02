@@ -10,6 +10,7 @@ using ALISS.STARS.DTO.RepeatAutomate;
 using ALISS.STARS.DTO.STARSMapGene;
 using ALISS.STARS.DTO.NarstService;
 using ALISS.STARS.DTO.UploadAutomate;
+using ALISS.STARS.DTO.InspectResult;
 
 namespace ALISS.STARS.Library.DataAccess
 {
@@ -95,6 +96,11 @@ namespace ALISS.STARS.Library.DataAccess
         public DbSet<StarAMRMapHosOrganismSelectDTO> StarAMRMapHosOrganismSelectDTOs { get; set; }
         #endregion
 
+        #region Inspect Result
+        public DbSet<InspectResultDataDTO> InspectResultDataDTOs { get; set; }
+        public DbSet<TRStarsResultAutomate> TRStarsResultAutomates { get; set; }
+        public DbSet<TRStarsResultGene> TRStarsResultGenes { get; set; }
+        #endregion
 
         public STARSContext(DbContextOptions<STARSContext> options) : base(options)
         {
@@ -195,6 +201,18 @@ namespace ALISS.STARS.Library.DataAccess
             #region Stars AMR Map
 
             builder.Entity<StarsAMRMapGeneDataDTO>().HasNoKey();
+            #endregion
+
+            #region Inspect Result
+
+            builder.Entity<InspectResultDataDTO>().HasNoKey();
+
+            builder.Entity<TRStarsResultAutomate>().HasKey(x => x.sra_id);
+            builder.Entity<TRStarsResultAutomate>().ToTable("TRStarsResultAutomate");
+
+            builder.Entity<TRStarsResultGene>().HasKey(x => x.srg_id);
+            builder.Entity<TRStarsResultGene>().ToTable("TRStarsResultGene");
+
             #endregion
 
             builder.Entity<StarAMRMapHosOrganismDataDTO>().HasNoKey();

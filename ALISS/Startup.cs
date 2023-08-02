@@ -175,6 +175,7 @@ namespace ALISS
             services.AddScoped<STARSMonitoringService>();
             services.AddScoped<MonthlyGeneReportService>();
             services.AddScoped<StarsAMRMapGeneService>();
+            services.AddScoped<InspectResultService>();
 
             services.AddSignalR();
         }

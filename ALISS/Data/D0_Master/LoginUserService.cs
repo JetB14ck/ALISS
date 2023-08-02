@@ -10,6 +10,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Text.Json;
 using ALISS.AUTH.DTO;
+using ALISS.DropDownList.DTO;
 
 namespace ALISS.Data.D0_Master
 {
@@ -78,6 +79,15 @@ namespace ALISS.Data.D0_Master
                         loginUser.hos_name = objListFirst.usp_hos_name;
                         loginUser.lab_code = objListFirst.usp_lab_code;
                         loginUser.lab_name = objListFirst.usp_lab_name;
+
+                        if (loginUser.hos_code != null)
+                        {
+                            HospitalLabDataDTO searchStars = new HospitalLabDataDTO() { hos_code = loginUser.hos_code };
+                            var objSTARS = await _apiHelper.GetDataListByModelAsync<HospitalLabDataDTO, HospitalLabDataDTO>("dropdownlist_api/GetAllLabList", searchStars);
+                            loginUser.stars_arh_code = objSTARS.FirstOrDefault().stars_arh_code;
+                            loginUser.stars_arh_name = objSTARS.FirstOrDefault().stars_arh_name;
+                        }
+                        
 
                         RoleSearchDTO searchData = new RoleSearchDTO() { sch_rol_code = loginUser.rol_code };
                         loginUser.rol_permission_List = await _apiHelper.GetDataListByModelAsync<RolePermissionDTO, RoleSearchDTO>("role_api/Get_PermissionListByModel", searchData);

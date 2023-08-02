@@ -57,9 +57,9 @@ namespace ALISS.STARS.DTO.RepeatAutomate
                 string objReturn = "";
                 if (afu_status == "N") objReturn = "New";
                 else if (afu_status == "W") objReturn = "Wait-Inspect";
-                else if (afu_status == "P") objReturn = "Processing";
-                else if (afu_status == "R") objReturn = "Repeat Automate";
-                else if (afu_status == "C") objReturn = "Cancel";
+                else if (afu_status == "P") objReturn = "Pending Approve";
+                else if (afu_status == "T") objReturn = "Repeat Automate";
+                else if (afu_status == "E") objReturn = "Cancel";
                 return objReturn;
             }
         }

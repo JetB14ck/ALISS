@@ -210,7 +210,9 @@ else
                                             <LabelBox inputLabel="@configData.Get_Label("srr_hos_code")" />
                                         </div>
                                         <div class="@classInput">
-                                            <RadzenDropDown @bind-Value="searchModel.srr_hos_code" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowClear="true" TValue="string" AllowFiltering="true" Placeholder="Select..." Data="lab_ddl_List.Where(x => (searchModel.srr_arh_code == null || x.arh_code == searchModel.srr_arh_code)).Select(x => new { x.hos_code, x.hos_name }).Distinct().OrderBy(o => o.hos_name)" ValueProperty="hos_code" TextProperty="hos_name" Disabled="(!string.IsNullOrEmpty(mainLayout.loginUser.hos_code))" Style="width: 100%;" />
+                                            <RadzenDropDown @bind-Value="searchModel.srr_hos_code" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowClear="true" TValue="string" AllowFiltering="true" Placeholder="Select..." 
+                                                            Data="lab_ddl_List.Where(x => (searchModel.srr_arh_code == null || x.stars_arh_code == searchModel.srr_arh_code)).Select(x => new { x.hos_code, x.hos_name }).Distinct().OrderBy(o => o.hos_name)" 
+                                                            ValueProperty="hos_code" TextProperty="hos_name" Disabled="(!string.IsNullOrEmpty(mainLayout.loginUser.hos_code))" Style="width: 100%;" />
                                         </div>
                                     </div>
                                 </div>
@@ -523,11 +525,24 @@ else
             ddl_contact = await ddlDataService.GetAreaHealthListContactByModelAsync(new TCAreaHealthContact() { arc_arh_code = mainLayout.loginUser.arh_code });
             ParameterList = await ddlDataService.GetParameterListByModelAsync(new ParameterDTO() { prm_code_major = "STARS_PERSONAL_REPORT" });
 
-            var searchData = new HospitalLabDataDTO()
+            //var searchData = new HospitalLabDataDTO()
+            //{
+            //    arh_code = searchModel.srr_arh_code = mainLayout.loginUser.arh_code,
+            //    hos_code = searchModel.srr_hos_code = mainLayout.loginUser.hos_code
+            //};
+
+            var searchData = new HospitalLabDataDTO();
+
+            if (mainLayout.loginUser.hos_code != null)
             {
-                arh_code = searchModel.srr_arh_code = mainLayout.loginUser.arh_code,
-                hos_code = searchModel.srr_hos_code = mainLayout.loginUser.hos_code
-            };
+                searchData.hos_code = searchModel.srr_hos_code = mainLayout.loginUser.hos_code;
+                searchData.stars_arh_code = searchModel.srr_arh_code = mainLayout.loginUser.stars_arh_code;
+            }
+            else
+            {
+                searchData.stars_arh_code = searchModel.srr_arh_code = mainLayout.loginUser.arh_code;
+            }
+
             lab_ddl_List = await ddlDataService.GetAllLabListByModelAsync(searchData);
 
             if (string.IsNullOrEmpty(id))
