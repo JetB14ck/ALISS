@@ -5,6 +5,7 @@ using System.Text;
 using ALISS.Mapping.DTO;
 using ALISS.Mapping.Library.Models;
 using ALISS.MasterManagement.Library.Models;
+using ALISS.STARS.DTO;
 
 namespace ALISS.Mapping.Library.DataAccess
 {
@@ -33,6 +34,7 @@ namespace ALISS.Mapping.Library.DataAccess
         public DbSet<WardTypeMappingDataDTO> WardTypeMappingDataDTOs { get; set; }
         public DbSet<TRImportMappingLogDTO> TRImportMappingLogDTOs { get; set; }
         public DbSet<TempImportMappingLogDTO> TempImportMappingLogDTOs { get; set; }
+        public DbSet<TempImportUploadAutomateLogDTO> TempImportUploadAutomateLogDTOs { get; set; }
         public MappingContext(DbContextOptions<MappingContext> options) : base(options)
         {
 
@@ -83,6 +85,8 @@ namespace ALISS.Mapping.Library.DataAccess
             builder.Entity<TempImportMappingLogDTO>().HasKey(x => x.tme_id);
             builder.Entity<TempImportMappingLogDTO>().ToTable("TEMP_ImportMappingError");
 
+            builder.Entity<TempImportUploadAutomateLogDTO>().HasKey(x => x.tae_id);
+            builder.Entity<TempImportUploadAutomateLogDTO>().ToTable("TEMP_ImportAutomateMappingError");
 
             base.OnModelCreating(builder);
         }

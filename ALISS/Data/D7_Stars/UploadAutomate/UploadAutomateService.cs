@@ -369,13 +369,13 @@ namespace ALISS.Data.D7_StarsMapping
                             }
 
                             // Rename
-                            var dtResult = DataTableHelper.RenameColumn(result.Tables[0], names).Select("whonet_code<>''").CopyToDataTable();
+                            var dtResult = DataTableHelper.RenameColumn(result.Tables[0], names).Select("data_code<>''").CopyToDataTable();
                             //var dtResult = DataTableHelper.RenameColumn(result.Tables[0], names);
                             //Save Temp to table
                             List<TempImportUploadAutomateLogDTO> objReturn = new List<TempImportUploadAutomateLogDTO>();
                             List<TempImportUploadAutomateLogDTO> models = new List<TempImportUploadAutomateLogDTO>();
                             models = DataTableHelper.ConvertDataTable<TempImportUploadAutomateLogDTO>(dtResult);
-                            objReturn = await _apiHelper.PostDataAsync("mapping_api/Post_SaveImportUploadAutomateLogData", models);
+                            objReturn = await _apiHelper.PostDataAsync("mapping_api/Post_SaveTempImportUploadAutomateLogData", models);
 
                             ErrorMessage.Add(new UploadAutomateLogErrorMessageDTO
                             {
@@ -435,7 +435,7 @@ namespace ALISS.Data.D7_StarsMapping
         public async Task<UploadAutomateLogDTO> UploadFileAsync(UploadAutomateLogDTO model)
         {
             UploadAutomateLogDTO objReturn = new UploadAutomateLogDTO();
-            objReturn = await _apiHelper.PostDataAsync("mapping_api/Post_SaveTempImportUploadAutomateLogData", model);
+            objReturn = await _apiHelper.PostDataAsync("mapping_api/Post_SaveImportUploadAutomateLogData", model);
 
             return objReturn;
         }
