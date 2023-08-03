@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using ALISS.Mapping.DTO;
+using ALISS.STARS.DTO;
 
 namespace ALISS.Mapping.Library
 {
@@ -55,11 +56,6 @@ namespace ALISS.Mapping.Library
         #region ImportMappingError
         TRImportMappingLogDTO SaveTRImportMappingLogData(TRImportMappingLogDTO model);
         List<TempImportMappingLogDTO> SaveTempImportMappingLogData(List<TempImportMappingLogDTO> model);
-        #endregion
-
-        #region ImportMappingAutomateError
-        TRImportMappingLogDTO SaveTRImportMappingAutomateLogData(TRImportMappingLogDTO model);
-        List<TempImportMappingLogDTO> SaveTempImportMappingAutomateLogData(List<TempImportMappingLogDTO> model);
         #endregion
     }
 }

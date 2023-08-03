@@ -282,23 +282,5 @@ namespace ALISS.Mapping.Api.Controllers
             return objReturn;
         }
         #endregion
-
-        [HttpPost]
-        [Route("api/Mapping/Post_SaveImportUploadAutomateLogData")]
-        public TRImportMappingLogDTO Post_SaveImportUploadAutomateLogData([FromBody] TRImportMappingLogDTO model)
-        {
-            var objReturn = _service.SaveTRImportMappingAutomateLogData(model);
-
-            return objReturn;
-        }
-
-        [HttpPost]
-        [Route("api/Mapping/Post_SaveTempImportUploadAutomateLogData")]
-        public List<TempImportUploadAutomateLogDTO> Post_SaveTempImportUploadAutomateLogData([FromBody] List<TempImportUploadAutomateLogDTO> model)
-        {
-            var objReturn = _service.SaveTempImportMappingAutomateLogData(model);
-
-            return objReturn;
-        }
     }
 }

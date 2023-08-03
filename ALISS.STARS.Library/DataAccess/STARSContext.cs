@@ -11,6 +11,7 @@ using ALISS.STARS.DTO.STARSMapGene;
 using ALISS.STARS.DTO.NarstService;
 using ALISS.STARS.DTO.UploadAutomate;
 using ALISS.STARS.DTO.InspectResult;
+using ALISS.Mapping.DTO;
 
 namespace ALISS.STARS.Library.DataAccess
 {
@@ -59,6 +60,7 @@ namespace ALISS.STARS.Library.DataAccess
         public DbSet<UploadAutomateExportErrorDTO> UploadAutomateExportErrorDTOs { get; set; }
         public DbSet<UploadAutomateLogDTO> UploadAutomateLogDTOs { get; set; }
         public DbSet<TempImportUploadAutomateLogDTO> TempImportUploadAutomateLogDTOs { get; set; }
+        public DbSet<TRImportMappingLogDTO> TRImportMappingLogDTOs { get; set; }
 
         #endregion
 
@@ -233,7 +235,16 @@ namespace ALISS.STARS.Library.DataAccess
             builder.Entity<UploadAutomateExportErrorDTO>().HasNoKey();
 
             builder.Entity<UploadAutomateLogDTO>().HasNoKey();
-            builder.Entity<TempImportUploadAutomateLogDTO>().HasNoKey();
+            //builder.Entity<UploadAutomateLogDTO>().HasKey(x => x.iml_id);
+            //builder.Entity<UploadAutomateLogDTO>().ToTable("TRImportMappingLog");
+
+            builder.Entity<TRImportMappingLogDTO>().HasKey(x => x.iml_id);
+            builder.Entity<TRImportMappingLogDTO>().ToTable("TRImportMappingLog");
+
+            builder.Entity<TempImportUploadAutomateLogDTO>().HasKey(x => x.tae_id);
+            builder.Entity<TempImportUploadAutomateLogDTO>().ToTable("TEMP_ImportAutomateMappingError");
+
+            
 
             base.OnModelCreating(builder);
         }

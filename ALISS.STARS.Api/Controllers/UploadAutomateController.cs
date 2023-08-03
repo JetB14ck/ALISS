@@ -8,6 +8,7 @@ using ALISS.STARS.Library;
 using ALISS.STARS.Library.DataAccess;
 using AutoMapper;
 using ALISS.STARS.DTO.UploadAutomate;
+using ALISS.Mapping.DTO;
 
 namespace ALISS.UploadAutomate.Api.Controllers
 {
@@ -101,19 +102,19 @@ namespace ALISS.UploadAutomate.Api.Controllers
         }
 
         [HttpPost]
-        [Route("api/Mapping/Post_SaveTRImportMappingLogData")]
-        public UploadAutomateLogDTO Post_SaveTRImportMappingLogData([FromBody] UploadAutomateLogDTO model)
+        [Route("api/UploadAutomate/Post_SaveImportUploadAutomateLogData")]
+        public TRImportMappingLogDTO Post_SaveImportUploadAutomateLogData([FromBody] TRImportMappingLogDTO model)
         {
-            var objReturn = _service.SaveImportUploadAutomateLogData(model);
+            var objReturn = _service.SaveTRImportMappingAutomateLogData(model);
 
             return objReturn;
         }
 
         [HttpPost]
-        [Route("api/Mapping/Post_SaveTempImportMappingLogData")]
-        public List<TempImportUploadAutomateLogDTO> Post_SaveTempImportMappingLogData([FromBody] List<TempImportUploadAutomateLogDTO> model)
+        [Route("api/UploadAutomate/Post_SaveTempImportUploadAutomateLogData")]
+        public List<TempImportUploadAutomateLogDTO> Post_SaveTempImportUploadAutomateLogData([FromBody] List<TempImportUploadAutomateLogDTO> model)
         {
-            var objReturn = _service.SaveTempImportUploadAutomateLogData(model);
+            var objReturn = _service.SaveTempImportMappingAutomateLogData(model);
 
             return objReturn;
         }

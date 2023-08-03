@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Net;
 using System.Text;
+using ALISS.Mapping.DTO;
 using ALISS.STARS.DTO;
 using ALISS.STARS.DTO.UploadAutomate;
 
@@ -21,7 +22,10 @@ namespace ALISS.STARS.Library
         List<UploadAutomateSummaryDetailListDTO> GetUploadAutomateSummaryDetailByAfuId(string fsh_id);
         List<UploadAutomateSummaryDetailListDTO> GetUploadAutomateSummaryDetailListByAfuId(string afu_Id);
         List<UploadAutomateExportErrorDTO> GetUploadAutomateExportError(string[] afu_ids);
-        UploadAutomateLogDTO SaveImportUploadAutomateLogData(UploadAutomateLogDTO model);
-        List<TempImportUploadAutomateLogDTO> SaveTempImportUploadAutomateLogData(List<TempImportUploadAutomateLogDTO> model);
+
+        #region ImportMappingAutomateError
+        TRImportMappingLogDTO SaveTRImportMappingAutomateLogData(TRImportMappingLogDTO model);
+        List<TempImportUploadAutomateLogDTO> SaveTempImportMappingAutomateLogData(List<TempImportUploadAutomateLogDTO> model);
+        #endregion
     }
 }

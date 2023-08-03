@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using ALISS.STARS.DTO.UploadAutomate;
 using EFCore.BulkExtensions;
+using ALISS.Mapping.DTO;
 
 namespace ALISS.STARS.Library
 {
@@ -329,30 +330,32 @@ namespace ALISS.STARS.Library
             return objList;
         }
 
-        public UploadAutomateLogDTO SaveImportUploadAutomateLogData(UploadAutomateLogDTO model)
+        #region ImportMappingAutomateError
+
+        public TRImportMappingLogDTO SaveTRImportMappingAutomateLogData(TRImportMappingLogDTO model)
         {
             log.MethodStart();
 
             var currentDateTime = DateTime.Now;
-            UploadAutomateLogDTO objReturn = new UploadAutomateLogDTO();
+            TRImportMappingLogDTO objReturn = new TRImportMappingLogDTO();
 
             using (var trans = _db.Database.BeginTransaction())
             {
                 try
                 {
-                    var objModel = new UploadAutomateLogDTO();
-                    objModel = _mapper.Map<UploadAutomateLogDTO>(model);
+                    var objModel = new TRImportMappingLogDTO();
+                    objModel = _mapper.Map<TRImportMappingLogDTO>(model);
 
                     objModel.iml_createdate = currentDateTime;
                     objModel.iml_import_date = currentDateTime;
 
-                    _db.UploadAutomateLogDTOs.Add(objModel);
+                    _db.TRImportMappingLogDTOs.Add(objModel);
 
                     _db.SaveChanges();
 
                     trans.Commit();
 
-                    objReturn = _mapper.Map<UploadAutomateLogDTO>(objModel);
+                    objReturn = _mapper.Map<TRImportMappingLogDTO>(objModel);
                 }
                 catch (Exception ex)
                 {
@@ -368,7 +371,7 @@ namespace ALISS.STARS.Library
             return objReturn;
         }
 
-        public List<TempImportUploadAutomateLogDTO> SaveTempImportUploadAutomateLogData(List<TempImportUploadAutomateLogDTO> tmpmodel)
+        public List<TempImportUploadAutomateLogDTO> SaveTempImportMappingAutomateLogData(List<TempImportUploadAutomateLogDTO> models)
         {
             log.MethodStart();
 
@@ -380,9 +383,9 @@ namespace ALISS.STARS.Library
                 {
                     // Insert Temp table
                     var objModel = new List<TempImportUploadAutomateLogDTO>();
-                    objModel = _mapper.Map<List<TempImportUploadAutomateLogDTO>>(tmpmodel);
+                    objModel = _mapper.Map<List<TempImportUploadAutomateLogDTO>>(models);
 
-                    _db.BulkInsert(tmpmodel);
+                    _db.BulkInsert(models);
 
                     _db.SaveChanges();
 
@@ -403,5 +406,7 @@ namespace ALISS.STARS.Library
 
             return objReturn;
         }
+
+        #endregion
     }
 }
