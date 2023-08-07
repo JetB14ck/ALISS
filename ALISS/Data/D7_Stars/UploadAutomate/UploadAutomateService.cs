@@ -374,7 +374,6 @@ namespace ALISS.Data.D7_StarsMapping
                             List<TempImportUploadAutomateLogDTO> objReturn = new List<TempImportUploadAutomateLogDTO>();
                             List<TempImportUploadAutomateLogDTO> models = new List<TempImportUploadAutomateLogDTO>();
                             models = DataTableHelper.ConvertDataTable<TempImportUploadAutomateLogDTO>(dtResult);
-                            //objReturn = await _apiHelper.PostDataAsync("mapping_api/Post_SaveTempImportUploadAutomateLogData", models);
                             objReturn = await _apiHelper.PostDataAsync("upload_automate_api/Post_SaveTempImportUploadAutomateLogData", models);
 
                             ErrorMessage.Add(new UploadAutomateLogErrorMessageDTO

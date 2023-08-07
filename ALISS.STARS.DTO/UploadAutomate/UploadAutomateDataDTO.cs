@@ -89,7 +89,7 @@ namespace ALISS.STARS.DTO
         public string aed_localdescr { get; set; } // Field Descr
         public string data_code { get; set; }
         public string data_desc { get; set; }
-        public string afu_id { get; set; } // hide in excel
+        public Double afu_id { get; set; } // hide in excel
         public string afu_smp_id { get; set; } // hide in excel
     }
 }

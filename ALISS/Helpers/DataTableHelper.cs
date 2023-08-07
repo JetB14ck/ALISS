@@ -47,7 +47,7 @@ namespace ALISS.Helpers
                         {
                             pro.SetValue(obj, dr[column.ColumnName], null);
                         }
-                        catch
+                        catch(Exception ex)
                         {
                             pro.SetValue(obj, string.Empty, null);
                         }

@@ -820,7 +820,6 @@ else
         LargeUploadMessage = "กำลังตรวจสอบไฟล์ ...";
         await InvokeAsync(StateHasChanged);
 
-        //UploadFileErrorData.afu_smp_id = machine_ddl_list.Find(x => x.smp_machinetype == UploadFileErrorData.afu_machinetype).smp_id;
         var chkValidate = await UploadAutomateservice.ValidateFileAsync(filepath, selectedErrorFiles.Name);
 
         LargeUploadMessage = "อัปโหลดเรียบร้อยแล้ว";
